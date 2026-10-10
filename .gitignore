@@ -1,0 +1,36 @@
+# Credenciales y configuración local
+.env
+.env.*
+!.env.example
+wp-config.php
+wp-config*.php
+*.pem
+*.key
+*.p12
+*.pfx
+*.log
+
+# Datos, backups, evidencias y cachés
+*.sql
+*.sql.gz
+*.wpress
+*.zip
+*.tar
+*.tar.gz
+*.quarantine
+*.evidence
+wp-content/uploads/
+wp-content/cache/
+wp-content/ai1wm-backups/
+wp-content/wpo-cache/
+wp-content/w3tc-config/
+
+# Dependencias instaladas fuera del repositorio
+wp-admin/
+wp-includes/
+wp-content/plugins/
+wp-content/mu-plugins/
+wp-content/themes/ohio/
+node_modules/
+vendor/
+.DS_Store
