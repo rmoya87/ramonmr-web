@@ -1,0 +1,27 @@
+/*!
+Theme Name: Upepo
+Theme URI: https://upepo.es/
+Author: Upepo
+Author URI: https://upepo.es/
+Description: Upepo is a WordPress theme bundled with premium plugins to build a modern and functional website.
+Version: 3.0.3
+License: GNU General Public License v2 or later
+License URI: http://www.gnu.org/licenses/gpl-2.0.html
+Template: ohio
+Text Domain: ohio-child
+Tags: ajax, customizer, ecommerce, portfolio, minimal, page builder, responsive, multipurpose, shop, store, woocommerce, wpml
+
+This theme, like WordPress, is licensed under the GPL.
+Use it to make something cool, have fun, and share what you've learned with others.
+
+Normalizing styles have been helped along thanks to the fine work of
+Nicolas Gallagher and Jonathan Neal http://necolas.github.com/normalize.css/
+*/
+
+button:not(.btn-outline):not(.btn-flat):not(.btn-link):not(.wc-forward):not(.single_add_to_wishlist):not(.feedback):not(.search-submit):not(.elementor-button){
+    color: #000!important;
+}
+
+.is-mobile-menu .mobile-overlay {overflow:visible}
+
+.is-mobile-menu .mobile-overlay .holder {width:calc(100% - 0px)}
