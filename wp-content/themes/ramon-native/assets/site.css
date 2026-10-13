@@ -2278,3 +2278,9 @@ body.home .service-cards .service-card{flex:0 0 82%;scroll-snap-align:start}}
 .native-reveal.native-reveal-in{opacity:1;transform:none}
 @media(prefers-reduced-motion:reduce){
 .native-reveal{opacity:1;transform:none;transition:none}}
+.method-grid>.method-item:first-child:nth-last-child(4),.method-grid>.method-item:first-child:nth-last-child(4)~.method-item{grid-area:auto}
+@media (width<=781px){
+.service-hero{padding-bottom:48px!important}
+.service-hero+.method-section{padding-top:48px!important;padding-bottom:48px!important}
+.service-hero+.method-section+.native-service-cards{padding-top:48px!important}
+                    }
