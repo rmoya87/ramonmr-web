@@ -1,0 +1,342 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/theme.json",
+  "version": 3,
+  "settings": {
+    "appearanceTools": true,
+    "layout": {
+      "contentSize": "1068px",
+      "wideSize": "1200px"
+    },
+    "color": {
+      "palette": [
+        {
+          "slug": "blue",
+          "name": "Blue",
+          "color": "#004eff"
+        },
+        {
+          "slug": "ink",
+          "name": "Ink",
+          "color": "#111111"
+        },
+        {
+          "slug": "pale",
+          "name": "Pale",
+          "color": "#f4f9ff"
+        },
+        {
+          "slug": "white",
+          "name": "White",
+          "color": "#ffffff"
+        },
+        {
+          "slug": "dark",
+          "name": "Dark",
+          "color": "#1a191d"
+        },
+        {
+          "slug": "muted",
+          "name": "Muted",
+          "color": "#606060"
+        },
+        {
+          "slug": "line",
+          "name": "Line",
+          "color": "#dedee3"
+        },
+        {
+          "slug": "surface",
+          "name": "Surface",
+          "color": "#f8f8f8"
+        },
+        {
+          "slug": "brands",
+          "name": "Brands",
+          "color": "#212121"
+        },
+        {
+          "slug": "footer",
+          "name": "Footer",
+          "color": "#17161a"
+        },
+        {
+          "slug": "tools",
+          "name": "Tools",
+          "color": "#242424"
+        },
+        {
+          "slug": "subtle",
+          "name": "Subtle",
+          "color": "#a4a3a6"
+        },
+        {
+          "slug": "soft",
+          "name": "Soft",
+          "color": "#e9e9e9"
+        },
+        {
+          "slug": "control",
+          "name": "Control",
+          "color": "#f1f5fa"
+        },
+        {
+          "slug": "overlay",
+          "name": "Overlay",
+          "color": "#939393"
+        },
+        {
+          "slug": "footer-text",
+          "name": "Footer-Text",
+          "color": "#eeeeee"
+        },
+        {
+          "slug": "footer-muted",
+          "name": "Footer-Muted",
+          "color": "#787779"
+        },
+        {
+          "slug": "placeholder",
+          "name": "Placeholder",
+          "color": "#858488"
+        },
+        {
+          "slug": "input",
+          "name": "Input",
+          "color": "#242328"
+        },
+        {
+          "slug": "copyright",
+          "name": "Copyright",
+          "color": "#cacaca"
+        },
+        {
+          "slug": "score-green",
+          "name": "Indicador SEO",
+          "color": "#98d27c"
+        },
+        {
+          "slug": "score-muted",
+          "name": "Texto indicador SEO",
+          "color": "#929aa8"
+        }
+      ]
+    },
+    "typography": {
+      "fontFamilies": [
+        {
+          "slug": "sans",
+          "name": "Sans original",
+          "fontFamily": "Arial, sans-serif"
+        },
+        {
+          "slug": "serif",
+          "name": "Serif",
+          "fontFamily": "Georgia, serif"
+        },
+        {
+          "slug": "system",
+          "name": "Sistema",
+          "fontFamily": "system-ui, sans-serif"
+        }
+      ],
+      "fontSizes": [
+        {
+          "slug": "small",
+          "name": "Small",
+          "size": "16px",
+          "fluid": false
+        },
+        {
+          "slug": "body",
+          "name": "Body",
+          "size": "18px",
+          "fluid": false
+        },
+        {
+          "slug": "subheading",
+          "name": "Subheading",
+          "size": "25px",
+          "fluid": false
+        },
+        {
+          "slug": "intro",
+          "name": "Intro",
+          "size": "30px",
+          "fluid": false
+        },
+        {
+          "slug": "heading",
+          "name": "Heading",
+          "size": "44.32px",
+          "fluid": false
+        },
+        {
+          "slug": "mobile-heading",
+          "name": "Mobile-heading",
+          "size": "31.3344px",
+          "fluid": false
+        },
+        {
+          "slug": "hero",
+          "name": "Hero",
+          "size": "80px",
+          "fluid": false
+        },
+        {
+          "slug": "section-small",
+          "name": "Título de noticias y clientes",
+          "size": "32.8px",
+          "fluid": false
+        }
+      ],
+      "defaultFontSizes": false
+    },
+    "spacing": {
+      "units": [
+        "px",
+        "rem",
+        "vh",
+        "%"
+      ],
+      "spacingSizes": [
+        {
+          "slug": "xs",
+          "name": "Xs",
+          "size": "8px"
+        },
+        {
+          "slug": "sm",
+          "name": "Sm",
+          "size": "16px"
+        },
+        {
+          "slug": "md",
+          "name": "Md",
+          "size": "24px"
+        },
+        {
+          "slug": "lg",
+          "name": "Lg",
+          "size": "40px"
+        },
+        {
+          "slug": "xl",
+          "name": "Xl",
+          "size": "65px"
+        },
+        {
+          "slug": "section",
+          "name": "Section",
+          "size": "110px"
+        }
+      ]
+    },
+    "custom": {
+      "layout": {
+        "cardRadius": "10px"
+      },
+      "type": {
+        "heroLine": "90px",
+        "headingLine": "65px",
+        "bodyLine": "1.6"
+      }
+    }
+  },
+  "styles": {
+    "color": {
+      "text": "var:preset|color|ink",
+      "background": "var:preset|color|white"
+    },
+    "typography": {
+      "fontFamily": "var:preset|font-family|sans",
+      "fontSize": "var:preset|font-size|body",
+      "lineHeight": "1.6"
+    },
+    "spacing": {
+      "blockGap": "0px"
+    },
+    "elements": {
+      "link": {
+        "color": {
+          "text": "inherit"
+        },
+        "typography": {
+          "textDecoration": "none"
+        }
+      },
+      "heading": {
+        "typography": {
+          "fontFamily": "inherit",
+          "fontWeight": "400"
+        }
+      }
+    },
+    "blocks": {
+      "core/button": {
+        "border": {
+          "radius": "100px"
+        },
+        "color": {
+          "background": "var:preset|color|blue",
+          "text": "var:preset|color|white"
+        },
+        "typography": {
+          "fontSize": "var:preset|font-size|small"
+        },
+        "variations": {
+          "outline": {
+            "color": {
+              "text": "var:preset|color|blue",
+              "background": "transparent"
+            },
+            "border": {
+              "color": "var:preset|color|blue",
+              "width": "1px"
+            },
+            "spacing": {
+              "padding": {
+                "top": "8px",
+                "bottom": "8px",
+                "left": "16px",
+                "right": "16px"
+              }
+            }
+          }
+        }
+      },
+      "core/heading": {
+        "typography": {
+          "fontFamily": "inherit"
+        }
+      }
+    }
+  },
+  "customTemplates": [
+    {
+      "name": "cv",
+      "title": "Curriculum Ramón",
+      "postTypes": [
+        "page"
+      ]
+    },
+    {
+      "name": "landing",
+      "title": "Página de secciones",
+      "postTypes": [
+        "page"
+      ]
+    }
+  ],
+  "templateParts": [
+    {
+      "name": "header",
+      "title": "Cabecera",
+      "area": "header"
+    },
+    {
+      "name": "footer",
+      "title": "Pie",
+      "area": "footer"
+    }
+  ]
+}

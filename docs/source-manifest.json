@@ -1,0 +1,1534 @@
+{
+  "wp-content/plugins/ramon-site/ramon-site.php": {
+    "size": 20041,
+    "sha256": "fee51d6ada1b924758efc2ac3af5bf9f5f286e5e05e2ceb4c6b1b889b57b0138"
+  },
+  "wp-content/plugins/ramon-site/assets/js/header.src.js": {
+    "size": 2062,
+    "sha256": "bca00804675e1cb8e7f0e1f9fdae7b3e0dff6bd5cdafd935f3680af70afa762f"
+  },
+  "wp-content/plugins/ramon-site/assets/js/reveal.src.js": {
+    "size": 662,
+    "sha256": "9a1034a56c768f9b603861355b7f230ad0c02bd7d5288c3f473ad9f2b042edd3"
+  },
+  "wp-content/plugins/ramon-site/assets/js/sources.json": {
+    "size": 482,
+    "sha256": "b8736e0d034c124b3ae4605e7b7a30856c0ca096f60b9271b1aa449f870396a1"
+  },
+  "wp-content/plugins/ramon-site/includes/texts.php": {
+    "size": 6234,
+    "sha256": "48220ce583d9b2560a5a7752d7ea7d9b4d7fed10dc1358650ad412f762cfd843"
+  },
+  "wp-content/plugins/ramon-site/includes/performance.php": {
+    "size": 9949,
+    "sha256": "c0855d1fd8e88ef2c8aa6c125381f0876b5e2de26b7e5e885c2ee85d2d951b91"
+  },
+  "wp-content/plugins/ramon-site/modules/workshop.php": {
+    "size": 6622,
+    "sha256": "0536a4240c24949ea3518fb7d283ad24f56d05f3a2b5728fce0b0ec5cb45ffe7"
+  },
+  "wp-content/plugins/ramon-site/modules/external-links.php": {
+    "size": 3974,
+    "sha256": "aba2d5f10f0c0f6efcdd04bcaafdf7893a633bf01bc4d40d1b5129a2505598a2"
+  },
+  "wp-content/plugins/ramon-site/modules/cta.php": {
+    "size": 16056,
+    "sha256": "9cbb92d8ad0bb6b2bb7b67adfcf4d06ea093f8b432b06202136e417135a1a887"
+  },
+  "wp-content/plugins/ramon-site/modules/header-stable.php": {
+    "size": 1059,
+    "sha256": "616983e1d473a76523ccb87d0f3b489213256cb7620e06a69fc06821c78e84a0"
+  },
+  "wp-content/plugins/ramon-site/modules/perf.php": {
+    "size": 10903,
+    "sha256": "4199eb28d7fbca7e708ca431a2c26799a96e9dd4a12a627d65cd9137ac20d423"
+  },
+  "wp-content/plugins/ramon-site/modules/a11y.php": {
+    "size": 23043,
+    "sha256": "8587bd937cb4d8ec19ae1aafffb6f83d40cbd6a24d35db12f292634aba74741f"
+  },
+  "wp-content/plugins/ramon-site/modules/i18n.php": {
+    "size": 15957,
+    "sha256": "9ab561e0de3ae662fda8cb41e8c1f0dae3f909cc8d5adb44ac1eb3d2b92113c6"
+  },
+  "wp-content/plugins/ramon-site/modules/security.php": {
+    "size": 6219,
+    "sha256": "2d760a31f1316801095ad79e8a2a813e782b51ef7f2effd51d326e507bb3df07"
+  },
+  "wp-content/plugins/ramon-site/modules/consent.php": {
+    "size": 731,
+    "sha256": "4a400be34b376bface97750fb8843bea25bb516f662a1c15842133ecb8bf128a"
+  },
+  "wp-content/plugins/ramon-site/modules/recaptcha.php": {
+    "size": 1762,
+    "sha256": "6116ceb5e63485c3a8c87354d963dbcb298b2c9b17c4333f85f9ac25f8283447"
+  },
+  "wp-content/plugins/ramon-site/modules/blog-hero.php": {
+    "size": 30453,
+    "sha256": "bdf107f6f8e0074fed650a00dd85fdfa507f1f2b191e1eb32cd8a4219aa0c138"
+  },
+  "wp-content/plugins/ramon-site/modules/dark.php": {
+    "size": 17781,
+    "sha256": "de2854c6b89ead329139452cbed002044f6376e443b071379aaf30941463f5d3"
+  },
+  "wp-content/plugins/ramon-site/modules/projects.php": {
+    "size": 8621,
+    "sha256": "37acc2764a7011623cc54f736840281e27d7bbc42e2d4d93a67e34d365054959"
+  },
+  "wp-content/plugins/ramon-site/modules/posts.php": {
+    "size": 12192,
+    "sha256": "03f18151e89c68e21be9c2cec2725565abce79783fc2e4b6938f638d8d567e58"
+  },
+  "wp-content/plugins/ramon-site/modules/footer.php": {
+    "size": 2891,
+    "sha256": "9ea460ba042c1e332e790d0be57b4bf68847b4a9025e9c1534674465739426be"
+  },
+  "wp-content/themes/ramon-native/screenshot.webp": {
+    "size": 433142,
+    "sha256": "c159b2a9a01782ea7b8336f376d48b29145525300680cf80107ba671942586fb"
+  },
+  "wp-content/themes/ramon-native/screenshot.png": {
+    "size": 691736,
+    "sha256": "7779946316a328a3b6bbdfb28df8ae446494d483c287a19d779d4c3b0c0d6433"
+  },
+  "wp-content/themes/ramon-native/functions.php": {
+    "size": 30595,
+    "sha256": "db0fce87fe5a85a005313a436fe2b8cce443e6a540d488157c4ddf3266e26e4c"
+  },
+  "wp-content/themes/ramon-native/style.css": {
+    "size": 252,
+    "sha256": "ae4336e5871c06a3fe8fac92b365088a6b4bf6933e8f51b03df352ef1f43b4ee"
+  },
+  "wp-content/themes/ramon-native/screenshot.png.webp": {
+    "size": 433142,
+    "sha256": "c159b2a9a01782ea7b8336f376d48b29145525300680cf80107ba671942586fb"
+  },
+  "wp-content/themes/ramon-native/theme.json": {
+    "size": 7112,
+    "sha256": "8d5842f9f70068a6a18acb5c96cb6e7d2350debdba7eae2670ab0e90ceac01ce"
+  },
+  "wp-content/themes/ramon-native/README.md": {
+    "size": 5544,
+    "sha256": "2e595afa0b8ab68ac17cc059b0d1db95a9b561b775a4b6566abc8985eb7a6d02"
+  },
+  "wp-content/themes/ramon-native/screenshot.png.rm.webp": {
+    "size": 433142,
+    "sha256": "c159b2a9a01782ea7b8336f376d48b29145525300680cf80107ba671942586fb"
+  },
+  "wp-content/themes/ramon-native/RENDIMIENTO.md": {
+    "size": 1345,
+    "sha256": "b448a3880be5f2bf29b4027f9a3ec9f7f3dbea93cc3dc8e2869ec65ec8e4a4bd"
+  },
+  "wp-content/themes/ramon-native/templates/page.html": {
+    "size": 336,
+    "sha256": "3c2d9f31af3cb22901d838200202485cba383c9dea70ff9126efb01ebab7a676"
+  },
+  "wp-content/themes/ramon-native/templates/cv.html": {
+    "size": 359,
+    "sha256": "b54bc59ed5f0a3ebed0e4b6ab8af24755fb15fd0c70b12f95857d3070184508f"
+  },
+  "wp-content/themes/ramon-native/templates/landing.html": {
+    "size": 359,
+    "sha256": "b54bc59ed5f0a3ebed0e4b6ab8af24755fb15fd0c70b12f95857d3070184508f"
+  },
+  "wp-content/themes/ramon-native/templates/index.html": {
+    "size": 616,
+    "sha256": "fdee76cffec44e8d39b6a3b11bb6c1d182a57283db42f723da0dbc686f8ab5e4"
+  },
+  "wp-content/themes/ramon-native/templates/single.html": {
+    "size": 336,
+    "sha256": "3c2d9f31af3cb22901d838200202485cba383c9dea70ff9126efb01ebab7a676"
+  },
+  "wp-content/themes/ramon-native/templates/single-ohio_portfolio.html": {
+    "size": 1747,
+    "sha256": "f30a9497ab0ef1d3f7cde9a4b32ce288de0c1f66289c9384caf6bd9846570059"
+  },
+  "wp-content/themes/ramon-native/templates/category.html": {
+    "size": 2229,
+    "sha256": "4cd71007dcf5f7b19221f1595ea6a8d478a6c92f1c8a8142ee21c838bd694706"
+  },
+  "wp-content/themes/ramon-native/templates/search.html": {
+    "size": 2399,
+    "sha256": "db324ce35810430bfb9585f55430151eb53fa63f50a16aff05f08def15020cfd"
+  },
+  "wp-content/themes/ramon-native/templates/404.html": {
+    "size": 797,
+    "sha256": "3a98b0c17c7f1f10b60ef3fc64db1c7a6dd7ca7104707734bd8d76c8cf8f73b6"
+  },
+  "wp-content/themes/ramon-native/templates/archive.html": {
+    "size": 2229,
+    "sha256": "4cd71007dcf5f7b19221f1595ea6a8d478a6c92f1c8a8142ee21c838bd694706"
+  },
+  "wp-content/themes/ramon-native/templates/single-post.html": {
+    "size": 4738,
+    "sha256": "85afe6decf63570a886a5da6d7f352d92860e9542d2a18d05470ca86af7c408b"
+  },
+  "wp-content/themes/ramon-native/templates/category-blog.html": {
+    "size": 2327,
+    "sha256": "60e7c9c05bb709ff52d2b1d4278b8d89acf173cf7814675eed8df0dd4ae54f15"
+  },
+  "wp-content/themes/ramon-native/templates/front-page.html": {
+    "size": 359,
+    "sha256": "b54bc59ed5f0a3ebed0e4b6ab8af24755fb15fd0c70b12f95857d3070184508f"
+  },
+  "wp-content/themes/ramon-native/assets/manifest.json": {
+    "size": 1903,
+    "sha256": "205df79cf8841bf714889827c038f567b1ecdb2d90ee4e40eb49ff0c350c1322"
+  },
+  "wp-content/themes/ramon-native/assets/optimization.json": {
+    "size": 425,
+    "sha256": "54e6b71881aeb868f3667bc5395a1349ab203568f69ae83467254a0f669219fd"
+  },
+  "wp-content/themes/ramon-native/assets/reveal.js": {
+    "size": 639,
+    "sha256": "54115fb4844211de46674e6480bcf64b6f416619c9c91f235fe06ea25b6608b6"
+  },
+  "wp-content/themes/ramon-native/assets/header.js": {
+    "size": 1853,
+    "sha256": "bb1265dfd0d4b9047bb08455599b6a475ed35aa2c7ad79129411028c11bbe976"
+  },
+  "wp-content/themes/ramon-native/assets/tabs.min.js": {
+    "size": 8298,
+    "sha256": "b38b571c2b5460ab3ef6d58dfbe88c8982432199c5ae2f0b7e238a276d8021cc"
+  },
+  "wp-content/themes/ramon-native/assets/site.min.css": {
+    "size": 168110,
+    "sha256": "728c2232ad2f6f5db8b38e719375c9a08e8fd039a7118740712c16fc3889ff7e"
+  },
+  "wp-content/themes/ramon-native/assets/site.css": {
+    "size": 172755,
+    "sha256": "9fc2b25f840ff47cdc441dd7ceea6938f0c948cc54fac98a952cc9d8e207cbb8"
+  },
+  "wp-content/themes/ramon-native/assets/carousel.js": {
+    "size": 1370,
+    "sha256": "5a747f14c01ccf6690557cdbd51689867b58f3229e5c7bf2bdf7d88fc1026670"
+  },
+  "wp-content/themes/ramon-native/assets/comment-avatars.json": {
+    "size": 9381,
+    "sha256": "2b1e5fcc0491b75826b789b2bd8dfb4274fef52b05f1838828db124f2a9d745b"
+  },
+  "wp-content/themes/ramon-native/assets/tabs.js": {
+    "size": 8298,
+    "sha256": "b38b571c2b5460ab3ef6d58dfbe88c8982432199c5ae2f0b7e238a276d8021cc"
+  },
+  "wp-content/themes/ramon-native/assets/images/icon-linkedin-in.svg": {
+    "size": 211,
+    "sha256": "3cca30ea07f8e1b2ee47a023d7dfd4a5f9b887b2c0e652782dd4167abc623e3c"
+  },
+  "wp-content/themes/ramon-native/assets/images/urban-safari-mv.webp": {
+    "size": 51180,
+    "sha256": "cfbc6c079653fa7c46c02323f121aa3c8f47ef278e13f15dca940b26a28b74ca"
+  },
+  "wp-content/themes/ramon-native/assets/images/icon-linea-software-add-vectorpoint.svg": {
+    "size": 649,
+    "sha256": "54c15ec5554393d2f4726dc95b9031cf861224be318c6682d189076a5f909672"
+  },
+  "wp-content/themes/ramon-native/assets/images/icon-watch.svg": {
+    "size": 175,
+    "sha256": "f196dfee99b664490c044709ef24ad4bfd695b24fdd6040ac5e9398ed82d41fa"
+  },
+  "wp-content/themes/ramon-native/assets/images/1CAC6E13-BE58-4AD8-BBE0-42A03E4393B7.jpeg.webp": {
+    "size": 24320,
+    "sha256": "ea57183d7ad2ef216b3a72daaeba338db0c037330558166d1b9685aee54ea324"
+  },
+  "wp-content/themes/ramon-native/assets/images/sony.webp": {
+    "size": 1544,
+    "sha256": "cbd9cfb4fc59ee615ec4b0ff0492e60e798652ad48b4ac4c73c12cc1287fa207"
+  },
+  "wp-content/themes/ramon-native/assets/images/hero-cv-likeness.webp": {
+    "size": 71308,
+    "sha256": "ce7f175241fc25ac2e9dc9215b0024bbf938ce66143b1cbebe98f7c61bbdcccd"
+  },
+  "wp-content/themes/ramon-native/assets/images/method-analysis.svg": {
+    "size": 240,
+    "sha256": "07a76b787dc8eba9a29580bb5019f1da94ef9e3043949397e4f079d7c4705591"
+  },
+  "wp-content/themes/ramon-native/assets/images/product-web-online.jpg": {
+    "size": 8434,
+    "sha256": "939c4aa9396d1e8121ed95c30d8ec953bf6ea920aec58830fd1f2c3a120e04a7"
+  },
+  "wp-content/themes/ramon-native/assets/images/mapfre.png.webp": {
+    "size": 1328,
+    "sha256": "dff509b4354876a00dbc3a56ffedc2c6cd00738d5e9e1e22280719a42b0a06ac"
+  },
+  "wp-content/themes/ramon-native/assets/images/hero-home.webp": {
+    "size": 58436,
+    "sha256": "b5baadc8c576366750081ac0faa0e9c32f6556d4eacb51d63a8e04cb8fba7832"
+  },
+  "wp-content/themes/ramon-native/assets/images/hero-cv-likeness-mobile.webp": {
+    "size": 70898,
+    "sha256": "c829e41696044492c538cb814b6a1619f5172f4e010ebeea7f22130f24d87f4b"
+  },
+  "wp-content/themes/ramon-native/assets/images/D3053385-DF1B-4F24-AC85-93EF59CA2573-1024x768.webp": {
+    "size": 142410,
+    "sha256": "15734f7d6613355cd7e7a2f5d73be767ccb6e81961618e450f4605847133e235"
+  },
+  "wp-content/themes/ramon-native/assets/images/icon-linea-basic-book-pen.svg": {
+    "size": 317,
+    "sha256": "1d05895081e7d4f9b911a47ea61d4cf63e8e5a2135d88f8461f4d5ce46218fe8"
+  },
+  "wp-content/themes/ramon-native/assets/images/yinper.png": {
+    "size": 2645,
+    "sha256": "8057c1d31f4fae717657482b6bce6a05eec7c04a9696d8d5593a9635b1bbc74e"
+  },
+  "wp-content/themes/ramon-native/assets/images/canembal.jpg.rm.webp": {
+    "size": 55918,
+    "sha256": "e553ed3b5a57de36dff82d15bb0ce03189d686a7874664b439707f3b0fc145a1"
+  },
+  "wp-content/themes/ramon-native/assets/images/product-app.jpg": {
+    "size": 8648,
+    "sha256": "42c2cdc5720852e5f7ef6cea4a8f8b88f847d1e1a81dd67caba02af8b5af6042"
+  },
+  "wp-content/themes/ramon-native/assets/images/icon-linea-basic-cup.svg": {
+    "size": 623,
+    "sha256": "cf25beba1ac58db80a5f92618b301cb9f3b97cdefc8389726d9bdd6adb122627"
+  },
+  "wp-content/themes/ramon-native/assets/images/icon-icomoon-Tilda_Icons_1ed_brain.svg": {
+    "size": 4380,
+    "sha256": "8d242fe3d1fa358dbb9d931d9a81c7f1c361366b96d4e3fbe06bd7b0c1221e09"
+  },
+  "wp-content/themes/ramon-native/assets/images/apps-1024x768.png.rm.webp": {
+    "size": 153606,
+    "sha256": "99dbc1b8962008e369d62f460f2dd42dd2c735cf03f05aefd4b5bb05ec804968"
+  },
+  "wp-content/themes/ramon-native/assets/images/icon-linea-basic-clockwise-white.svg": {
+    "size": 559,
+    "sha256": "9dbfd365b89f1a90a45fe89b362e0858337e9b1b3b14ef4189836595e578e0ad"
+  },
+  "wp-content/themes/ramon-native/assets/images/icon-linea-basic-compass.svg": {
+    "size": 774,
+    "sha256": "2dfdc742345c6357aa47cd0f38f31b5d620f3570c03308c56f6f40c8f8e5acaf"
+  },
+  "wp-content/themes/ramon-native/assets/images/urban-safari.png.webp": {
+    "size": 13792,
+    "sha256": "53fbed2728b272f42a390b7e4136b7f2ef4997e7ed313659683def50080953fb"
+  },
+  "wp-content/themes/ramon-native/assets/images/logounibailrodamco.png": {
+    "size": 5223,
+    "sha256": "20ad17b359f015ff4f3f4ae2735967b4690ad744935560a0f7dcabfa29c77584"
+  },
+  "wp-content/themes/ramon-native/assets/images/icon-icomoon-Tilda_Icons_30_system_reload.svg": {
+    "size": 1179,
+    "sha256": "c18d87484002f7fd9cb6d761865ef5692f668b99eae905a7e39be9b7cf8e748a"
+  },
+  "wp-content/themes/ramon-native/assets/images/hero-cv.webp": {
+    "size": 25984,
+    "sha256": "d91375fb275688b9b83bfb856a2ce7d036c9afaed6887c51666d01bb3c44ff7b"
+  },
+  "wp-content/themes/ramon-native/assets/images/yinper-1-1024x749.webp": {
+    "size": 45716,
+    "sha256": "87fa5789da847b8c510b92ac61691089409a9069e2c75b1eb9afcc8442de148e"
+  },
+  "wp-content/themes/ramon-native/assets/images/global-corner.png": {
+    "size": 22452,
+    "sha256": "24f96c9a43507e961ec9aa618f19b84fb9723ce78d19cff70123db5e47d2c91c"
+  },
+  "wp-content/themes/ramon-native/assets/images/yinper.webp": {
+    "size": 2284,
+    "sha256": "b32eeb0450c0afe93d8af5c6bd08e22ef43d66b2c3a7b0ab5aa6e0d816d602e7"
+  },
+  "wp-content/themes/ramon-native/assets/images/icon-linea-basic-pencil-ruler-white.svg": {
+    "size": 395,
+    "sha256": "6e3cf3369202f13abf443e60e29aecdb0ad178d9e435af0d2cbb43c06d29abcb"
+  },
+  "wp-content/themes/ramon-native/assets/images/canembal.png": {
+    "size": 8213,
+    "sha256": "2e86f6a421513cf171d3f2f57aa462868f3fe2aec1614a6ce95eee93418f65bc"
+  },
+  "wp-content/themes/ramon-native/assets/images/urban-safari.png": {
+    "size": 25618,
+    "sha256": "e3373edac665ed7056bc0b7f285fba0c72c473c9496de034eb52683238ede68f"
+  },
+  "wp-content/themes/ramon-native/assets/images/product-web-online.webp": {
+    "size": 8430,
+    "sha256": "85c22cd75e8cda97d3e4c308e7c83d7186c997c4b67bfe61fc27a1e8585d5611"
+  },
+  "wp-content/themes/ramon-native/assets/images/icon-linea-basic-signs-mono.svg": {
+    "size": 319,
+    "sha256": "6b49411e4fbcdacea86f397742d92285020ae3dd8d14fcc8d7b3cd7fb626b814"
+  },
+  "wp-content/themes/ramon-native/assets/images/hero-cv-portrait.webp": {
+    "size": 82576,
+    "sha256": "0f08d39755c31084ccc3cccdde8b37719fa1e4d2c92984fb8edb425c692f95b9"
+  },
+  "wp-content/themes/ramon-native/assets/images/sony.png": {
+    "size": 2073,
+    "sha256": "2672060b540f6519916a9a8fc566d7cbe2bc5132aae1110226129fe4a4cadf59"
+  },
+  "wp-content/themes/ramon-native/assets/images/global-corner.png.webp": {
+    "size": 9822,
+    "sha256": "1d46c90885cb95888c239d768488b4f29863647fa44df42d542f3f20de42ad31"
+  },
+  "wp-content/themes/ramon-native/assets/images/urban-safari.png.rm.webp": {
+    "size": 13792,
+    "sha256": "53fbed2728b272f42a390b7e4136b7f2ef4997e7ed313659683def50080953fb"
+  },
+  "wp-content/themes/ramon-native/assets/images/urban-Safari-header2.png.rm.webp": {
+    "size": 349140,
+    "sha256": "876c04b7222d2db31845cc0918a284a8101d4d3c32ee9be6635f62609f427a35"
+  },
+  "wp-content/themes/ramon-native/assets/images/icon-linea-basic-accelerator.svg": {
+    "size": 827,
+    "sha256": "3fb8b9f44faccd0b395353128a03664773f5013bc0286be77df26a3237ed2db5"
+  },
+  "wp-content/themes/ramon-native/assets/images/icon-linea-basic-download.svg": {
+    "size": 259,
+    "sha256": "f87ba1be2ce8b97f289840f2cb5d9bd4399adab78ac94e2c26831bc3e57c1386"
+  },
+  "wp-content/themes/ramon-native/assets/images/icon-linea-basic-lightbulb.svg": {
+    "size": 687,
+    "sha256": "adcb384f1de517258a331b918e975680a80d93a6865b28faf75319c743d3a400"
+  },
+  "wp-content/themes/ramon-native/assets/images/icon-linea-basic-compass-white.svg": {
+    "size": 774,
+    "sha256": "05ef1fe727524fe5645cffd9af2e0ae9992f2f8c2de4b17f8857209ecbbb1cb7"
+  },
+  "wp-content/themes/ramon-native/assets/images/product-app.jpg.rm.webp": {
+    "size": 6330,
+    "sha256": "d7c96a170c182598bf9904106edbc87e221b68def0b77906d77fb93ae928fb4e"
+  },
+  "wp-content/themes/ramon-native/assets/images/apps-1024x768.png": {
+    "size": 187360,
+    "sha256": "dc9c4f90a2ff86018d44cacfd86c46a448eb88b765055cf4deae06eef168bb8f"
+  },
+  "wp-content/themes/ramon-native/assets/images/icon-linea-basic-signs.svg": {
+    "size": 319,
+    "sha256": "1b52f04759d60f2dcc2346563203c8944f59dd4f7b5fee69fc1f692c802224e1"
+  },
+  "wp-content/themes/ramon-native/assets/images/product-app.webp": {
+    "size": 6330,
+    "sha256": "d7c96a170c182598bf9904106edbc87e221b68def0b77906d77fb93ae928fb4e"
+  },
+  "wp-content/themes/ramon-native/assets/images/author-public.jpg.webp": {
+    "size": 1318,
+    "sha256": "93a0db9c892f5e190a99d11d82939ce0a62cf87184c3588299fa4bef7a90f8b1"
+  },
+  "wp-content/themes/ramon-native/assets/images/icon-linea-basic-cup-mono.svg": {
+    "size": 623,
+    "sha256": "d7fb359c630f4d681507ab6504b8e3d7eb324abda884da9cdc2e49b110611365"
+  },
+  "wp-content/themes/ramon-native/assets/images/icon-linea-arrows-button-on-mono.svg": {
+    "size": 558,
+    "sha256": "6f1bd610fa6b7bb08dd105bc5a9ecb15b64ded3f1af9316fdbd5a55d595169cc"
+  },
+  "wp-content/themes/ramon-native/assets/images/1CAC6E13-BE58-4AD8-BBE0-42A03E4393B7.jpeg.rm.webp": {
+    "size": 24320,
+    "sha256": "ea57183d7ad2ef216b3a72daaeba338db0c037330558166d1b9685aee54ea324"
+  },
+  "wp-content/themes/ramon-native/assets/images/icon-person.svg": {
+    "size": 190,
+    "sha256": "3d67d1151f57b1d0c929c74fba83dd227232c5193f4095e00dc3096a2a446a39"
+  },
+  "wp-content/themes/ramon-native/assets/images/icon-linea-basic-eye.svg": {
+    "size": 1215,
+    "sha256": "99d2ff5757ac83223a7c5495f14d7ed68e410e317020ceada8d7c1f1eb55905b"
+  },
+  "wp-content/themes/ramon-native/assets/images/product-ecommerce.jpg": {
+    "size": 9021,
+    "sha256": "bf8ba8a4ec6356a9d86c8f81a9f28b9ba0a2da5dd92b0e79d2d69613374fe0bd"
+  },
+  "wp-content/themes/ramon-native/assets/images/method-strategy.svg": {
+    "size": 299,
+    "sha256": "f70d7874b5bd300fb6a00295a247df11f434dbce79d1def5e7363266521d7971"
+  },
+  "wp-content/themes/ramon-native/assets/images/canembal.png.rm.webp": {
+    "size": 3786,
+    "sha256": "debb581dcb61715cb184156f12b0094bc4791a55886e7c223897d38948f8bfba"
+  },
+  "wp-content/themes/ramon-native/assets/images/logounibailrodamco.png.webp": {
+    "size": 3014,
+    "sha256": "3b83d9cfd49123fc94833528c5453c6bfdd7d0ebe22b399b06670123bb85ae64"
+  },
+  "wp-content/themes/ramon-native/assets/images/vass.webp": {
+    "size": 1836,
+    "sha256": "685c7b4b0570bac5b960b8bb55038677145a5d90c6c1cc60788940a2bf0f89c0"
+  },
+  "wp-content/themes/ramon-native/assets/images/icon-chat.svg": {
+    "size": 167,
+    "sha256": "4135f07b0c8efa495bfd8760bd87ddc8f13c9360b7c6b431dce063de557a2811"
+  },
+  "wp-content/themes/ramon-native/assets/images/icon-linea-basic-calendar.svg": {
+    "size": 544,
+    "sha256": "4d56672b3c084a23c49268e15dcfdcfaf600b7ab8c10c5279429fd3e666adce5"
+  },
+  "wp-content/themes/ramon-native/assets/images/icon-linea-ecommerce-graph3-white.svg": {
+    "size": 1300,
+    "sha256": "0ba94f2d6993316e9ace970093eccb84569aab0054480f70dca522bf2b239378"
+  },
+  "wp-content/themes/ramon-native/assets/images/urban-Safari-header2.png.webp": {
+    "size": 349140,
+    "sha256": "876c04b7222d2db31845cc0918a284a8101d4d3c32ee9be6635f62609f427a35"
+  },
+  "wp-content/themes/ramon-native/assets/images/icon-linea-arrows-button-on.svg": {
+    "size": 558,
+    "sha256": "5c81e5adae25d4bc02fb8151ac465fe1ee58d23e098e92ae52b4ede73d7f3521"
+  },
+  "wp-content/themes/ramon-native/assets/images/canembal-png.webp": {
+    "size": 3786,
+    "sha256": "debb581dcb61715cb184156f12b0094bc4791a55886e7c223897d38948f8bfba"
+  },
+  "wp-content/themes/ramon-native/assets/images/logo.png": {
+    "size": 16079,
+    "sha256": "4b61951895a8cfb03438c040fc2dab63cb7afd56ab5d41830a363fb399b96009"
+  },
+  "wp-content/themes/ramon-native/assets/images/bodaclick.png.rm.webp": {
+    "size": 1334,
+    "sha256": "cfea7a94446dfa499cc4068fdef4354ef409868f3e3b1812da4d83709b40aee5"
+  },
+  "wp-content/themes/ramon-native/assets/images/bodaclick.webp": {
+    "size": 1334,
+    "sha256": "cfea7a94446dfa499cc4068fdef4354ef409868f3e3b1812da4d83709b40aee5"
+  },
+  "wp-content/themes/ramon-native/assets/images/icon-linea-basic-cloud.svg": {
+    "size": 615,
+    "sha256": "ddfdd17b27dd15f9b00004314c03563fff24b637d91ccbaafdd3b2243503b682"
+  },
+  "wp-content/themes/ramon-native/assets/images/mapfre.png": {
+    "size": 1626,
+    "sha256": "3f67e1d9c23a08ea90ae09182bdc61ffac4869cf52c5dd82a4b0370677aefdf8"
+  },
+  "wp-content/themes/ramon-native/assets/images/mapfre.png.rm.webp": {
+    "size": 1328,
+    "sha256": "dff509b4354876a00dbc3a56ffedc2c6cd00738d5e9e1e22280719a42b0a06ac"
+  },
+  "wp-content/themes/ramon-native/assets/images/urban-safari-mv.jpg.rm.webp": {
+    "size": 51180,
+    "sha256": "cfbc6c079653fa7c46c02323f121aa3c8f47ef278e13f15dca940b26a28b74ca"
+  },
+  "wp-content/themes/ramon-native/assets/images/icon-linea-basic-bolt.svg": {
+    "size": 269,
+    "sha256": "707ce3c6a48615555c684889e6e36577b8affdd44c48ce21d566d72155366802"
+  },
+  "wp-content/themes/ramon-native/assets/images/logo.webp": {
+    "size": 7134,
+    "sha256": "dcec5297ea9ff67fe586f520970afd669d3d824e9dd8f82fdbe019198147a443"
+  },
+  "wp-content/themes/ramon-native/assets/images/bodaclick.png": {
+    "size": 1696,
+    "sha256": "c59aca6f60bc0c8edb2203f70b97d0a20be39f05814c1e3dfc99a04aeae98330"
+  },
+  "wp-content/themes/ramon-native/assets/images/icon-linea-basic-clockwise.svg": {
+    "size": 559,
+    "sha256": "d3312d7fd872ce0a912331b410c170b7de24d15975f46c899e58f887e226b9a0"
+  },
+  "wp-content/themes/ramon-native/assets/images/logo.png.webp": {
+    "size": 7134,
+    "sha256": "dcec5297ea9ff67fe586f520970afd669d3d824e9dd8f82fdbe019198147a443"
+  },
+  "wp-content/themes/ramon-native/assets/images/icon-linea-software-pencil.svg": {
+    "size": 348,
+    "sha256": "7fbbfe160bc6fe88d0eef407ddc67bac358fad569cd01afda598190334bdc874"
+  },
+  "wp-content/themes/ramon-native/assets/images/value.webp": {
+    "size": 400848,
+    "sha256": "1e9fe75deb6a189764668d872997afd770c5a5da2f0b0876513b220f44600809"
+  },
+  "wp-content/themes/ramon-native/assets/images/global-corner.webp": {
+    "size": 9822,
+    "sha256": "1d46c90885cb95888c239d768488b4f29863647fa44df42d542f3f20de42ad31"
+  },
+  "wp-content/themes/ramon-native/assets/images/1CAC6E13-BE58-4AD8-BBE0-42A03E4393B7.webp": {
+    "size": 24320,
+    "sha256": "ea57183d7ad2ef216b3a72daaeba338db0c037330558166d1b9685aee54ea324"
+  },
+  "wp-content/themes/ramon-native/assets/images/urban-safari-mv.jpg.webp": {
+    "size": 51180,
+    "sha256": "cfbc6c079653fa7c46c02323f121aa3c8f47ef278e13f15dca940b26a28b74ca"
+  },
+  "wp-content/themes/ramon-native/assets/images/yinper-1-1024x749.jpg.rm.webp": {
+    "size": 45716,
+    "sha256": "87fa5789da847b8c510b92ac61691089409a9069e2c75b1eb9afcc8442de148e"
+  },
+  "wp-content/themes/ramon-native/assets/images/icon-linea-arrows-shrink.svg": {
+    "size": 366,
+    "sha256": "28ef9465f3de1337552b752dd75d5a532d2beeb3f8f15cd018c70fb924dd5e40"
+  },
+  "wp-content/themes/ramon-native/assets/images/icon-linea-basic-calculator.svg": {
+    "size": 380,
+    "sha256": "ebccd48ff827d472b34992dc9fadaff2fe3fdbf76982661d2b037a6ab9889a0e"
+  },
+  "wp-content/themes/ramon-native/assets/images/apps-1024x768.png.webp": {
+    "size": 153606,
+    "sha256": "99dbc1b8962008e369d62f460f2dd42dd2c735cf03f05aefd4b5bb05ec804968"
+  },
+  "wp-content/themes/ramon-native/assets/images/icon-linea-arrows-circle-check.svg": {
+    "size": 560,
+    "sha256": "78fdade07cb86f9e5f5d612d421c20f5acb9ac5d838ce78672dddf3a935520b9"
+  },
+  "wp-content/themes/ramon-native/assets/images/logista.png": {
+    "size": 2287,
+    "sha256": "6a54bd131b98215af7edd61a0bafefb47bcc3c3448daee6981c83b7c095cf884"
+  },
+  "wp-content/themes/ramon-native/assets/images/icon-linea-basic-pencil-ruler-pen.svg": {
+    "size": 410,
+    "sha256": "b58521bf2dea03cdfd43ed86d9b6740d4d41a1b946b7386109ff0fceae9fa65e"
+  },
+  "wp-content/themes/ramon-native/assets/images/author-public.jpg.rm.webp": {
+    "size": 1318,
+    "sha256": "93a0db9c892f5e190a99d11d82939ce0a62cf87184c3588299fa4bef7a90f8b1"
+  },
+  "wp-content/themes/ramon-native/assets/images/icon-linea-ecommerce-graph2.svg": {
+    "size": 257,
+    "sha256": "c4538b51560ed20125d6377c286886ba2a4d7d6d31051cf8669daef2d7472d81"
+  },
+  "wp-content/themes/ramon-native/assets/images/canembal.jpg": {
+    "size": 512566,
+    "sha256": "f62570a31badd68279f7fac2dc600f6c4706a7857a2aa48bc239d3827e797ab4"
+  },
+  "wp-content/themes/ramon-native/assets/images/mapfre.webp": {
+    "size": 1328,
+    "sha256": "dff509b4354876a00dbc3a56ffedc2c6cd00738d5e9e1e22280719a42b0a06ac"
+  },
+  "wp-content/themes/ramon-native/assets/images/sony.png.webp": {
+    "size": 1544,
+    "sha256": "cbd9cfb4fc59ee615ec4b0ff0492e60e798652ad48b4ac4c73c12cc1287fa207"
+  },
+  "wp-content/themes/ramon-native/assets/images/icon-linea-basic-book-pen-mono.svg": {
+    "size": 317,
+    "sha256": "70c3f40f606cdb274e79d02b3b1280a01cc4e7aee21049c658ec02c8bf237631"
+  },
+  "wp-content/themes/ramon-native/assets/images/icon-linea-basic-pencil-ruler-mono.svg": {
+    "size": 395,
+    "sha256": "434f36892f625de755b57b3f4c96644eaf05e83e27551e568b6b80fc29305055"
+  },
+  "wp-content/themes/ramon-native/assets/images/bodaclick.png.webp": {
+    "size": 1334,
+    "sha256": "cfea7a94446dfa499cc4068fdef4354ef409868f3e3b1812da4d83709b40aee5"
+  },
+  "wp-content/themes/ramon-native/assets/images/icon-linea-basic-map.svg": {
+    "size": 276,
+    "sha256": "0e6cde7e5ead1a092bf95bdce7112108d0a133817965ae8b2f2987810acbf7c8"
+  },
+  "wp-content/themes/ramon-native/assets/images/sony.png.rm.webp": {
+    "size": 1544,
+    "sha256": "cbd9cfb4fc59ee615ec4b0ff0492e60e798652ad48b4ac4c73c12cc1287fa207"
+  },
+  "wp-content/themes/ramon-native/assets/images/icon-linea-basic-display.svg": {
+    "size": 226,
+    "sha256": "1643b3415296175213081bc65d07a5675ed5dbdfd52cbf22a744b60b49b45e57"
+  },
+  "wp-content/themes/ramon-native/assets/images/icon-linea-basic-webpage-img-txt-mono.svg": {
+    "size": 356,
+    "sha256": "823182b769f7d7e7c7137645a83af9bb050208a73db6f35e3557becff7bef7b9"
+  },
+  "wp-content/themes/ramon-native/assets/images/1CAC6E13-BE58-4AD8-BBE0-42A03E4393B7.jpeg": {
+    "size": 41868,
+    "sha256": "34727cafb55d9c822fa339d0e0dd31dfbd54e50eac90162f3f3270d03c663dbd"
+  },
+  "wp-content/themes/ramon-native/assets/images/icon-linea-basic-pencil-ruler.svg": {
+    "size": 395,
+    "sha256": "98d9a02b27c51c59e1fbe51498765c583c837be4fcd4b53d5c49dcdee1e75b1d"
+  },
+  "wp-content/themes/ramon-native/assets/images/global-corner.png.rm.webp": {
+    "size": 9822,
+    "sha256": "1d46c90885cb95888c239d768488b4f29863647fa44df42d542f3f20de42ad31"
+  },
+  "wp-content/themes/ramon-native/assets/images/canembal.png.webp": {
+    "size": 3786,
+    "sha256": "debb581dcb61715cb184156f12b0094bc4791a55886e7c223897d38948f8bfba"
+  },
+  "wp-content/themes/ramon-native/assets/images/icon-linea-basic-webpage-img-txt.svg": {
+    "size": 356,
+    "sha256": "46d4c2526873f16755bba814b1bb8b3067112bbd9dd9e803ecd10730375cae68"
+  },
+  "wp-content/themes/ramon-native/assets/images/icon-linea-basic-lightbulb-white.svg": {
+    "size": 687,
+    "sha256": "e73b364ee3b95528f065d61de40b65989f132245923b7edee754c7034cdba9dc"
+  },
+  "wp-content/themes/ramon-native/assets/images/icon-icomoon-Tilda_Icons_32_profession_marketer.svg": {
+    "size": 2001,
+    "sha256": "7d376639ce41ac8b243fee7658f8266ccdc933b330aa2ead945a799466583717"
+  },
+  "wp-content/themes/ramon-native/assets/images/logounibailrodamco.png.rm.webp": {
+    "size": 3014,
+    "sha256": "3b83d9cfd49123fc94833528c5453c6bfdd7d0ebe22b399b06670123bb85ae64"
+  },
+  "wp-content/themes/ramon-native/assets/images/icon-linea-ecommerce-graph3.svg": {
+    "size": 1300,
+    "sha256": "b9b1e9608b272f8865d2ec6f2d955a6079a5eeaab04efb69c25a6b43114b37d2"
+  },
+  "wp-content/themes/ramon-native/assets/images/icon-linea-basic-bolt-white.svg": {
+    "size": 269,
+    "sha256": "255930dca57870ee63f99a66e8ce40531e903234c924daf2924bbcff303abbb8"
+  },
+  "wp-content/themes/ramon-native/assets/images/product-web-corporate.jpg": {
+    "size": 12086,
+    "sha256": "4512b96cf2033fd6e2f53301f18013e937f5967fc06b0b40d402c5290d549dae"
+  },
+  "wp-content/themes/ramon-native/assets/images/icon-linea-basic-mail.svg": {
+    "size": 218,
+    "sha256": "d4436a0c4026ab1aca1aae89679c6de1e48aedd637ba2247229534704530aeba"
+  },
+  "wp-content/themes/ramon-native/assets/images/author-public.jpg": {
+    "size": 2925,
+    "sha256": "94e1f830c50561020eac89e91aae1fb42cf11315789fdf6adb4f866c96381c3a"
+  },
+  "wp-content/themes/ramon-native/assets/images/logo.png.rm.webp": {
+    "size": 7134,
+    "sha256": "dcec5297ea9ff67fe586f520970afd669d3d824e9dd8f82fdbe019198147a443"
+  },
+  "wp-content/themes/ramon-native/assets/images/urban-safari.webp": {
+    "size": 13792,
+    "sha256": "53fbed2728b272f42a390b7e4136b7f2ef4997e7ed313659683def50080953fb"
+  },
+  "wp-content/themes/ramon-native/assets/images/urban-Safari-header2.png": {
+    "size": 467270,
+    "sha256": "75a7c5afc18a2ea446de57a38627aa75e96fcbdd346627702eaa22f191401d1b"
+  },
+  "wp-content/themes/ramon-native/assets/images/method-customer.svg": {
+    "size": 308,
+    "sha256": "614805c1b5e6638dc65bfb429f286d1f74185c484eb3b1f8e698202b9f291c77"
+  },
+  "wp-content/themes/ramon-native/assets/images/icon-spark.svg": {
+    "size": 188,
+    "sha256": "f5fd095f4be764935ae1d79b71363bdd91c5e6789f84c3c3286075d175d2d329"
+  },
+  "wp-content/themes/ramon-native/assets/images/logounibailrodamco.webp": {
+    "size": 3014,
+    "sha256": "3b83d9cfd49123fc94833528c5453c6bfdd7d0ebe22b399b06670123bb85ae64"
+  },
+  "wp-content/themes/ramon-native/assets/images/yinper-1-1024x749.jpg.webp": {
+    "size": 45716,
+    "sha256": "87fa5789da847b8c510b92ac61691089409a9069e2c75b1eb9afcc8442de148e"
+  },
+  "wp-content/themes/ramon-native/assets/images/product-app.jpg.webp": {
+    "size": 6330,
+    "sha256": "d7c96a170c182598bf9904106edbc87e221b68def0b77906d77fb93ae928fb4e"
+  },
+  "wp-content/themes/ramon-native/assets/images/vass.png": {
+    "size": 2151,
+    "sha256": "c2d7c436889c04230b835f58d1251c6fae64034dbdeceacf47a15137f48ad160"
+  },
+  "wp-content/themes/ramon-native/assets/images/icon-linea-basic-tablet.svg": {
+    "size": 479,
+    "sha256": "87335a59a9bae2fa42e94429585ef5c324200cb1e8ab2863497fdafe297d4a40"
+  },
+  "wp-content/themes/ramon-native/assets/images/canembal.jpg.webp": {
+    "size": 55918,
+    "sha256": "e553ed3b5a57de36dff82d15bb0ce03189d686a7874664b439707f3b0fc145a1"
+  },
+  "wp-content/themes/ramon-native/assets/images/logista.webp": {
+    "size": 1998,
+    "sha256": "de9d5052b870b01d2ec841c72a4db8342b809e276e569a862ffa6a087accddd0"
+  },
+  "wp-content/themes/ramon-native/assets/images/icon-icomoon-Tilda_Icons_1ed_beaker.svg": {
+    "size": 1930,
+    "sha256": "f824733b563ab81c7fc9ef308468080ea48a2a45455f79058d5bfd9311941213"
+  },
+  "wp-content/themes/ramon-native/assets/images/icon-linea-basic-battery-charge.svg": {
+    "size": 316,
+    "sha256": "e1e540fddf86f176d0e1824949ed95419d135cebce49c27d37a789d5ae044400"
+  },
+  "wp-content/themes/ramon-native/assets/images/canembal-jpg.webp": {
+    "size": 55918,
+    "sha256": "e553ed3b5a57de36dff82d15bb0ce03189d686a7874664b439707f3b0fc145a1"
+  },
+  "wp-content/themes/ramon-native/assets/images/yinper-1-1024x749.jpg": {
+    "size": 76914,
+    "sha256": "ae3fb5ef58242672cd4722b67a9dcfb8cfadf80232502519052256bc0c1e7223"
+  },
+  "wp-content/themes/ramon-native/assets/images/method-measurement.svg": {
+    "size": 253,
+    "sha256": "0fd4b1ee9b182ad2035824f04efbf8c1f73831be38bc271d4278e5917667c8cb"
+  },
+  "wp-content/themes/ramon-native/assets/images/icon-linea-basic-battery-charge-mono.svg": {
+    "size": 316,
+    "sha256": "553fd63f76898620dc028c3d98973e6effd505c5b9fb3096ad27a03994819516"
+  },
+  "wp-content/themes/ramon-native/assets/images/apps-1024x768.webp": {
+    "size": 153606,
+    "sha256": "99dbc1b8962008e369d62f460f2dd42dd2c735cf03f05aefd4b5bb05ec804968"
+  },
+  "wp-content/themes/ramon-native/assets/images/author-public.webp": {
+    "size": 1318,
+    "sha256": "93a0db9c892f5e190a99d11d82939ce0a62cf87184c3588299fa4bef7a90f8b1"
+  },
+  "wp-content/themes/ramon-native/assets/images/urban-safari-mv.jpg": {
+    "size": 267420,
+    "sha256": "b92dc397c81f396bce94bbd593d5cc96428ddd5ebdf988790df861b82b72ec8e"
+  },
+  "wp-content/themes/ramon-native/assets/images/urban-Safari-header2.webp": {
+    "size": 349140,
+    "sha256": "876c04b7222d2db31845cc0918a284a8101d4d3c32ee9be6635f62609f427a35"
+  },
+  "wp-content/themes/ramon-native/assets/images/icon-light.svg": {
+    "size": 186,
+    "sha256": "45c52c43dac99e2feb60385814aacdef5ed77d9add9241bcf6a4c56f69a3dcf1"
+  },
+  "wp-content/themes/ramon-native/assets/images/comment-avatars/18-comment-773.png": {
+    "size": 1856,
+    "sha256": "5809a1782368cd1f8a4693ea5eb1910fe82e6a41338bba314aa8f25e114fbb09"
+  },
+  "wp-content/themes/ramon-native/assets/images/comment-avatars/26-comment-417.png.webp": {
+    "size": 1766,
+    "sha256": "0bc5684bdfc97781e1f3a79e14bd78525a6b72417094f49a9863366e8df09381"
+  },
+  "wp-content/themes/ramon-native/assets/images/comment-avatars/22-comment-452.png": {
+    "size": 1084,
+    "sha256": "539247ac8e441684f71a81d7cc37d30f27c4defaa9dbc7ed11fec10abae5db14"
+  },
+  "wp-content/themes/ramon-native/assets/images/comment-avatars/70-comment-360.png.rm.webp": {
+    "size": 200,
+    "sha256": "652f4ddf7ad49891bd3e929faac2d39753decdcfeef0e314c4dda26e936c4eba"
+  },
+  "wp-content/themes/ramon-native/assets/images/comment-avatars/22-comment-632.png": {
+    "size": 1084,
+    "sha256": "539247ac8e441684f71a81d7cc37d30f27c4defaa9dbc7ed11fec10abae5db14"
+  },
+  "wp-content/themes/ramon-native/assets/images/comment-avatars/34-comment-409.png": {
+    "size": 1084,
+    "sha256": "539247ac8e441684f71a81d7cc37d30f27c4defaa9dbc7ed11fec10abae5db14"
+  },
+  "wp-content/themes/ramon-native/assets/images/comment-avatars/66-comment-380.png.rm.webp": {
+    "size": 200,
+    "sha256": "652f4ddf7ad49891bd3e929faac2d39753decdcfeef0e314c4dda26e936c4eba"
+  },
+  "wp-content/themes/ramon-native/assets/images/comment-avatars/22-comment-637.webp": {
+    "size": 802,
+    "sha256": "92ec62554d211bc972eb10c77d9d18e4164b1e0a6468f1ffab19601cfe07b3cd"
+  },
+  "wp-content/themes/ramon-native/assets/images/comment-avatars/28-comment-722.png.webp": {
+    "size": 200,
+    "sha256": "652f4ddf7ad49891bd3e929faac2d39753decdcfeef0e314c4dda26e936c4eba"
+  },
+  "wp-content/themes/ramon-native/assets/images/comment-avatars/18-comment-773.webp": {
+    "size": 802,
+    "sha256": "92ec62554d211bc972eb10c77d9d18e4164b1e0a6468f1ffab19601cfe07b3cd"
+  },
+  "wp-content/themes/ramon-native/assets/images/comment-avatars/62-comment-676.png": {
+    "size": 1084,
+    "sha256": "539247ac8e441684f71a81d7cc37d30f27c4defaa9dbc7ed11fec10abae5db14"
+  },
+  "wp-content/themes/ramon-native/assets/images/comment-avatars/22-comment-637.png": {
+    "size": 1856,
+    "sha256": "5809a1782368cd1f8a4693ea5eb1910fe82e6a41338bba314aa8f25e114fbb09"
+  },
+  "wp-content/themes/ramon-native/assets/images/comment-avatars/46-comment-412.webp": {
+    "size": 802,
+    "sha256": "92ec62554d211bc972eb10c77d9d18e4164b1e0a6468f1ffab19601cfe07b3cd"
+  },
+  "wp-content/themes/ramon-native/assets/images/comment-avatars/28-comment-677.png.webp": {
+    "size": 200,
+    "sha256": "652f4ddf7ad49891bd3e929faac2d39753decdcfeef0e314c4dda26e936c4eba"
+  },
+  "wp-content/themes/ramon-native/assets/images/comment-avatars/18-comment-772.png.rm.webp": {
+    "size": 200,
+    "sha256": "652f4ddf7ad49891bd3e929faac2d39753decdcfeef0e314c4dda26e936c4eba"
+  },
+  "wp-content/themes/ramon-native/assets/images/comment-avatars/30-comment-655.png": {
+    "size": 1084,
+    "sha256": "539247ac8e441684f71a81d7cc37d30f27c4defaa9dbc7ed11fec10abae5db14"
+  },
+  "wp-content/themes/ramon-native/assets/images/comment-avatars/46-comment-412.png.webp": {
+    "size": 802,
+    "sha256": "92ec62554d211bc972eb10c77d9d18e4164b1e0a6468f1ffab19601cfe07b3cd"
+  },
+  "wp-content/themes/ramon-native/assets/images/comment-avatars/40-comment-675.png.webp": {
+    "size": 200,
+    "sha256": "652f4ddf7ad49891bd3e929faac2d39753decdcfeef0e314c4dda26e936c4eba"
+  },
+  "wp-content/themes/ramon-native/assets/images/comment-avatars/22-comment-636.png.rm.webp": {
+    "size": 802,
+    "sha256": "92ec62554d211bc972eb10c77d9d18e4164b1e0a6468f1ffab19601cfe07b3cd"
+  },
+  "wp-content/themes/ramon-native/assets/images/comment-avatars/66-comment-414.png.webp": {
+    "size": 200,
+    "sha256": "652f4ddf7ad49891bd3e929faac2d39753decdcfeef0e314c4dda26e936c4eba"
+  },
+  "wp-content/themes/ramon-native/assets/images/comment-avatars/26-comment-418.webp": {
+    "size": 802,
+    "sha256": "92ec62554d211bc972eb10c77d9d18e4164b1e0a6468f1ffab19601cfe07b3cd"
+  },
+  "wp-content/themes/ramon-native/assets/images/comment-avatars/66-comment-380.webp": {
+    "size": 200,
+    "sha256": "652f4ddf7ad49891bd3e929faac2d39753decdcfeef0e314c4dda26e936c4eba"
+  },
+  "wp-content/themes/ramon-native/assets/images/comment-avatars/22-comment-635.png.rm.webp": {
+    "size": 200,
+    "sha256": "652f4ddf7ad49891bd3e929faac2d39753decdcfeef0e314c4dda26e936c4eba"
+  },
+  "wp-content/themes/ramon-native/assets/images/comment-avatars/22-comment-636.webp": {
+    "size": 802,
+    "sha256": "92ec62554d211bc972eb10c77d9d18e4164b1e0a6468f1ffab19601cfe07b3cd"
+  },
+  "wp-content/themes/ramon-native/assets/images/comment-avatars/22-comment-452.png.webp": {
+    "size": 200,
+    "sha256": "652f4ddf7ad49891bd3e929faac2d39753decdcfeef0e314c4dda26e936c4eba"
+  },
+  "wp-content/themes/ramon-native/assets/images/comment-avatars/22-comment-452.webp": {
+    "size": 200,
+    "sha256": "652f4ddf7ad49891bd3e929faac2d39753decdcfeef0e314c4dda26e936c4eba"
+  },
+  "wp-content/themes/ramon-native/assets/images/comment-avatars/22-comment-632.webp": {
+    "size": 200,
+    "sha256": "652f4ddf7ad49891bd3e929faac2d39753decdcfeef0e314c4dda26e936c4eba"
+  },
+  "wp-content/themes/ramon-native/assets/images/comment-avatars/22-comment-640.png.rm.webp": {
+    "size": 200,
+    "sha256": "652f4ddf7ad49891bd3e929faac2d39753decdcfeef0e314c4dda26e936c4eba"
+  },
+  "wp-content/themes/ramon-native/assets/images/comment-avatars/34-comment-409.png.rm.webp": {
+    "size": 200,
+    "sha256": "652f4ddf7ad49891bd3e929faac2d39753decdcfeef0e314c4dda26e936c4eba"
+  },
+  "wp-content/themes/ramon-native/assets/images/comment-avatars/28-comment-722.png.rm.webp": {
+    "size": 200,
+    "sha256": "652f4ddf7ad49891bd3e929faac2d39753decdcfeef0e314c4dda26e936c4eba"
+  },
+  "wp-content/themes/ramon-native/assets/images/comment-avatars/22-comment-641.webp": {
+    "size": 200,
+    "sha256": "652f4ddf7ad49891bd3e929faac2d39753decdcfeef0e314c4dda26e936c4eba"
+  },
+  "wp-content/themes/ramon-native/assets/images/comment-avatars/66-comment-414.webp": {
+    "size": 200,
+    "sha256": "652f4ddf7ad49891bd3e929faac2d39753decdcfeef0e314c4dda26e936c4eba"
+  },
+  "wp-content/themes/ramon-native/assets/images/comment-avatars/34-comment-411.png.rm.webp": {
+    "size": 802,
+    "sha256": "92ec62554d211bc972eb10c77d9d18e4164b1e0a6468f1ffab19601cfe07b3cd"
+  },
+  "wp-content/themes/ramon-native/assets/images/comment-avatars/48-comment-525.webp": {
+    "size": 200,
+    "sha256": "652f4ddf7ad49891bd3e929faac2d39753decdcfeef0e314c4dda26e936c4eba"
+  },
+  "wp-content/themes/ramon-native/assets/images/comment-avatars/46-comment-408.png": {
+    "size": 1084,
+    "sha256": "539247ac8e441684f71a81d7cc37d30f27c4defaa9dbc7ed11fec10abae5db14"
+  },
+  "wp-content/themes/ramon-native/assets/images/comment-avatars/40-comment-675.png.rm.webp": {
+    "size": 200,
+    "sha256": "652f4ddf7ad49891bd3e929faac2d39753decdcfeef0e314c4dda26e936c4eba"
+  },
+  "wp-content/themes/ramon-native/assets/images/comment-avatars/46-comment-412.png.rm.webp": {
+    "size": 802,
+    "sha256": "92ec62554d211bc972eb10c77d9d18e4164b1e0a6468f1ffab19601cfe07b3cd"
+  },
+  "wp-content/themes/ramon-native/assets/images/comment-avatars/50-comment-361.webp": {
+    "size": 200,
+    "sha256": "652f4ddf7ad49891bd3e929faac2d39753decdcfeef0e314c4dda26e936c4eba"
+  },
+  "wp-content/themes/ramon-native/assets/images/comment-avatars/46-comment-408.png.rm.webp": {
+    "size": 200,
+    "sha256": "652f4ddf7ad49891bd3e929faac2d39753decdcfeef0e314c4dda26e936c4eba"
+  },
+  "wp-content/themes/ramon-native/assets/images/comment-avatars/44-comment-444.webp": {
+    "size": 200,
+    "sha256": "652f4ddf7ad49891bd3e929faac2d39753decdcfeef0e314c4dda26e936c4eba"
+  },
+  "wp-content/themes/ramon-native/assets/images/comment-avatars/22-comment-547.png.webp": {
+    "size": 200,
+    "sha256": "652f4ddf7ad49891bd3e929faac2d39753decdcfeef0e314c4dda26e936c4eba"
+  },
+  "wp-content/themes/ramon-native/assets/images/comment-avatars/50-comment-361.png.webp": {
+    "size": 200,
+    "sha256": "652f4ddf7ad49891bd3e929faac2d39753decdcfeef0e314c4dda26e936c4eba"
+  },
+  "wp-content/themes/ramon-native/assets/images/comment-avatars/42-comment-520.png.webp": {
+    "size": 200,
+    "sha256": "652f4ddf7ad49891bd3e929faac2d39753decdcfeef0e314c4dda26e936c4eba"
+  },
+  "wp-content/themes/ramon-native/assets/images/comment-avatars/66-comment-6.webp": {
+    "size": 200,
+    "sha256": "652f4ddf7ad49891bd3e929faac2d39753decdcfeef0e314c4dda26e936c4eba"
+  },
+  "wp-content/themes/ramon-native/assets/images/comment-avatars/62-comment-676.png.rm.webp": {
+    "size": 200,
+    "sha256": "652f4ddf7ad49891bd3e929faac2d39753decdcfeef0e314c4dda26e936c4eba"
+  },
+  "wp-content/themes/ramon-native/assets/images/comment-avatars/24-comment-774.png.webp": {
+    "size": 1030,
+    "sha256": "bcca9ce9b0f8cf238aa77479a15cc4eae00c464c19fef6e05c99531d381deb83"
+  },
+  "wp-content/themes/ramon-native/assets/images/comment-avatars/24-comment-774.png.rm.webp": {
+    "size": 1030,
+    "sha256": "bcca9ce9b0f8cf238aa77479a15cc4eae00c464c19fef6e05c99531d381deb83"
+  },
+  "wp-content/themes/ramon-native/assets/images/comment-avatars/18-comment-772.png": {
+    "size": 1084,
+    "sha256": "539247ac8e441684f71a81d7cc37d30f27c4defaa9dbc7ed11fec10abae5db14"
+  },
+  "wp-content/themes/ramon-native/assets/images/comment-avatars/28-comment-677.png.rm.webp": {
+    "size": 200,
+    "sha256": "652f4ddf7ad49891bd3e929faac2d39753decdcfeef0e314c4dda26e936c4eba"
+  },
+  "wp-content/themes/ramon-native/assets/images/comment-avatars/70-comment-360.png.webp": {
+    "size": 200,
+    "sha256": "652f4ddf7ad49891bd3e929faac2d39753decdcfeef0e314c4dda26e936c4eba"
+  },
+  "wp-content/themes/ramon-native/assets/images/comment-avatars/22-comment-514.webp": {
+    "size": 200,
+    "sha256": "652f4ddf7ad49891bd3e929faac2d39753decdcfeef0e314c4dda26e936c4eba"
+  },
+  "wp-content/themes/ramon-native/assets/images/comment-avatars/26-comment-417.png": {
+    "size": 3061,
+    "sha256": "9995cb09d23b28be633ac42bfb01edd88b0cdb2126ae393317d2c7c353d2527d"
+  },
+  "wp-content/themes/ramon-native/assets/images/comment-avatars/28-comment-722.webp": {
+    "size": 200,
+    "sha256": "652f4ddf7ad49891bd3e929faac2d39753decdcfeef0e314c4dda26e936c4eba"
+  },
+  "wp-content/themes/ramon-native/assets/images/comment-avatars/24-comment-774.webp": {
+    "size": 1030,
+    "sha256": "bcca9ce9b0f8cf238aa77479a15cc4eae00c464c19fef6e05c99531d381deb83"
+  },
+  "wp-content/themes/ramon-native/assets/images/comment-avatars/66-comment-1.png": {
+    "size": 1084,
+    "sha256": "539247ac8e441684f71a81d7cc37d30f27c4defaa9dbc7ed11fec10abae5db14"
+  },
+  "wp-content/themes/ramon-native/assets/images/comment-avatars/62-comment-676.png.webp": {
+    "size": 200,
+    "sha256": "652f4ddf7ad49891bd3e929faac2d39753decdcfeef0e314c4dda26e936c4eba"
+  },
+  "wp-content/themes/ramon-native/assets/images/comment-avatars/66-comment-1.png.webp": {
+    "size": 200,
+    "sha256": "652f4ddf7ad49891bd3e929faac2d39753decdcfeef0e314c4dda26e936c4eba"
+  },
+  "wp-content/themes/ramon-native/assets/images/comment-avatars/22-comment-547.png": {
+    "size": 1084,
+    "sha256": "539247ac8e441684f71a81d7cc37d30f27c4defaa9dbc7ed11fec10abae5db14"
+  },
+  "wp-content/themes/ramon-native/assets/images/comment-avatars/70-comment-360.webp": {
+    "size": 200,
+    "sha256": "652f4ddf7ad49891bd3e929faac2d39753decdcfeef0e314c4dda26e936c4eba"
+  },
+  "wp-content/themes/ramon-native/assets/images/comment-avatars/18-comment-772.webp": {
+    "size": 200,
+    "sha256": "652f4ddf7ad49891bd3e929faac2d39753decdcfeef0e314c4dda26e936c4eba"
+  },
+  "wp-content/themes/ramon-native/assets/images/comment-avatars/22-comment-633.png.webp": {
+    "size": 802,
+    "sha256": "92ec62554d211bc972eb10c77d9d18e4164b1e0a6468f1ffab19601cfe07b3cd"
+  },
+  "wp-content/themes/ramon-native/assets/images/comment-avatars/34-comment-409.webp": {
+    "size": 200,
+    "sha256": "652f4ddf7ad49891bd3e929faac2d39753decdcfeef0e314c4dda26e936c4eba"
+  },
+  "wp-content/themes/ramon-native/assets/images/comment-avatars/34-comment-411.webp": {
+    "size": 802,
+    "sha256": "92ec62554d211bc972eb10c77d9d18e4164b1e0a6468f1ffab19601cfe07b3cd"
+  },
+  "wp-content/themes/ramon-native/assets/images/comment-avatars/30-comment-655.png.webp": {
+    "size": 200,
+    "sha256": "652f4ddf7ad49891bd3e929faac2d39753decdcfeef0e314c4dda26e936c4eba"
+  },
+  "wp-content/themes/ramon-native/assets/images/comment-avatars/48-comment-525.png.webp": {
+    "size": 200,
+    "sha256": "652f4ddf7ad49891bd3e929faac2d39753decdcfeef0e314c4dda26e936c4eba"
+  },
+  "wp-content/themes/ramon-native/assets/images/comment-avatars/22-comment-540.png": {
+    "size": 1084,
+    "sha256": "539247ac8e441684f71a81d7cc37d30f27c4defaa9dbc7ed11fec10abae5db14"
+  },
+  "wp-content/themes/ramon-native/assets/images/comment-avatars/22-comment-514.png.webp": {
+    "size": 200,
+    "sha256": "652f4ddf7ad49891bd3e929faac2d39753decdcfeef0e314c4dda26e936c4eba"
+  },
+  "wp-content/themes/ramon-native/assets/images/comment-avatars/46-comment-408.png.webp": {
+    "size": 200,
+    "sha256": "652f4ddf7ad49891bd3e929faac2d39753decdcfeef0e314c4dda26e936c4eba"
+  },
+  "wp-content/themes/ramon-native/assets/images/comment-avatars/28-comment-677.png": {
+    "size": 1084,
+    "sha256": "539247ac8e441684f71a81d7cc37d30f27c4defaa9dbc7ed11fec10abae5db14"
+  },
+  "wp-content/themes/ramon-native/assets/images/comment-avatars/26-comment-417.webp": {
+    "size": 1766,
+    "sha256": "0bc5684bdfc97781e1f3a79e14bd78525a6b72417094f49a9863366e8df09381"
+  },
+  "wp-content/themes/ramon-native/assets/images/comment-avatars/22-comment-633.png": {
+    "size": 1856,
+    "sha256": "5809a1782368cd1f8a4693ea5eb1910fe82e6a41338bba314aa8f25e114fbb09"
+  },
+  "wp-content/themes/ramon-native/assets/images/comment-avatars/22-comment-632.png.rm.webp": {
+    "size": 200,
+    "sha256": "652f4ddf7ad49891bd3e929faac2d39753decdcfeef0e314c4dda26e936c4eba"
+  },
+  "wp-content/themes/ramon-native/assets/images/comment-avatars/22-comment-640.png": {
+    "size": 1084,
+    "sha256": "539247ac8e441684f71a81d7cc37d30f27c4defaa9dbc7ed11fec10abae5db14"
+  },
+  "wp-content/themes/ramon-native/assets/images/comment-avatars/66-comment-414.png": {
+    "size": 1084,
+    "sha256": "539247ac8e441684f71a81d7cc37d30f27c4defaa9dbc7ed11fec10abae5db14"
+  },
+  "wp-content/themes/ramon-native/assets/images/comment-avatars/46-comment-408.webp": {
+    "size": 200,
+    "sha256": "652f4ddf7ad49891bd3e929faac2d39753decdcfeef0e314c4dda26e936c4eba"
+  },
+  "wp-content/themes/ramon-native/assets/images/comment-avatars/66-comment-1.png.rm.webp": {
+    "size": 200,
+    "sha256": "652f4ddf7ad49891bd3e929faac2d39753decdcfeef0e314c4dda26e936c4eba"
+  },
+  "wp-content/themes/ramon-native/assets/images/comment-avatars/66-comment-9.png.rm.webp": {
+    "size": 802,
+    "sha256": "92ec62554d211bc972eb10c77d9d18e4164b1e0a6468f1ffab19601cfe07b3cd"
+  },
+  "wp-content/themes/ramon-native/assets/images/comment-avatars/50-comment-361.png": {
+    "size": 1084,
+    "sha256": "539247ac8e441684f71a81d7cc37d30f27c4defaa9dbc7ed11fec10abae5db14"
+  },
+  "wp-content/themes/ramon-native/assets/images/comment-avatars/22-comment-547.webp": {
+    "size": 200,
+    "sha256": "652f4ddf7ad49891bd3e929faac2d39753decdcfeef0e314c4dda26e936c4eba"
+  },
+  "wp-content/themes/ramon-native/assets/images/comment-avatars/70-comment-360.png": {
+    "size": 1084,
+    "sha256": "539247ac8e441684f71a81d7cc37d30f27c4defaa9dbc7ed11fec10abae5db14"
+  },
+  "wp-content/themes/ramon-native/assets/images/comment-avatars/22-comment-640.webp": {
+    "size": 200,
+    "sha256": "652f4ddf7ad49891bd3e929faac2d39753decdcfeef0e314c4dda26e936c4eba"
+  },
+  "wp-content/themes/ramon-native/assets/images/comment-avatars/66-comment-381.png.webp": {
+    "size": 802,
+    "sha256": "92ec62554d211bc972eb10c77d9d18e4164b1e0a6468f1ffab19601cfe07b3cd"
+  },
+  "wp-content/themes/ramon-native/assets/images/comment-avatars/22-comment-641.png": {
+    "size": 1084,
+    "sha256": "539247ac8e441684f71a81d7cc37d30f27c4defaa9dbc7ed11fec10abae5db14"
+  },
+  "wp-content/themes/ramon-native/assets/images/comment-avatars/66-comment-381.png.rm.webp": {
+    "size": 802,
+    "sha256": "92ec62554d211bc972eb10c77d9d18e4164b1e0a6468f1ffab19601cfe07b3cd"
+  },
+  "wp-content/themes/ramon-native/assets/images/comment-avatars/50-comment-361.png.rm.webp": {
+    "size": 200,
+    "sha256": "652f4ddf7ad49891bd3e929faac2d39753decdcfeef0e314c4dda26e936c4eba"
+  },
+  "wp-content/themes/ramon-native/assets/images/comment-avatars/22-comment-452.png.rm.webp": {
+    "size": 200,
+    "sha256": "652f4ddf7ad49891bd3e929faac2d39753decdcfeef0e314c4dda26e936c4eba"
+  },
+  "wp-content/themes/ramon-native/assets/images/comment-avatars/42-comment-520.webp": {
+    "size": 200,
+    "sha256": "652f4ddf7ad49891bd3e929faac2d39753decdcfeef0e314c4dda26e936c4eba"
+  },
+  "wp-content/themes/ramon-native/assets/images/comment-avatars/42-comment-520.png": {
+    "size": 1084,
+    "sha256": "539247ac8e441684f71a81d7cc37d30f27c4defaa9dbc7ed11fec10abae5db14"
+  },
+  "wp-content/themes/ramon-native/assets/images/comment-avatars/46-comment-412.png": {
+    "size": 1856,
+    "sha256": "5809a1782368cd1f8a4693ea5eb1910fe82e6a41338bba314aa8f25e114fbb09"
+  },
+  "wp-content/themes/ramon-native/assets/images/comment-avatars/66-comment-8.png.rm.webp": {
+    "size": 802,
+    "sha256": "92ec62554d211bc972eb10c77d9d18e4164b1e0a6468f1ffab19601cfe07b3cd"
+  },
+  "wp-content/themes/ramon-native/assets/images/comment-avatars/66-comment-6.png.rm.webp": {
+    "size": 200,
+    "sha256": "652f4ddf7ad49891bd3e929faac2d39753decdcfeef0e314c4dda26e936c4eba"
+  },
+  "wp-content/themes/ramon-native/assets/images/comment-avatars/26-comment-417.png.rm.webp": {
+    "size": 1766,
+    "sha256": "0bc5684bdfc97781e1f3a79e14bd78525a6b72417094f49a9863366e8df09381"
+  },
+  "wp-content/themes/ramon-native/assets/images/comment-avatars/34-comment-411.png.webp": {
+    "size": 802,
+    "sha256": "92ec62554d211bc972eb10c77d9d18e4164b1e0a6468f1ffab19601cfe07b3cd"
+  },
+  "wp-content/themes/ramon-native/assets/images/comment-avatars/22-comment-540.png.rm.webp": {
+    "size": 200,
+    "sha256": "652f4ddf7ad49891bd3e929faac2d39753decdcfeef0e314c4dda26e936c4eba"
+  },
+  "wp-content/themes/ramon-native/assets/images/comment-avatars/22-comment-596.png.rm.webp": {
+    "size": 200,
+    "sha256": "652f4ddf7ad49891bd3e929faac2d39753decdcfeef0e314c4dda26e936c4eba"
+  },
+  "wp-content/themes/ramon-native/assets/images/comment-avatars/62-comment-676.webp": {
+    "size": 200,
+    "sha256": "652f4ddf7ad49891bd3e929faac2d39753decdcfeef0e314c4dda26e936c4eba"
+  },
+  "wp-content/themes/ramon-native/assets/images/comment-avatars/66-comment-9.png.webp": {
+    "size": 802,
+    "sha256": "92ec62554d211bc972eb10c77d9d18e4164b1e0a6468f1ffab19601cfe07b3cd"
+  },
+  "wp-content/themes/ramon-native/assets/images/comment-avatars/48-comment-525.png.rm.webp": {
+    "size": 200,
+    "sha256": "652f4ddf7ad49891bd3e929faac2d39753decdcfeef0e314c4dda26e936c4eba"
+  },
+  "wp-content/themes/ramon-native/assets/images/comment-avatars/22-comment-547.png.rm.webp": {
+    "size": 200,
+    "sha256": "652f4ddf7ad49891bd3e929faac2d39753decdcfeef0e314c4dda26e936c4eba"
+  },
+  "wp-content/themes/ramon-native/assets/images/comment-avatars/18-comment-772.png.webp": {
+    "size": 200,
+    "sha256": "652f4ddf7ad49891bd3e929faac2d39753decdcfeef0e314c4dda26e936c4eba"
+  },
+  "wp-content/themes/ramon-native/assets/images/comment-avatars/26-comment-575.png": {
+    "size": 1084,
+    "sha256": "539247ac8e441684f71a81d7cc37d30f27c4defaa9dbc7ed11fec10abae5db14"
+  },
+  "wp-content/themes/ramon-native/assets/images/comment-avatars/26-comment-418.png.rm.webp": {
+    "size": 802,
+    "sha256": "92ec62554d211bc972eb10c77d9d18e4164b1e0a6468f1ffab19601cfe07b3cd"
+  },
+  "wp-content/themes/ramon-native/assets/images/comment-avatars/66-comment-380.png.webp": {
+    "size": 200,
+    "sha256": "652f4ddf7ad49891bd3e929faac2d39753decdcfeef0e314c4dda26e936c4eba"
+  },
+  "wp-content/themes/ramon-native/assets/images/comment-avatars/66-comment-381.webp": {
+    "size": 802,
+    "sha256": "92ec62554d211bc972eb10c77d9d18e4164b1e0a6468f1ffab19601cfe07b3cd"
+  },
+  "wp-content/themes/ramon-native/assets/images/comment-avatars/30-comment-655.png.rm.webp": {
+    "size": 200,
+    "sha256": "652f4ddf7ad49891bd3e929faac2d39753decdcfeef0e314c4dda26e936c4eba"
+  },
+  "wp-content/themes/ramon-native/assets/images/comment-avatars/18-comment-773.png.webp": {
+    "size": 802,
+    "sha256": "92ec62554d211bc972eb10c77d9d18e4164b1e0a6468f1ffab19601cfe07b3cd"
+  },
+  "wp-content/themes/ramon-native/assets/images/comment-avatars/22-comment-635.png.webp": {
+    "size": 200,
+    "sha256": "652f4ddf7ad49891bd3e929faac2d39753decdcfeef0e314c4dda26e936c4eba"
+  },
+  "wp-content/themes/ramon-native/assets/images/comment-avatars/22-comment-596.webp": {
+    "size": 200,
+    "sha256": "652f4ddf7ad49891bd3e929faac2d39753decdcfeef0e314c4dda26e936c4eba"
+  },
+  "wp-content/themes/ramon-native/assets/images/comment-avatars/22-comment-596.png": {
+    "size": 1084,
+    "sha256": "539247ac8e441684f71a81d7cc37d30f27c4defaa9dbc7ed11fec10abae5db14"
+  },
+  "wp-content/themes/ramon-native/assets/images/comment-avatars/48-comment-525.png": {
+    "size": 1084,
+    "sha256": "539247ac8e441684f71a81d7cc37d30f27c4defaa9dbc7ed11fec10abae5db14"
+  },
+  "wp-content/themes/ramon-native/assets/images/comment-avatars/34-comment-411.png": {
+    "size": 1856,
+    "sha256": "5809a1782368cd1f8a4693ea5eb1910fe82e6a41338bba314aa8f25e114fbb09"
+  },
+  "wp-content/themes/ramon-native/assets/images/comment-avatars/22-comment-641.png.webp": {
+    "size": 200,
+    "sha256": "652f4ddf7ad49891bd3e929faac2d39753decdcfeef0e314c4dda26e936c4eba"
+  },
+  "wp-content/themes/ramon-native/assets/images/comment-avatars/66-comment-9.png": {
+    "size": 1856,
+    "sha256": "5809a1782368cd1f8a4693ea5eb1910fe82e6a41338bba314aa8f25e114fbb09"
+  },
+  "wp-content/themes/ramon-native/assets/images/comment-avatars/66-comment-6.png": {
+    "size": 1084,
+    "sha256": "539247ac8e441684f71a81d7cc37d30f27c4defaa9dbc7ed11fec10abae5db14"
+  },
+  "wp-content/themes/ramon-native/assets/images/comment-avatars/18-comment-773.png.rm.webp": {
+    "size": 802,
+    "sha256": "92ec62554d211bc972eb10c77d9d18e4164b1e0a6468f1ffab19601cfe07b3cd"
+  },
+  "wp-content/themes/ramon-native/assets/images/comment-avatars/22-comment-596.png.webp": {
+    "size": 200,
+    "sha256": "652f4ddf7ad49891bd3e929faac2d39753decdcfeef0e314c4dda26e936c4eba"
+  },
+  "wp-content/themes/ramon-native/assets/images/comment-avatars/28-comment-677.webp": {
+    "size": 200,
+    "sha256": "652f4ddf7ad49891bd3e929faac2d39753decdcfeef0e314c4dda26e936c4eba"
+  },
+  "wp-content/themes/ramon-native/assets/images/comment-avatars/22-comment-635.webp": {
+    "size": 200,
+    "sha256": "652f4ddf7ad49891bd3e929faac2d39753decdcfeef0e314c4dda26e936c4eba"
+  },
+  "wp-content/themes/ramon-native/assets/images/comment-avatars/22-comment-632.png.webp": {
+    "size": 200,
+    "sha256": "652f4ddf7ad49891bd3e929faac2d39753decdcfeef0e314c4dda26e936c4eba"
+  },
+  "wp-content/themes/ramon-native/assets/images/comment-avatars/24-comment-774.png": {
+    "size": 2535,
+    "sha256": "fa163da92c618dcb08ced535ee007011fd313c67da6371b307ece5a6b8289c88"
+  },
+  "wp-content/themes/ramon-native/assets/images/comment-avatars/22-comment-514.png.rm.webp": {
+    "size": 200,
+    "sha256": "652f4ddf7ad49891bd3e929faac2d39753decdcfeef0e314c4dda26e936c4eba"
+  },
+  "wp-content/themes/ramon-native/assets/images/comment-avatars/40-comment-675.png": {
+    "size": 1084,
+    "sha256": "539247ac8e441684f71a81d7cc37d30f27c4defaa9dbc7ed11fec10abae5db14"
+  },
+  "wp-content/themes/ramon-native/assets/images/comment-avatars/30-comment-655.webp": {
+    "size": 200,
+    "sha256": "652f4ddf7ad49891bd3e929faac2d39753decdcfeef0e314c4dda26e936c4eba"
+  },
+  "wp-content/themes/ramon-native/assets/images/comment-avatars/34-comment-409.png.webp": {
+    "size": 200,
+    "sha256": "652f4ddf7ad49891bd3e929faac2d39753decdcfeef0e314c4dda26e936c4eba"
+  },
+  "wp-content/themes/ramon-native/assets/images/comment-avatars/66-comment-8.png.webp": {
+    "size": 802,
+    "sha256": "92ec62554d211bc972eb10c77d9d18e4164b1e0a6468f1ffab19601cfe07b3cd"
+  },
+  "wp-content/themes/ramon-native/assets/images/comment-avatars/22-comment-640.png.webp": {
+    "size": 200,
+    "sha256": "652f4ddf7ad49891bd3e929faac2d39753decdcfeef0e314c4dda26e936c4eba"
+  },
+  "wp-content/themes/ramon-native/assets/images/comment-avatars/66-comment-8.png": {
+    "size": 1856,
+    "sha256": "5809a1782368cd1f8a4693ea5eb1910fe82e6a41338bba314aa8f25e114fbb09"
+  },
+  "wp-content/themes/ramon-native/assets/images/comment-avatars/22-comment-636.png": {
+    "size": 1856,
+    "sha256": "5809a1782368cd1f8a4693ea5eb1910fe82e6a41338bba314aa8f25e114fbb09"
+  },
+  "wp-content/themes/ramon-native/assets/images/comment-avatars/44-comment-444.png.webp": {
+    "size": 200,
+    "sha256": "652f4ddf7ad49891bd3e929faac2d39753decdcfeef0e314c4dda26e936c4eba"
+  },
+  "wp-content/themes/ramon-native/assets/images/comment-avatars/22-comment-540.png.webp": {
+    "size": 200,
+    "sha256": "652f4ddf7ad49891bd3e929faac2d39753decdcfeef0e314c4dda26e936c4eba"
+  },
+  "wp-content/themes/ramon-native/assets/images/comment-avatars/40-comment-675.webp": {
+    "size": 200,
+    "sha256": "652f4ddf7ad49891bd3e929faac2d39753decdcfeef0e314c4dda26e936c4eba"
+  },
+  "wp-content/themes/ramon-native/assets/images/comment-avatars/22-comment-633.png.rm.webp": {
+    "size": 802,
+    "sha256": "92ec62554d211bc972eb10c77d9d18e4164b1e0a6468f1ffab19601cfe07b3cd"
+  },
+  "wp-content/themes/ramon-native/assets/images/comment-avatars/66-comment-8.webp": {
+    "size": 802,
+    "sha256": "92ec62554d211bc972eb10c77d9d18e4164b1e0a6468f1ffab19601cfe07b3cd"
+  },
+  "wp-content/themes/ramon-native/assets/images/comment-avatars/42-comment-520.png.rm.webp": {
+    "size": 200,
+    "sha256": "652f4ddf7ad49891bd3e929faac2d39753decdcfeef0e314c4dda26e936c4eba"
+  },
+  "wp-content/themes/ramon-native/assets/images/comment-avatars/22-comment-540.webp": {
+    "size": 200,
+    "sha256": "652f4ddf7ad49891bd3e929faac2d39753decdcfeef0e314c4dda26e936c4eba"
+  },
+  "wp-content/themes/ramon-native/assets/images/comment-avatars/22-comment-636.png.webp": {
+    "size": 802,
+    "sha256": "92ec62554d211bc972eb10c77d9d18e4164b1e0a6468f1ffab19601cfe07b3cd"
+  },
+  "wp-content/themes/ramon-native/assets/images/comment-avatars/22-comment-514.png": {
+    "size": 1084,
+    "sha256": "539247ac8e441684f71a81d7cc37d30f27c4defaa9dbc7ed11fec10abae5db14"
+  },
+  "wp-content/themes/ramon-native/assets/images/comment-avatars/26-comment-418.png.webp": {
+    "size": 802,
+    "sha256": "92ec62554d211bc972eb10c77d9d18e4164b1e0a6468f1ffab19601cfe07b3cd"
+  },
+  "wp-content/themes/ramon-native/assets/images/comment-avatars/28-comment-722.png": {
+    "size": 1084,
+    "sha256": "539247ac8e441684f71a81d7cc37d30f27c4defaa9dbc7ed11fec10abae5db14"
+  },
+  "wp-content/themes/ramon-native/assets/images/comment-avatars/26-comment-575.webp": {
+    "size": 200,
+    "sha256": "652f4ddf7ad49891bd3e929faac2d39753decdcfeef0e314c4dda26e936c4eba"
+  },
+  "wp-content/themes/ramon-native/assets/images/comment-avatars/26-comment-575.png.rm.webp": {
+    "size": 200,
+    "sha256": "652f4ddf7ad49891bd3e929faac2d39753decdcfeef0e314c4dda26e936c4eba"
+  },
+  "wp-content/themes/ramon-native/assets/images/comment-avatars/26-comment-575.png.webp": {
+    "size": 200,
+    "sha256": "652f4ddf7ad49891bd3e929faac2d39753decdcfeef0e314c4dda26e936c4eba"
+  },
+  "wp-content/themes/ramon-native/assets/images/comment-avatars/22-comment-637.png.webp": {
+    "size": 802,
+    "sha256": "92ec62554d211bc972eb10c77d9d18e4164b1e0a6468f1ffab19601cfe07b3cd"
+  },
+  "wp-content/themes/ramon-native/assets/images/comment-avatars/44-comment-444.png": {
+    "size": 1084,
+    "sha256": "539247ac8e441684f71a81d7cc37d30f27c4defaa9dbc7ed11fec10abae5db14"
+  },
+  "wp-content/themes/ramon-native/assets/images/comment-avatars/22-comment-633.webp": {
+    "size": 802,
+    "sha256": "92ec62554d211bc972eb10c77d9d18e4164b1e0a6468f1ffab19601cfe07b3cd"
+  },
+  "wp-content/themes/ramon-native/assets/images/comment-avatars/66-comment-9.webp": {
+    "size": 802,
+    "sha256": "92ec62554d211bc972eb10c77d9d18e4164b1e0a6468f1ffab19601cfe07b3cd"
+  },
+  "wp-content/themes/ramon-native/assets/images/comment-avatars/66-comment-6.png.webp": {
+    "size": 200,
+    "sha256": "652f4ddf7ad49891bd3e929faac2d39753decdcfeef0e314c4dda26e936c4eba"
+  },
+  "wp-content/themes/ramon-native/assets/images/comment-avatars/66-comment-414.png.rm.webp": {
+    "size": 200,
+    "sha256": "652f4ddf7ad49891bd3e929faac2d39753decdcfeef0e314c4dda26e936c4eba"
+  },
+  "wp-content/themes/ramon-native/assets/images/comment-avatars/66-comment-380.png": {
+    "size": 1084,
+    "sha256": "539247ac8e441684f71a81d7cc37d30f27c4defaa9dbc7ed11fec10abae5db14"
+  },
+  "wp-content/themes/ramon-native/assets/images/comment-avatars/26-comment-418.png": {
+    "size": 1856,
+    "sha256": "5809a1782368cd1f8a4693ea5eb1910fe82e6a41338bba314aa8f25e114fbb09"
+  },
+  "wp-content/themes/ramon-native/assets/images/comment-avatars/66-comment-1.webp": {
+    "size": 200,
+    "sha256": "652f4ddf7ad49891bd3e929faac2d39753decdcfeef0e314c4dda26e936c4eba"
+  },
+  "wp-content/themes/ramon-native/assets/images/comment-avatars/22-comment-641.png.rm.webp": {
+    "size": 200,
+    "sha256": "652f4ddf7ad49891bd3e929faac2d39753decdcfeef0e314c4dda26e936c4eba"
+  },
+  "wp-content/themes/ramon-native/assets/images/comment-avatars/22-comment-635.png": {
+    "size": 1084,
+    "sha256": "539247ac8e441684f71a81d7cc37d30f27c4defaa9dbc7ed11fec10abae5db14"
+  },
+  "wp-content/themes/ramon-native/assets/images/comment-avatars/22-comment-637.png.rm.webp": {
+    "size": 802,
+    "sha256": "92ec62554d211bc972eb10c77d9d18e4164b1e0a6468f1ffab19601cfe07b3cd"
+  },
+  "wp-content/themes/ramon-native/assets/images/comment-avatars/44-comment-444.png.rm.webp": {
+    "size": 200,
+    "sha256": "652f4ddf7ad49891bd3e929faac2d39753decdcfeef0e314c4dda26e936c4eba"
+  },
+  "wp-content/themes/ramon-native/assets/images/comment-avatars/66-comment-381.png": {
+    "size": 1856,
+    "sha256": "5809a1782368cd1f8a4693ea5eb1910fe82e6a41338bba314aa8f25e114fbb09"
+  },
+  "wp-content/themes/ramon-native/assets/images/emoji/1f510.svg": {
+    "size": 583,
+    "sha256": "4f573cfd1b1b23cf6d7e929819d29c4c6197add012f2d13307c37924b2ef131c"
+  },
+  "wp-content/themes/ramon-native/assets/images/emoji/1f609.svg": {
+    "size": 1183,
+    "sha256": "2468609517599c10415c9c9b65024cf697b747dbb837d07d0ea12130f224c65f"
+  },
+  "wp-content/themes/ramon-native/assets/images/emoji/1f464.svg": {
+    "size": 591,
+    "sha256": "d64f74fb3a3083c1a88ff9e7ef259b408e48542625d7b84242f894fffee51a65"
+  },
+  "wp-content/themes/ramon-native/assets/images/emoji/1f36a.svg": {
+    "size": 1779,
+    "sha256": "88724da3173eaf855fc8b8094480d1d923f69c420107501da8d40b503163bcf2"
+  },
+  "wp-content/themes/ramon-native/assets/images/emoji/26a1.svg": {
+    "size": 451,
+    "sha256": "d3a6d0c18f6887f771aa3cd51db375e7a9588e1af63801cc100cd9bcc5bccaac"
+  },
+  "wp-content/themes/ramon-native/assets/images/emoji/1f371.svg": {
+    "size": 3130,
+    "sha256": "a166a228471f7a9c397395b8f96f5e27a777731f13de2ffd1ffae41b777df68a"
+  },
+  "wp-content/themes/ramon-native/assets/images/emoji/1f50d.svg": {
+    "size": 460,
+    "sha256": "426d4db7bb4ca89f374e8c1b85807741e44b26a8d1691517f670256125624134"
+  },
+  "wp-content/themes/ramon-native/assets/images/emoji/1f449.svg": {
+    "size": 563,
+    "sha256": "41578770d740012d57be1d400db47fdba90631e27363a4877af6cc54a032ad10"
+  },
+  "wp-content/themes/ramon-native/assets/images/emoji/1f4e6.svg": {
+    "size": 1556,
+    "sha256": "35a41947f54c96134d1c364c7eef3d692d3af0be37874a86a94c22bdc6d464bf"
+  },
+  "wp-content/themes/ramon-native/assets/images/emoji/1f5d1.svg": {
+    "size": 961,
+    "sha256": "ce1798b308cf8bf8dfb8a6796e2680e37b57c153d5da2db4846ca8f14e7fc50a"
+  },
+  "wp-content/themes/ramon-native/assets/images/emoji/1f4dc.svg": {
+    "size": 912,
+    "sha256": "e8d2fa22f334a6e170fc4b156d677eaa3f19b23699a2b594e8f47b952bfddec3"
+  },
+  "wp-content/themes/ramon-native/assets/images/emoji/1f498.svg": {
+    "size": 1589,
+    "sha256": "72de9ee8d35db48ba6e14d27a6adc17e55fc73dace5557e618505f5f6da2d960"
+  },
+  "wp-content/themes/ramon-native/assets/images/emoji/1f4d3.svg": {
+    "size": 1224,
+    "sha256": "51c171c1a43535c53fda1a24bc0c941d3d7fa095cb2d089fa73916c5ce826b21"
+  },
+  "wp-content/themes/ramon-native/assets/images/emoji/1f4f1.svg": {
+    "size": 184,
+    "sha256": "331d62f00a03f10e07dc3a7660891469b6b76e57d78b57a865645a5ae5378486"
+  },
+  "wp-content/themes/ramon-native/assets/images/emoji/1f356.svg": {
+    "size": 1127,
+    "sha256": "eb988a0e2cda4de5ff26f97d8ab0732668875e05950693acca352ca6e462fee7"
+  },
+  "wp-content/themes/ramon-native/assets/images/emoji/1f52a.svg": {
+    "size": 852,
+    "sha256": "5e65d30dfe04f3a1f363646d04d5958ced5b00c5506a2e0aed2f7bd3e0b82df6"
+  },
+  "wp-content/themes/ramon-native/assets/images/emoji/1f357.svg": {
+    "size": 623,
+    "sha256": "fef4cca86148db3ab05bfdeb887c9bed9a0305a8b796b8904c84e61c82becf59"
+  },
+  "wp-content/themes/ramon-native/assets/images/emoji/1f1e7-1f1f7.svg": {
+    "size": 682,
+    "sha256": "a74ec5e2fe1a2f859edf8c7de03b43379030f58f17b8e57371a347620f5c9b31"
+  },
+  "wp-content/themes/ramon-native/assets/images/emoji/2764.svg": {
+    "size": 368,
+    "sha256": "09a743ee0c32ca57c9be64b13b29c396310d1dd309cb4d7d3be722e47db95f27"
+  },
+  "wp-content/themes/ramon-native/assets/images/emoji/1f3f0.svg": {
+    "size": 1010,
+    "sha256": "aa33d2ebf419ec83d3f913be6de908bed392aa7849962aa66d9f5e37781c7483"
+  },
+  "wp-content/themes/ramon-native/assets/images/emoji/1f60d.svg": {
+    "size": 941,
+    "sha256": "e17d4d0339ce34ba1ee3274fdc98a1bd5ca4a8f309861b63b746970a609d7d63"
+  },
+  "wp-content/themes/ramon-native/assets/images/emoji/1f4e9.svg": {
+    "size": 1074,
+    "sha256": "a89afc0447548c9ba47bfd811bd3a3703d6dd0f4f897c842268424c76a9277d5"
+  },
+  "wp-content/themes/ramon-native/assets/images/emoji/1f9ea.svg": {
+    "size": 1879,
+    "sha256": "98bf884f79a76a7028d252e63c5b93fea4b0d17ad276eaf0f2c8904cbd7f8189"
+  },
+  "wp-content/themes/ramon-native/assets/images/emoji/1f4e7.svg": {
+    "size": 1128,
+    "sha256": "9b3fe62f47546c2ce72b821d0bb878fab505f80c0d1da31e1fdeed3d1acbb10d"
+  },
+  "wp-content/themes/ramon-native/assets/images/emoji/2615.svg": {
+    "size": 1294,
+    "sha256": "8b8afd8f60833ca51907899d4a3279cdfd355282858ba8a73cd1034d2a1e31ff"
+  },
+  "wp-content/themes/ramon-native/assets/images/emoji/1f35b.svg": {
+    "size": 1537,
+    "sha256": "7f5e68a1cb414fe8349d5591f39e0878b9ea0c997c527e5e2a7bd2aed787d620"
+  },
+  "wp-content/themes/ramon-native/assets/images/emoji/1f35a.svg": {
+    "size": 1630,
+    "sha256": "4cdea01f8b856397d0769c98e98ff91b21c941da5557ea6e02851f4f8ecead0a"
+  },
+  "wp-content/themes/ramon-native/assets/images/emoji/1f642.svg": {
+    "size": 525,
+    "sha256": "943c44a0f3dc1aba84f5fbe8465baadbb90af66cd7be9f37ca07a39260357ad2"
+  },
+  "wp-content/themes/ramon-native/parts/header.html": {
+    "size": 2807,
+    "sha256": "4230b6cbf1c4ee32fac4763676904be8f53eab36e1b10c29763fdfcf0c414853"
+  },
+  "wp-content/themes/ramon-native/parts/footer.html": {
+    "size": 2630,
+    "sha256": "6051f527a5d0418d2fec1566c7ae0bc12c5687db66b15c10370300c9e0c885c5"
+  },
+  "wp-content/themes/ramon-native/inc/home.blocks.html": {
+    "size": 20518,
+    "sha256": "0594f1adff8630c7fc3aa8cad7555a734eb4736512b782218231d8d05fbdc8b2"
+  },
+  "wp-content/themes/ramon-native/inc/cv.blocks.html": {
+    "size": 41822,
+    "sha256": "6049026428ad07c72ab8b4a8876dd50b2fbfc31fccca506058f28a9044ce1d27"
+  },
+  "wp-content/themes/ramon-native/inc/header.blocks.html": {
+    "size": 2458,
+    "sha256": "8f6b14f38df9c3d4f8d5c712e5c764f361a2bd791f756bf8ed93a7d5b703c253"
+  },
+  "wp-content/themes/ramon-native/inc/footer.blocks.html": {
+    "size": 2681,
+    "sha256": "6d6cab25e7888bbbc2ce2be4125b7fe32f1fba6fc43e44ecae56162883ed71c9"
+  },
+  "wp-content/themes/ramon-native/patterns/cv.php": {
+    "size": 608,
+    "sha256": "cfe20ebb2ffab1fc27b63a5dd52615a5399d8ff30bc0953bb50b9919d464c703"
+  },
+  "wp-content/themes/ramon-native/patterns/home.php": {
+    "size": 607,
+    "sha256": "dd067f79e8899f9ee259d7d7bec049228beb53901f841b089fb988247e67c49e"
+  },
+  "wp-content/themes/ramon-native/patterns/header.php": {
+    "size": 2577,
+    "sha256": "5c281a2375ea7295c529fe0c6ffcf4a2625aa362d3c6cac86f68131bee0aa3d5"
+  },
+  "wp-content/themes/ramon-native/patterns/footer.php": {
+    "size": 2793,
+    "sha256": "70cd3a8bb89216c739fcb9bcc1d08572ccfa48b62f768d73cf429711cbea4d30"
+  }
+}

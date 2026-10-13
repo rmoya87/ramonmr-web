@@ -1,0 +1,26 @@
+<!-- wp:template-part {"slug":"header","tagName":"div"} /--><!-- wp:group {"tagName":"main","className":"native-landing archive-listing search-listing","layout":{"type":"default"}} --><main class="wp-block-group native-landing archive-listing search-listing"><!-- wp:group {"className":"listing-header content-width archive-header","layout":{"type":"default"}} --><div class="wp-block-group listing-header content-width archive-header"><!-- wp:query-title {"type":"search","showPrefix":false,"level":1} /--></div><!-- /wp:group --><!-- wp:group {"className":"listing-content content-width","layout":{"type":"default"}} -->
+<div class="wp-block-group listing-content content-width"><!-- wp:query {"queryId":77,"query":{"perPage":9,"pages":0,"offset":0,"postType":"post","order":"desc","orderBy":"date","author":"","search":"","exclude":[],"sticky":"","inherit":true},"className":"native-news-grid listing-grid"} -->
+<div class="wp-block-query native-news-grid listing-grid"><!-- wp:post-template {"layout":{"type":"grid","columnCount":3}} -->
+<!-- wp:post-featured-image {"isLink":true,"aspectRatio":"4/3"} /-->
+
+<!-- wp:group {"className":"news-overlay","textColor":"white","layout":{"type":"default"}} -->
+<div class="wp-block-group news-overlay has-white-color has-text-color"><!-- wp:post-date {"format":"d/m/Y","metadata":{"bindings":{"datetime":{"source":"core/post-data","args":{"field":"date"}}}},"fontSize":"small"} /-->
+
+<!-- wp:paragraph {"className":"article-reading-time"} --><p class="article-reading-time">min lectura</p><!-- /wp:paragraph -->
+<!-- wp:post-title {"level":3,"isLink":true,"style":{"typography":{"fontSize":"20px","lineHeight":"26px"}}} /-->
+
+<!-- wp:post-terms {"term":"category","fontSize":"small"} /-->
+
+<!-- wp:read-more {"content":"Leer más →"} /--></div>
+<!-- /wp:group -->
+<!-- /wp:post-template -->
+
+<!-- wp:query-pagination {"layout":{"type":"flex","justifyContent":"center"}} -->
+<!-- wp:query-pagination-previous /-->
+
+<!-- wp:query-pagination-numbers /-->
+
+<!-- wp:query-pagination-next /-->
+<!-- /wp:query-pagination --></div>
+<!-- wp:query-no-results --><!-- wp:paragraph --><p>No se han encontrado resultados.</p><!-- /wp:paragraph --><!-- wp:search {"label":"Buscar","buttonText":"Buscar"} /--><!-- /wp:query-no-results --><!-- /wp:query --></div>
+<!-- /wp:group --></main><!-- /wp:group --><!-- wp:template-part {"slug":"footer","tagName":"div"} /-->

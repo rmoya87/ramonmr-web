@@ -1,0 +1,42 @@
+<!-- wp:template-part {"slug":"header","tagName":"div"} /-->
+<!-- wp:group {"tagName":"main","className":"native-landing"} --><main class="wp-block-group native-landing">
+<!-- wp:group {"className":"listing-header content-width","layout":{"type":"default"}} -->
+<div class="wp-block-group listing-header content-width"><!-- wp:heading {"level":1,"style":{"typography":{"textAlign":"left"}}} -->
+<h1 class="wp-block-heading has-text-align-left">Blog</h1>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Encuentra artículos interesantes sobre marketing online, diseño de producto o como mejorar tu negocio online.</p>
+<!-- /wp:paragraph --></div>
+<!-- /wp:group -->
+
+<!-- wp:group {"className":"listing-content content-width","layout":{"type":"default"}} -->
+<div class="wp-block-group listing-content content-width"><!-- wp:query {"queryId":1,"query":{"perPage":10,"pages":0,"offset":0,"postType":"post","order":"desc","orderBy":"date","author":"","search":"","exclude":[20,21,72],"sticky":"","inherit":true},"className":"native-news-grid listing-grid"} -->
+<div class="wp-block-query native-news-grid listing-grid"><!-- wp:post-template {"layout":{"type":"grid","columnCount":3}} -->
+<!-- wp:post-featured-image {"isLink":true,"aspectRatio":"4/3"} /-->
+
+<!-- wp:group {"className":"news-overlay","textColor":"white","layout":{"type":"default"}} -->
+<div class="wp-block-group news-overlay has-white-color has-text-color"><!-- wp:post-date {"format":"d/m/Y","metadata":{"bindings":{"datetime":{"source":"core/post-data","args":{"field":"date"}}}},"fontSize":"small"} /-->
+
+<!-- wp:paragraph {"className":"article-reading-time"} -->
+<p class="article-reading-time">min lectura</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:post-title {"level":3,"isLink":true} /-->
+
+<!-- wp:post-terms {"term":"category","fontSize":"small"} /-->
+
+<!-- wp:read-more {"content":"Leer más →"} /--></div>
+<!-- /wp:group -->
+<!-- /wp:post-template -->
+
+<!-- wp:query-pagination {"layout":{"type":"flex","justifyContent":"center"}} -->
+<!-- wp:query-pagination-previous {"label":"Anterior"} /-->
+
+<!-- wp:query-pagination-numbers /-->
+
+<!-- wp:query-pagination-next {"label":"Siguiente"} /-->
+<!-- /wp:query-pagination --></div>
+<!-- /wp:query --></div>
+<!-- /wp:group -->
+</main><!-- /wp:group --><!-- wp:template-part {"slug":"footer","tagName":"div"} /-->

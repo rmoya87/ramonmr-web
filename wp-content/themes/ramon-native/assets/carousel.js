@@ -1,0 +1,6 @@
+/* Editable core block slides with native scrolling and keyboard support. */
+document.querySelectorAll('.native-service-carousel').forEach(root=>{
+ const track=root.querySelector('.native-service-carousel-track');const slides=[...root.querySelectorAll('.native-service-slide')];const dots=[...root.querySelectorAll('.native-carousel-dots a')];if(!track||!slides.length)return;
+ let index=0;function select(i){index=(i+slides.length)%slides.length;const current=root.querySelector('.native-carousel-current');if(current)current.textContent=String(index+1);track.scrollTo({left:slides[index].offsetLeft-track.offsetLeft,behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth'});dots.forEach((dot,n)=>{dot.setAttribute('aria-label',`Servicio ${n+1}`);dot.setAttribute('aria-current',n===index?'true':'false')})}
+ root.querySelector('.native-carousel-prev a')?.addEventListener('click',e=>{e.preventDefault();select(index-1)});root.querySelector('.native-carousel-next a')?.addEventListener('click',e=>{e.preventDefault();select(index+1)});dots.forEach((a,i)=>a.addEventListener('click',e=>{e.preventDefault();select(i)}));track.tabIndex=0;track.setAttribute('aria-label','Servicios');track.addEventListener('keydown',e=>{if(e.key==='ArrowRight'||e.key==='ArrowLeft'){e.preventDefault();select(index+(e.key==='ArrowRight'?1:-1))}});select(0);
+});
