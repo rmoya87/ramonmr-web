@@ -52,6 +52,10 @@ jobs:
           protected=['.htaccess','1-ramon-image-alias.php','wp-content/rm-backup-unused/rn-map.json']
           before_protected={p:digest(sftp.open(p,'rb').read()) for p in protected}
           manifest=json.loads(pathlib.Path('docs/source-manifest.json').read_text())
+          state_path='.ramon-deploy-backups/deployed-manifest.json'
+          try: deployed=json.loads(sftp.open(state_path,'rb').read())
+          except FileNotFoundError: deployed={}
+          assert isinstance(deployed,dict)
           files=[]
           for folder in ['wp-content/themes/ramon-native','wp-content/plugins/ramon-site']:
               for p in pathlib.Path(folder).rglob('*'):
@@ -67,8 +71,8 @@ jobs:
               except FileNotFoundError:
                   old=None;mode=0o644
               # Abort if production diverged since the source baseline.
-              expected=manifest.get(name)
-              if old is not None and expected and digest(old)!=expected['sha256'] and old!=new:
+              expected=deployed.get(name) or manifest.get(name)
+              if old is not None and (not expected or digest(old)!=expected['sha256']) and old!=new:
                   raise RuntimeError('Production drift: '+name)
               if old!=new:changes.append((name,new,old,mode))
           dry=os.environ['DRY_RUN'].lower()=='true'
@@ -86,7 +90,7 @@ jobs:
               b='wp-content/themes/ramon-native/.deploy-check-'+tag+'.txt'
               payload=b'ramonmr deployment transport verification\n'
               try:
-                  with sftp.open(a,'x') as f:f.write(payload)
+                  with sftp.open(a,'wx') as f:f.write(payload)
                   sftp.chmod(a,0o600)
                   assert sftp.open(a,'rb').read()==payload
                   sftp.posix_rename(a,b)
@@ -136,5 +140,16 @@ jobs:
                   health();raise
               print('Verified deployment. Private remote rollback copy:',backup)
           assert before_protected=={p:digest(sftp.open(p,'rb').read()) for p in protected}
+          if not dry:
+              try:sftp.mkdir('.ramon-deploy-backups',0o700)
+              except IOError:pass
+              sftp.chmod('.ramon-deploy-backups',0o700)
+              state=json.dumps({p.as_posix():{'sha256':digest(p.read_bytes())} for p in files},sort_keys=True).encode()
+              temp=state_path+'.tmp'
+              with sftp.open(temp,'wb') as f:f.write(state)
+              sftp.chmod(temp,0o600)
+              assert sftp.open(temp,'rb').read()==state
+              sftp.posix_rename(temp,state_path)
+              print('Recorded verified deployment baseline')
           sftp.close();client.close()
           PY
