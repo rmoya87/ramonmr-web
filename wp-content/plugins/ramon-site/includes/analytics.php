@@ -10,6 +10,31 @@
  */
 if ( ! defined( 'ABSPATH' ) ) { exit; }
 
+/**
+ * Titulo de la pagina de resultados de busqueda: Rank Math lo compone con lo que
+ * escribio el visitante ("Busco por el termino ...") y GA4 lo envia como
+ * page_title en cada evento (no se puede ocultar en GA). Se neutraliza en origen,
+ * en el HTML, antes de que exista cualquier peticion de GA.
+ */
+function rsite_search_title_neutral() {
+	$en = function_exists( 'pll_current_language' ) && 'en' === pll_current_language();
+	return $en ? 'Search results' : 'Resultados de búsqueda';
+}
+function rsite_search_title_filter( $title ) {
+	return is_search() ? rsite_search_title_neutral() : $title;
+}
+function rsite_search_title_parts( $parts ) {
+	if ( is_search() && is_array( $parts ) ) {
+		$parts['title'] = rsite_search_title_neutral();
+	}
+	return $parts;
+}
+add_filter( 'pre_get_document_title', 'rsite_search_title_filter', 99999 );
+add_filter( 'document_title_parts', 'rsite_search_title_parts', 99999 );
+add_filter( 'rank_math/frontend/title', 'rsite_search_title_filter', 99999 );
+add_filter( 'rank_math/opengraph/facebook/og_title', 'rsite_search_title_filter', 99999 );
+add_filter( 'rank_math/opengraph/twitter/twitter_title', 'rsite_search_title_filter', 99999 );
+
 add_action( 'wp_footer', function () {
 	if ( is_admin() || is_feed() || is_robots() || wp_doing_ajax() || ( defined( 'REST_REQUEST' ) && REST_REQUEST ) ) { return; }
 	?>
