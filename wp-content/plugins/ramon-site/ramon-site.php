@@ -101,7 +101,7 @@ add_shortcode( 'rsite_workshop', '__return_empty_string' );
 rsite_load_modules();
 
 // Pestanas Rendimiento y Textos por idioma. Un fallo aqui no debe tumbar el sitio.
-foreach ( array( 'performance', 'texts' ) as $rsite_inc ) {
+foreach ( array( 'performance', 'texts', 'analytics' ) as $rsite_inc ) {
 	$rsite_file = RSITE_DIR . 'includes/' . $rsite_inc . '.php';
 	if ( file_exists( $rsite_file ) ) {
 		try {
@@ -360,4 +360,3 @@ add_action( 'transition_post_status', function ( $new, $old, $post ) {
 		}
 	}
 }, 99, 3 );
-
