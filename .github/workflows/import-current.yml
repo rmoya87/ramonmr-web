@@ -1,0 +1,47 @@
+name: Import verified current site code
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: ramonmr-code-import
+  cancel-in-progress: false
+jobs:
+  import:
+    if: github.repository == 'rmoya87/ramonmr-web' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      - name: Validate snapshot and extract only own theme and plugin
+        run: |
+          python3 - <<'PY'
+          import zipfile,hashlib,json,pathlib,stat
+          archive=pathlib.Path('2-ramonmr-source-20261013.zip')
+          assert hashlib.sha256(archive.read_bytes()).hexdigest()=='8ca398b4e5b001c9783c7e6fca294a450abd3bb311c6bcefa9ca68686c7e2578'
+          with zipfile.ZipFile(archive) as z:
+              manifest=json.loads(z.read('source-manifest.json'))
+              assert len(manifest)==383
+              assert set(z.namelist())==set(manifest)|{'source-manifest.json'}
+              for name,meta in manifest.items():
+                  p=pathlib.PurePosixPath(name)
+                  assert not p.is_absolute() and '..' not in p.parts
+                  assert name.startswith(('wp-content/themes/ramon-native/','wp-content/plugins/ramon-site/'))
+                  assert not stat.S_ISLNK(z.getinfo(name).external_attr>>16)
+                  data=z.read(name)
+                  assert len(data)==meta['size'] and hashlib.sha256(data).hexdigest()==meta['sha256']
+                  out=pathlib.Path(name);out.parent.mkdir(parents=True,exist_ok=True);out.write_bytes(data)
+              pathlib.Path('docs').mkdir(exist_ok=True)
+              pathlib.Path('docs/source-manifest.json').write_text(json.dumps(manifest,ensure_ascii=False,indent=2)+'\n')
+          archive.unlink()
+          PY
+      - name: Check PHP syntax
+        run: find wp-content/themes/ramon-native wp-content/plugins/ramon-site -name '*.php' -print0 | xargs -0 -n1 php -l
+      - name: Commit verified source without production deployment
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -f wp-content/themes/ramon-native wp-content/plugins/ramon-site docs/source-manifest.json
+          git add -u -- 2-ramonmr-source-20261013.zip
+          git commit -m 'Sincronizar tema nativo y Ramon Site actuales'
+          git push origin HEAD:main
