@@ -1,6 +1,9 @@
 <?php
 // Catalog contract tests. No WordPress database connection.
 define('ABSPATH','/tmp/');$actions=[];
+function register_activation_hook($file,$callback){}
+function rest_url($path){return home_url('/wp-json/'.$path);}
+function check($condition){if(!$condition)throw new Exception('Catalog assertion failed');}
 function add_action($name,$cb,$priority=10){global $actions;$actions[$name][$priority][]=$cb;}
 function pll_current_language($field){return $_GET['lang']??'es';}
 function pll_home_url($lang){return home_url($lang==='en'?'/en/':'/');}
@@ -21,9 +24,9 @@ function wp_json_encode($x,$flags=0){return json_encode($x,$flags);}
 $posts=[];$langs=[];
 foreach (['es','en'] as $lang) { foreach (['page','post','ohio_portfolio'] as $i=>$type) { $id=count($posts)+1;$langs[$id]=$lang;$posts[]=(object)['ID'=>$id,'title'=>$lang.' item '.$id,'post_type'=>$type,'post_status'=>'publish','post_password'=>'','url'=>home_url(($lang==='en'?'/en':'').'/sample-'.$id.'/')]; } }
 require dirname(__DIR__).'/ramon-touring.php';
-foreach (['es','en'] as $lang) { $catalog=rm_touring_catalog($lang);$items=array_merge(...array_column($catalog,'items'));assert(count($items)===3);foreach($items as $item)assert($langs[$item['id']]===$lang); }
+foreach (['es','en'] as $lang) { $catalog=rm_touring_catalog($lang);$items=array_merge(...array_column($catalog,'items'));check(count($items)===3);foreach($items as $item)check($langs[$item['id']]===$lang); }
 $posts[]=(object)['ID'=>99,'title'=>'DRAFT','post_type'=>'post','post_status'=>'draft','post_password'=>'','url'=>home_url('/draft/')];$langs[99]='es';
 $posts[]=(object)['ID'=>98,'title'=>'PASSWORD','post_type'=>'page','post_status'=>'publish','post_password'=>'protected','url'=>home_url('/protected/')];$langs[98]='es';
 $posts[]=(object)['ID'=>97,'title'=>'FOREIGN','post_type'=>'post','post_status'=>'publish','post_password'=>'','url'=>'https://other.invalid/'];$langs[97]='es';
-$all=json_encode(rm_touring_catalog('es'));foreach(['DRAFT','PASSWORD','FOREIGN'] as $bad)assert(!str_contains($all,$bad));
+$all=json_encode(rm_touring_catalog('es'));foreach(['DRAFT','PASSWORD','FOREIGN'] as $bad)check(!str_contains($all,$bad));
 echo "Catalog language and exclusion tests passed\n";
