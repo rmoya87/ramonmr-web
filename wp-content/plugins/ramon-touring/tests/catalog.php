@@ -21,6 +21,9 @@ function nocache_headers(){header('Cache-Control: no-store');}
 function plugins_url($path,$file){return home_url('/assets/');}
 function esc_attr($x){return htmlspecialchars($x,ENT_QUOTES);}function esc_html($x){return htmlspecialchars($x,ENT_QUOTES);}function esc_url($x){return htmlspecialchars($x,ENT_QUOTES);}
 function wp_json_encode($x,$flags=0){return json_encode($x,$flags);}
+function get_option($k,$d=false){return $d;}function update_option($k,$v,$a=true){return true;}
+function register_setting($a,$b,$c=[]){}function add_options_page(...$a){}function current_user_can($c){return true;}
+function settings_fields($g){}function submit_button(){}function __($s,$d=null){return $s;}
 $posts=[];$langs=[];
 foreach (['es','en'] as $lang) { foreach (['page','post','ohio_portfolio'] as $i=>$type) { $id=count($posts)+1;$langs[$id]=$lang;$posts[]=(object)['ID'=>$id,'title'=>$lang.' item '.$id,'post_type'=>$type,'post_status'=>'publish','post_password'=>'','url'=>home_url(($lang==='en'?'/en':'').'/sample-'.$id.'/')]; } }
 require dirname(__DIR__).'/ramon-touring.php';

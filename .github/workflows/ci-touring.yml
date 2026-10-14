@@ -1,0 +1,49 @@
+name: CI Ramon Touring
+on:
+  pull_request:
+    paths:
+      - 'wp-content/plugins/ramon-touring/**'
+      - '.github/workflows/ci-touring.yml'
+  push:
+    branches: [feature/ramon-touring-2]
+    paths:
+      - 'wp-content/plugins/ramon-touring/**'
+permissions:
+  contents: read
+jobs:
+  validate:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    defaults:
+      run:
+        working-directory: wp-content/plugins/ramon-touring
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: wp-content/plugins/ramon-touring/package-lock.json
+      - name: PHP syntax
+        working-directory: ${{ github.workspace }}
+        run: find wp-content/plugins/ramon-touring -name '*.php' -print0 | xargs -0 -n1 php -l
+      - name: Install
+        run: npm ci
+      - name: Typecheck and build
+        run: npm run build
+      - name: Reproducible build check
+        run: |
+          git status --porcelain assets | tee /tmp/dirty.txt
+          if [ -s /tmp/dirty.txt ]; then
+            echo "Built assets differ from committed sources"
+            git diff -- assets | head -200
+            exit 1
+          fi
+      - name: Unit tests (JS)
+        run: npm test
+      - name: Contract tests (PHP scores)
+        working-directory: ${{ github.workspace }}
+        run: php wp-content/plugins/ramon-touring/tests/scores-contract.php
+      - name: Catalog test
+        working-directory: ${{ github.workspace }}
+        run: php wp-content/plugins/ramon-touring/tests/catalog.php

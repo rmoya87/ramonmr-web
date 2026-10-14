@@ -1,115 +1,265 @@
 export const v = (x, y, z) => ({ x, y, z });
-export function box(a, x, y, z, w, h, d, c, ry = 0) { const q = [[-1, -1, -1], [1, -1, -1], [1, 1, -1], [-1, 1, -1], [-1, -1, 1], [1, -1, 1], [1, 1, 1], [-1, 1, 1]].map(([i, j, k]) => v(x + i * w / 2 * Math.cos(ry) + k * d / 2 * Math.sin(ry), y + j * h / 2, z - i * w / 2 * Math.sin(ry) + k * d / 2 * Math.cos(ry))); [[0, 1, 2, 3], [5, 4, 7, 6], [4, 0, 3, 7], [1, 5, 6, 2], [3, 2, 6, 7], [4, 5, 1, 0]].forEach((f, i) => a.push({ v: f.map(n => q[n]), c: shade(c, [.75, .82, .65, .9, 1.08, .55][i]) })); }
-export function shade(c, n) { if (!c.startsWith('#'))
-    return c; let k = parseInt(c.slice(1), 16); return '#' + [k >> 16, (k >> 8) & 255, k & 255].map(x => Math.min(255, Math.max(0, Math.round(x * n))).toString(16).padStart(2, '0')).join(''); }
-export function cylinder(a, x, y, z, r, w, c, spin = 0) { for (let i = 0; i < 8; i++) {
-    let t = i * Math.PI / 4 + spin, u = t + Math.PI / 4;
-    let p = [v(x - w / 2, y + Math.cos(t) * r, z + Math.sin(t) * r), v(x + w / 2, y + Math.cos(t) * r, z + Math.sin(t) * r), v(x + w / 2, y + Math.cos(u) * r, z + Math.sin(u) * r), v(x - w / 2, y + Math.cos(u) * r, z + Math.sin(u) * r)];
-    a.push({ v: p, c: shade(c, .6 + .25 * Math.cos(t)) });
-} for (let side of [-1, 1]) {
-    a.push({ v: Array.from({ length: 8 }, (_, i) => v(x + side * w / 2, y + Math.cos(i * Math.PI / 4) * r, z + Math.sin(i * Math.PI / 4) * r)), c: '#22272c' });
-    a.push({ v: Array.from({ length: 10 }, (_, i) => v(x + side * (w / 2 + .004), y + Math.cos(i * Math.PI / 5) * r * .64, z + Math.sin(i * Math.PI / 5) * r * .64)), c: '#a8afb3' });
-    for (let i = 0; i < 5; i++) {
-        let t = i * Math.PI / 2.5 + spin;
-        a.push({ v: [v(x + side * (w / 2 + .008), y, z), v(x + side * (w / 2 + .008), y + Math.cos(t) * r * .57, z + Math.sin(t) * r * .57), v(x + side * (w / 2 + .008), y + Math.cos(t + .18) * r * .57, z + Math.sin(t + .18) * r * .57)], c: '#30383f', wheel: { y, z } });
+export function shade(c, n) {
+    if (!c.startsWith('#'))
+        return c;
+    const k = parseInt(c.slice(1), 16);
+    return ('#' +
+        [k >> 16, (k >> 8) & 255, k & 255]
+            .map((x) => Math.min(255, Math.max(0, Math.round(x * n))).toString(16).padStart(2, '0'))
+            .join(''));
+}
+export function box(a, x, y, z, w, h, d, c, ry = 0) {
+    const q = [
+        [-1, -1, -1],
+        [1, -1, -1],
+        [1, 1, -1],
+        [-1, 1, -1],
+        [-1, -1, 1],
+        [1, -1, 1],
+        [1, 1, 1],
+        [-1, 1, 1],
+    ].map(([i, j, k]) => v(x + (i * w) / 2 * Math.cos(ry) + (k * d) / 2 * Math.sin(ry), y + (j * h) / 2, z - (i * w) / 2 * Math.sin(ry) + (k * d) / 2 * Math.cos(ry)));
+    [
+        [0, 1, 2, 3],
+        [5, 4, 7, 6],
+        [4, 0, 3, 7],
+        [1, 5, 6, 2],
+        [3, 2, 6, 7],
+        [4, 5, 1, 0],
+    ].forEach((f, i) => a.push({ v: f.map((n) => q[n]), c: shade(c, [0.75, 0.82, 0.65, 0.9, 1.08, 0.55][i]) }));
+}
+export function cylinder(a, x, y, z, r, w, c, spin = 0) {
+    for (let i = 0; i < 8; i++) {
+        const t = (i * Math.PI) / 4 + spin;
+        const u = t + Math.PI / 4;
+        const p = [
+            v(x - w / 2, y + Math.cos(t) * r, z + Math.sin(t) * r),
+            v(x + w / 2, y + Math.cos(t) * r, z + Math.sin(t) * r),
+            v(x + w / 2, y + Math.cos(u) * r, z + Math.sin(u) * r),
+            v(x - w / 2, y + Math.cos(u) * r, z + Math.sin(u) * r),
+        ];
+        a.push({ v: p, c: shade(c, 0.6 + 0.25 * Math.cos(t)) });
     }
-} }
-function prism(a, side, width, c) { let l = side.map(([y, z]) => v(-width / 2, y, z)), r = side.map(([y, z]) => v(width / 2, y, z)); a.push({ v: l, c: shade(c, .72) }, { v: r.slice().reverse(), c: shade(c, .92) }); for (let i = 0; i < side.length; i++) {
-    let j = (i + 1) % side.length;
-    a.push({ v: [l[i], r[i], r[j], l[j]], c: shade(c, i === 1 ? 1.15 : .95) });
-} }
+    for (const side of [-1, 1]) {
+        a.push({
+            v: Array.from({ length: 8 }, (_, i) => v(x + (side * w) / 2, y + Math.cos((i * Math.PI) / 4) * r, z + Math.sin((i * Math.PI) / 4) * r)),
+            c: '#22272c',
+        });
+        a.push({
+            v: Array.from({ length: 10 }, (_, i) => v(x + side * (w / 2 + 0.004), y + Math.cos((i * Math.PI) / 5) * r * 0.64, z + Math.sin((i * Math.PI) / 5) * r * 0.64)),
+            c: '#a8afb3',
+        });
+        for (let i = 0; i < 5; i++) {
+            const t = (i * Math.PI) / 2.5 + spin;
+            a.push({
+                v: [
+                    v(x + side * (w / 2 + 0.008), y, z),
+                    v(x + side * (w / 2 + 0.008), y + Math.cos(t) * r * 0.57, z + Math.sin(t) * r * 0.57),
+                    v(x + side * (w / 2 + 0.008), y + Math.cos(t + 0.18) * r * 0.57, z + Math.sin(t + 0.18) * r * 0.57),
+                ],
+                c: '#30383f',
+                wheel: { y, z },
+            });
+        }
+    }
+}
+function prism(a, side, width, c) {
+    const l = side.map(([y, z]) => v(-width / 2, y, z));
+    const r = side.map(([y, z]) => v(width / 2, y, z));
+    a.push({ v: l, c: shade(c, 0.72) }, { v: r.slice().reverse(), c: shade(c, 0.92) });
+    for (let i = 0; i < side.length; i++) {
+        const j = (i + 1) % side.length;
+        a.push({ v: [l[i], r[i], r[j], l[j]], c: shade(c, i === 1 ? 1.15 : 0.95) });
+    }
+}
 const carCache = new Map();
 export function car(a, x, z, color, opts = {}) {
     const key = color + ':' + !!opts.hood + ':' + !!opts.lights + ':' + !!opts.brake;
     let b = carCache.get(key);
     if (!b) {
         b = [];
-        for (let [z, d, low] of [[-2.02, .36, .45], [-1.35, .98, .88], [0, 1.72, .45], [1.35, .98, .88], [2.02, .36, .45]])
-            box(b, 0, (low + 1) / 2, z, 1.88, 1 - low, d, color);
-        if (opts.hood) {
-            box(b, 0, .87, 1.36, 1.55, .06, 1.25, '#192228');
-            box(b, 0, 1.03, 1.4, .75, .2, .65, '#8e989d');
-        }
-        prism(b, [[.99, -1.15], [1.48, -.7], [1.5, .32], [1, .98]], 1.52, '#40545e');
-        box(b, 0, 1.51, -.18, 1.5, .055, .96, color);
-        b.push({ c: '#7695a1', v: [v(-.72, 1.48, .34), v(.72, 1.48, .34), v(.79, 1.01, .99), v(-.79, 1.01, .99)] });
-        b.push({ c: '#425e6c', v: [v(-.72, 1.48, -.71), v(.72, 1.48, -.71), v(.79, 1.01, -1.17), v(-.79, 1.01, -1.17)] });
-        for (let side of [-1, 1]) {
-            box(b, side * .772, 1.25, -.22, .035, .47, .07, color);
-            box(b, side * .82, .98, -.17, .035, .07, 2.2, color);
-            box(b, side * .96, .6, 0, .035, .07, 2, '#56626a');
-            box(b, side * .85, .97, .52, .13, .06, .28, color);
-            box(b, side * .98, 1.12, .58, .17, .11, .26, color);
-            for (let f of [-1, 1])
-                cylinder(b, side * 1.04, .44, f * 1.35, .44, .28, '#25292d', 0);
+        for (const [zz, d, low] of [
+            [-2.02, 0.36, 0.45],
+            [-1.35, 0.98, 0.88],
+            [0, 1.72, 0.45],
+            [1.35, 0.98, 0.88],
+            [2.02, 0.36, 0.45],
+        ]) {
+            box(b, 0, (low + 1) / 2, zz, 1.88, 1 - low, d, color);
         }
         if (opts.hood) {
-            let panel = [];
-            box(panel, 0, 1.02, 1.45, 1.62, .065, 1.1, color);
-            for (let f of panel)
-                b.push({ c: f.c, v: f.v.map(p => { let yy = p.y - 1, zz = p.z - .9; return v(p.x, 1 + yy * Math.cos(-1.05) - zz * Math.sin(-1.05), .9 + yy * Math.sin(-1.05) + zz * Math.cos(-1.05)); }) });
-            box(b, 0, .99, 1.5, 1.34, .04, .9, '#192228');
-            box(b, 0, 1.08, 1.4, .7, .14, .55, '#8e989d');
+            box(b, 0, 0.87, 1.36, 1.55, 0.06, 1.25, '#192228');
+            box(b, 0, 1.03, 1.4, 0.75, 0.2, 0.65, '#8e989d');
         }
-        box(b, 0, .5, 2.19, 1.83, .14, .06, '#1b252c');
-        box(b, 0, .49, -2.19, 1.8, .11, .06, '#202a30');
-        box(b, 0, .67, -2.205, 1.75, .055, .03, '#7d7772');
-        box(b, 0, .48, -2.225, .78, .08, .02, '#222a2d');
-        for (let side of [-1, 1]) {
-            box(b, side * .62, .76, -2.19, .5, .11, .045, opts.brake ? '#ff422c' : '#c74235');
-            box(b, side * .66, .73, 2.19, .46, .13, .04, opts.lights ? '#fff5c6' : '#d2d6c7');
-            box(b, side * .7, .38, -2.19, .14, .09, .15, '#a5b1b1');
+        prism(b, [[0.99, -1.15], [1.48, -0.7], [1.5, 0.32], [1, 0.98]], 1.52, '#40545e');
+        box(b, 0, 1.51, -0.18, 1.5, 0.055, 0.96, color);
+        // Glass panes
+        b.push({ c: '#8eb4c4', v: [v(-0.72, 1.48, 0.34), v(0.72, 1.48, 0.34), v(0.79, 1.01, 0.99), v(-0.79, 1.01, 0.99)] });
+        b.push({ c: '#4a6a78', v: [v(-0.72, 1.48, -0.71), v(0.72, 1.48, -0.71), v(0.79, 1.01, -1.17), v(-0.79, 1.01, -1.17)] });
+        for (const side of [-1, 1]) {
+            box(b, side * 0.772, 1.25, -0.22, 0.035, 0.47, 0.07, color);
+            box(b, side * 0.82, 0.98, -0.17, 0.035, 0.07, 2.2, color);
+            box(b, side * 0.96, 0.6, 0, 0.035, 0.07, 2, '#56626a');
+            box(b, side * 0.85, 0.97, 0.52, 0.13, 0.06, 0.28, color);
+            box(b, side * 0.98, 1.12, 0.58, 0.17, 0.11, 0.26, color);
+            // Side glass
+            box(b, side * 0.9, 1.2, -0.15, 0.02, 0.28, 1.1, '#6a8fa0');
+            for (const f of [-1, 1])
+                cylinder(b, side * 1.04, 0.44, f * 1.35, 0.44, 0.28, '#25292d', 0);
         }
-        box(b, 0, .62, -2.23, .45, .12, .025, '#e2dfcf');
+        if (opts.hood) {
+            const panel = [];
+            box(panel, 0, 1.02, 1.45, 1.62, 0.065, 1.1, color);
+            for (const f of panel) {
+                b.push({
+                    c: f.c,
+                    v: f.v.map((p) => {
+                        const yy = p.y - 1;
+                        const zz = p.z - 0.9;
+                        return v(p.x, 1 + yy * Math.cos(-1.05) - zz * Math.sin(-1.05), 0.9 + yy * Math.sin(-1.05) + zz * Math.cos(-1.05));
+                    }),
+                });
+            }
+            box(b, 0, 0.99, 1.5, 1.34, 0.04, 0.9, '#192228');
+            box(b, 0, 1.08, 1.4, 0.7, 0.14, 0.55, '#8e989d');
+        }
+        box(b, 0, 0.5, 2.19, 1.83, 0.14, 0.06, '#1b252c');
+        box(b, 0, 0.49, -2.19, 1.8, 0.11, 0.06, '#202a30');
+        box(b, 0, 0.67, -2.205, 1.75, 0.055, 0.03, '#7d7772');
+        box(b, 0, 0.48, -2.225, 0.78, 0.08, 0.02, '#222a2d');
+        for (const side of [-1, 1]) {
+            box(b, side * 0.62, 0.76, -2.19, 0.5, 0.11, 0.045, opts.brake ? '#ff422c' : '#c74235');
+            box(b, side * 0.66, 0.73, 2.19, 0.46, 0.13, 0.04, opts.lights ? '#fff5c6' : '#d2d6c7');
+            box(b, side * 0.7, 0.38, -2.19, 0.14, 0.09, 0.15, '#a5b1b1');
+        }
+        box(b, 0, 0.62, -2.23, 0.45, 0.12, 0.025, '#e2dfcf');
         carCache.set(key, b);
     }
-    let angle = opts.angle || 0, roll = opts.roll || 0;
-    for (let f of b)
-        a.push({ c: f.c, v: f.v.map(original => { let p = original; if (f.wheel) {
-                let t = opts.spin || 0, y = p.y - f.wheel.y, z = p.z - f.wheel.z;
-                p = v(p.x, f.wheel.y + y * Math.cos(t) - z * Math.sin(t), f.wheel.z + y * Math.sin(t) + z * Math.cos(t));
-            } let xx = p.x * Math.cos(roll) - p.y * Math.sin(roll), yy = p.y * Math.cos(roll) + p.x * Math.sin(roll); return v(x + xx * Math.cos(angle) + p.z * Math.sin(angle), yy, z - xx * Math.sin(angle) + p.z * Math.cos(angle)); }) });
+    const angle = opts.angle || 0;
+    const roll = opts.roll || 0;
+    const steer = opts.steer || 0;
+    for (const f of b) {
+        a.push({
+            c: f.c,
+            v: f.v.map((original) => {
+                let p = original;
+                if (f.wheel) {
+                    const t = opts.spin || 0;
+                    const y = p.y - f.wheel.y;
+                    const z0 = p.z - f.wheel.z;
+                    p = v(p.x, f.wheel.y + y * Math.cos(t) - z0 * Math.sin(t), f.wheel.z + y * Math.sin(t) + z0 * Math.cos(t));
+                    // Front wheels yaw with steer
+                    if (f.wheel.z > 0.5 && Math.abs(steer) > 0.01) {
+                        const lx = p.x;
+                        const lz = p.z - f.wheel.z;
+                        p = v(Math.cos(steer) * lx + Math.sin(steer) * lz, p.y, f.wheel.z - Math.sin(steer) * lx + Math.cos(steer) * lz);
+                    }
+                }
+                const xx = p.x * Math.cos(roll) - p.y * Math.sin(roll);
+                const yy = p.y * Math.cos(roll) + p.x * Math.sin(roll);
+                return v(x + xx * Math.cos(angle) + p.z * Math.sin(angle), yy, z - xx * Math.sin(angle) + p.z * Math.cos(angle));
+            }),
+        });
+    }
 }
-export function renderer(c, w, h, cam, depthTest = false) { let image = depthTest ? c.getImageData(0, 0, w, h) : null, depth = depthTest ? new Float32Array(w * h).fill(Infinity) : null; let dz = cam.target.z - cam.pos.z, dx = cam.target.x - cam.pos.x, dy = cam.target.y - cam.pos.y, len = Math.hypot(dx, dy, dz), f = v(dx / len, dy / len, dz / len), rr = Math.hypot(f.z, f.x), r = v(f.z / rr, 0, -f.x / rr), u = v(f.y * r.z, f.z * r.x - f.x * r.z, -f.y * r.x); function coord(p) { let x = p.x - cam.pos.x, y = p.y - cam.pos.y, z = p.z - cam.pos.z; return v(x * r.x + y * r.y + z * r.z, x * u.x + y * u.y + z * u.z, x * f.x + y * f.y + z * f.z); } function project(p) { let q = coord(p); return { x: w / 2 + q.x * cam.fov / q.z, y: h / 2 - q.y * cam.fov / q.z, z: q.z }; } return { project, draw(a, ordered = false) { let faces = a.map(f => { let q = f.v.map(coord), out = []; for (let i = 0; i < q.length; i++) {
-        let a = q[i], b = q[(i + 1) % q.length];
-        if (a.z >= .2)
-            out.push(a);
-        if ((a.z >= .2) !== (b.z >= .2)) {
-            let t = (.2 - a.z) / (b.z - a.z);
-            out.push(v(a.x + (b.x - a.x) * t, a.y + (b.y - a.y) * t, .2));
-        }
-    } return { f, q: out, depth: out.reduce((sum, p) => sum + p.z, 0) / out.length }; }).filter(o => o.q.length > 2); if (!ordered)
-        faces.sort((a, b) => b.depth - a.depth); for (let { f, q } of faces) {
-        if (image && depth) {
-            let pts = q.map(p => ({ x: w / 2 + p.x * cam.fov / p.z, y: h / 2 - p.y * cam.fov / p.z, iz: 1 / p.z })), rgb = parseInt(f.c.slice(1), 16);
-            for (let j = 1; j < pts.length - 1; j++) {
-                let A = pts[0], B = pts[j], C = pts[j + 1], den = (B.y - C.y) * (A.x - C.x) + (C.x - B.x) * (A.y - C.y);
-                if (Math.abs(den) < .001)
-                    continue;
-                let x0 = Math.max(0, Math.floor(Math.min(A.x, B.x, C.x))), x1 = Math.min(w - 1, Math.ceil(Math.max(A.x, B.x, C.x))), y0 = Math.max(0, Math.floor(Math.min(A.y, B.y, C.y))), y1 = Math.min(h - 1, Math.ceil(Math.max(A.y, B.y, C.y)));
-                for (let y = y0; y <= y1; y++)
-                    for (let x = x0; x <= x1; x++) {
-                        let a = ((B.y - C.y) * (x + .5 - C.x) + (C.x - B.x) * (y + .5 - C.y)) / den, b = ((C.y - A.y) * (x + .5 - C.x) + (A.x - C.x) * (y + .5 - C.y)) / den, d = 1 - a - b;
-                        if (a < -.0001 || b < -.0001 || d < -.0001)
+export function renderer(c, w, h, cam, depthTest = false) {
+    const image = depthTest ? c.getImageData(0, 0, w, h) : null;
+    const depth = depthTest ? new Float32Array(w * h).fill(Infinity) : null;
+    const dz = cam.target.z - cam.pos.z;
+    const dx = cam.target.x - cam.pos.x;
+    const dy = cam.target.y - cam.pos.y;
+    const len = Math.hypot(dx, dy, dz);
+    const f = v(dx / len, dy / len, dz / len);
+    const rr = Math.hypot(f.z, f.x);
+    const r = v(f.z / rr, 0, -f.x / rr);
+    const u = v(f.y * r.z, f.z * r.x - f.x * r.z, -f.y * r.x);
+    function coord(p) {
+        const x = p.x - cam.pos.x;
+        const y = p.y - cam.pos.y;
+        const z = p.z - cam.pos.z;
+        return v(x * r.x + y * r.y + z * r.z, x * u.x + y * u.y + z * u.z, x * f.x + y * f.y + z * f.z);
+    }
+    function project(p) {
+        const q = coord(p);
+        return { x: w / 2 + (q.x * cam.fov) / q.z, y: h / 2 - (q.y * cam.fov) / q.z, z: q.z };
+    }
+    return {
+        project,
+        draw(a, ordered = false) {
+            const faces = a
+                .map((face) => {
+                const q = face.v.map(coord);
+                const out = [];
+                for (let i = 0; i < q.length; i++) {
+                    const A = q[i];
+                    const B = q[(i + 1) % q.length];
+                    if (A.z >= 0.2)
+                        out.push(A);
+                    if (A.z >= 0.2 !== B.z >= 0.2) {
+                        const t = (0.2 - A.z) / (B.z - A.z);
+                        out.push(v(A.x + (B.x - A.x) * t, A.y + (B.y - A.y) * t, 0.2));
+                    }
+                }
+                return { f: face, q: out, depth: out.reduce((sum, p) => sum + p.z, 0) / out.length };
+            })
+                .filter((o) => o.q.length > 2);
+            if (!ordered)
+                faces.sort((A, B) => B.depth - A.depth);
+            for (const { f: face, q } of faces) {
+                if (image && depth) {
+                    const pts = q.map((p) => ({ x: w / 2 + (p.x * cam.fov) / p.z, y: h / 2 - (p.y * cam.fov) / p.z, iz: 1 / p.z }));
+                    const rgb = parseInt(face.c.slice(1), 16);
+                    for (let j = 1; j < pts.length - 1; j++) {
+                        const A = pts[0];
+                        const B = pts[j];
+                        const C = pts[j + 1];
+                        const den = (B.y - C.y) * (A.x - C.x) + (C.x - B.x) * (A.y - C.y);
+                        if (Math.abs(den) < 0.001)
                             continue;
-                        let z = 1 / (a * A.iz + b * B.iz + d * C.iz), idx = y * w + x;
-                        if (z < depth[idx]) {
-                            depth[idx] = z;
-                            image.data[idx * 4] = rgb >> 16;
-                            image.data[idx * 4 + 1] = (rgb >> 8) & 255;
-                            image.data[idx * 4 + 2] = rgb & 255;
-                            image.data[idx * 4 + 3] = 255;
+                        const x0 = Math.max(0, Math.floor(Math.min(A.x, B.x, C.x)));
+                        const x1 = Math.min(w - 1, Math.ceil(Math.max(A.x, B.x, C.x)));
+                        const y0 = Math.max(0, Math.floor(Math.min(A.y, B.y, C.y)));
+                        const y1 = Math.min(h - 1, Math.ceil(Math.max(A.y, B.y, C.y)));
+                        for (let y = y0; y <= y1; y++) {
+                            for (let x = x0; x <= x1; x++) {
+                                const aa = ((B.y - C.y) * (x + 0.5 - C.x) + (C.x - B.x) * (y + 0.5 - C.y)) / den;
+                                const bb = ((C.y - A.y) * (x + 0.5 - C.x) + (A.x - C.x) * (y + 0.5 - C.y)) / den;
+                                const dd = 1 - aa - bb;
+                                if (aa < -0.0001 || bb < -0.0001 || dd < -0.0001)
+                                    continue;
+                                const z = 1 / (aa * A.iz + bb * B.iz + dd * C.iz);
+                                const idx = y * w + x;
+                                if (z < depth[idx]) {
+                                    depth[idx] = z;
+                                    image.data[idx * 4] = rgb >> 16;
+                                    image.data[idx * 4 + 1] = (rgb >> 8) & 255;
+                                    image.data[idx * 4 + 2] = rgb & 255;
+                                    image.data[idx * 4 + 3] = 255;
+                                }
+                            }
                         }
                     }
+                }
+                else {
+                    c.beginPath();
+                    q.forEach((p, i) => {
+                        const xx = w / 2 + (p.x * cam.fov) / p.z;
+                        const yy = h / 2 - (p.y * cam.fov) / p.z;
+                        i ? c.lineTo(xx, yy) : c.moveTo(xx, yy);
+                    });
+                    c.closePath();
+                    c.fillStyle = face.c;
+                    c.fill();
+                }
             }
-        }
-        else {
-            c.beginPath();
-            q.forEach((p, i) => { let xx = w / 2 + p.x * cam.fov / p.z, yy = h / 2 - p.y * cam.fov / p.z; i ? c.lineTo(xx, yy) : c.moveTo(xx, yy); });
-            c.closePath();
-            c.fillStyle = f.c;
-            c.fill();
-        }
-    } if (image)
-        c.putImageData(image, 0, 0); } }; }
-export function quad(a, x1, z1, x2, z2, width, color, y = .01) { a.push({ c: color, v: [v(x1 - width / 2, y, z1), v(x1 + width / 2, y, z1), v(x2 + width / 2, y, z2), v(x2 - width / 2, y, z2)] }); }
+            if (image)
+                c.putImageData(image, 0, 0);
+        },
+    };
+}
+export function quad(a, x1, z1, x2, z2, width, color, y = 0.01) {
+    a.push({
+        c: color,
+        v: [v(x1 - width / 2, y, z1), v(x1 + width / 2, y, z1), v(x2 + width / 2, y, z2), v(x2 - width / 2, y, z2)],
+    });
+}
