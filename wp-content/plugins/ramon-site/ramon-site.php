@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Ramon Site
  * Description: Funciones propias de ramonmr.com en un solo plugin, con modulos activables y pagina de ajustes (Ajustes > Ramon Site). Rollback: desactivar y reactivar los plugins antiguos.
- * Version: 1.1.2
+ * Version: 1.1.3
  * Author: ramonmr.com
  */
 if ( ! defined( 'ABSPATH' ) ) {

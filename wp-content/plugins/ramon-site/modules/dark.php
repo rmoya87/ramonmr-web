@@ -150,6 +150,10 @@ html body .cmplz-cookiebanner .cmplz-close svg{fill:#e6e9f0!important}
 html body .cmplz-cookiebanner .cmplz-categories .cmplz-category{background:rgba(255,255,255,.08)!important;border:1px solid rgba(255,255,255,.12)!important;border-radius:10px!important}
 html body .cmplz-cookiebanner .cmplz-categories .cmplz-category :is(summary,.cmplz-category-header,.cmplz-category-title,.cmplz-always-active,.cmplz-description-categories,.cmplz-description){background:transparent!important;color:#e6e9f0!important}
 html body .cmplz-cookiebanner .cmplz-category-header .cmplz-icon svg,html body .cmplz-cookiebanner .cmplz-category summary svg{fill:#e6e9f0!important;stroke:#e6e9f0!important}
+/* Servicios: tarjetas coherentes en noche (padding de EQUIPOS y tarjeta en COMO TRABAJO) */
+html body .rm-services-v3 .native-section.dark .native-panel.native-panel.native-panel{padding:32px!important}
+@media(max-width:600px){html body .rm-services-v3 .native-section.dark .native-panel.native-panel.native-panel{padding:24px 20px!important}}
+html body .rm-services-v3 .native-section.open-panel:has(.native-steps) .native-panel.native-panel.native-panel{background-color:#171b24!important;border:1px solid rgba(255,255,255,.1)!important}
 CSS
 	. '}</style>' . "\n";
 }, 999 );
