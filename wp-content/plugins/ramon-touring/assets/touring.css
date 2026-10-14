@@ -42,3 +42,5 @@ body.rm-touring-shell{height:100dvh;overflow:hidden}body.rm-touring-shell #rm-to
 @media(max-width:700px){body.rm-touring-shell #rm-touring{padding-right:64px}}
 
 @media(max-width:700px){#rm-touring .game-over{padding:12px}}
+
+@media(min-width:900px){#rm-touring .workshop-config{position:fixed;z-index:7;max-height:calc(100dvh - 94px);overflow-y:auto;overscroll-behavior:contain}#rm-touring .reader-expanded .workshop-config{display:none}}
