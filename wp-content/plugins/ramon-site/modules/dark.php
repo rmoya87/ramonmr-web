@@ -39,7 +39,7 @@ body .wp-block-image img,body figure img{filter:brightness(.92)}
 body .site-mark img,body .site-header img.custom-logo,body .site-header .wp-block-site-logo img{filter:invert(1) hue-rotate(180deg) brightness(1.15)}
 body,body :is(.service-card,.rs-case,.site-header,a,button){transition:background-color .3s ease,color .3s ease,border-color .3s ease}
 @media (prefers-reduced-motion:reduce){body,body *{transition:none!important}}
-html body .site-header .header-row.header-row::before{background:rgba(22,26,35,.9)!important}
+html body .site-header .header-row.header-row::before{background:rgba(22,26,35,.70)!important}
 html body .site-header .header-row.header-row{border-color:rgba(255,255,255,.12)!important;box-shadow:0 10px 32px rgba(0,0,0,.45)!important}
 html body .site-header .header-row a:not(.wp-block-button__link),html body .site-header .header-row .wp-block-navigation-item__content{color:#f2f4f8!important}
 html body .site-header .wp-block-navigation__responsive-container-open{background:rgba(255,255,255,.1)!important;color:#f2f4f8!important}
@@ -153,4 +153,3 @@ html body .cmplz-cookiebanner .cmplz-category-header .cmplz-icon svg,html body .
 CSS
 	. '}</style>' . "\n";
 }, 999 );
-
