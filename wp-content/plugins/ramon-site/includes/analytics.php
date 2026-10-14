@@ -12,7 +12,8 @@
  * encola el update ANTES de que Complianz cargue gtag.js y dispare el primer
  * hit (evita que ese primer hit salga en estado denied). Los cambios
  * posteriores (revocar, guardar preferencias) se cubren con el mismo listener
- * y con cmplz_status_change en el script de eventos.
+ * y con cmplz_status_change en el script de eventos, que usa el valor real
+ * que trae el evento (detail.category/detail.value) y no la cookie.
  * El script de eventos comprueba ademas en cada evento que gtag existe y que
  * la cookie cmplz_statistics sigue en allow. Solo envia nombres de evento y
  * etiquetas fijas (idioma, zona de la pagina, red social); nunca texto
@@ -95,9 +96,24 @@ add_action( 'wp_footer', function () {
     p=p||{};p.page_language=(document.documentElement.lang||'').slice(0,2);
     try{window.gtag('event',n,p);return true;}catch(e){return false;}
   }
-  document.addEventListener('cmplz_status_change',function(){
-    var s=/(?:^|;\s*)cmplz_statistics=allow(?:;|$)/.test(document.cookie)?'granted':'denied';
-    try{window.gtag('consent','update',{'analytics_storage':s});}catch(e){}
+  /* Complianz dispara cmplz_status_change UNA VEZ POR CATEGORIA y en
+     "Aceptar todo" procesa functional/preferences ANTES que statistics:
+     leer aqui la cookie cmplz_statistics mezclaba estados (empujaba un
+     denied obsoleto despues del granted del clic, y el primer page_view
+     salia con gcs=G100). El evento trae el valor real y nuevo de cada
+     categoria en detail (complianz.min.js: cmplz_set_consent escribe la
+     cookie y despacha {category, value, region, categories}), asi que solo
+     se escucha la categoria statistics y se usa detail.value. Cubre
+     aceptar (granted), guardar marcada (granted), guardar desmarcada y
+     revocar (denied, incluida retirada desde preferencias sin recarga),
+     sin flags persistentes ni lecturas de cookie que puedan quedar
+     obsoletas. Si el evento no trae detail (otro emisor), se ignora: el
+     listener en fase de captura y el default del head ya cubren esas rutas. */
+  document.addEventListener('cmplz_status_change',function(e){
+    var d=e&&e.detail;
+    if(!d||d.category!=='statistics'){return;}
+    var s=d.value==='allow'?'granted':'denied';
+    try{window.gtag('consent','update',{'analytics_storage':s});}catch(x){}
   });
   function zone(el){
     var z=el.closest&&el.closest('header,footer,nav,main,section');
