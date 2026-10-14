@@ -8,8 +8,11 @@
  * las tres senales de publicidad quedan siempre en denied (este sitio no usa
  * Ads). Mientras no haya consentimiento no se carga gtag.js ni se envia nada:
  * es Consent Mode en modo basico (bloqueo total hasta aceptar), no avanzado.
- * Si el visitante acepta o revoca durante la visita, los eventos de Complianz
- * (cmplz_status_change) actualizan el estado con gtag('consent','update').
+ * Si el visitante acepta durante la visita, un listener en fase de captura
+ * encola el update ANTES de que Complianz cargue gtag.js y dispare el primer
+ * hit (evita que ese primer hit salga en estado denied). Los cambios
+ * posteriores (revocar, guardar preferencias) se cubren con el mismo listener
+ * y con cmplz_status_change en el script de eventos.
  * El script de eventos comprueba ademas en cada evento que gtag existe y que
  * la cookie cmplz_statistics sigue en allow. Solo envia nombres de evento y
  * etiquetas fijas (idioma, zona de la pagina, red social); nunca texto
@@ -35,6 +38,21 @@ gtag('consent','default',{
   'ad_user_data':'denied',
   'ad_personalization':'denied'
 });
+/* Al aceptar en caliente, Complianz carga gtag.js y dispara el primer hit de
+   inmediato. Este listener en fase de captura se ejecuta antes que el propio
+   manejador de Complianz y encola el update ANTES del config, para que el
+   primer hit ya salga con la senal correcta. Con "Aceptar" todo queda
+   granted; con "Guardar preferencias" se lee la casilla de estadisticas. */
+document.addEventListener('click',function(e){
+  var b=e.target&&e.target.closest?e.target.closest('.cmplz-accept,.cmplz-save-preferences'):null;
+  if(!b){return;}
+  var s='granted';
+  if(b.classList.contains('cmplz-save-preferences')){
+    var t=document.querySelector('input.cmplz-consent-checkbox[data-category="cmplz_statistics"]');
+    s=(t&&t.checked)?'granted':'denied';
+  }
+  try{window.gtag('consent','update',{'analytics_storage':s});}catch(x){}
+},true);
 </script>
 	<?php
 }, 1 );
