@@ -17,3 +17,15 @@ check($post(new Req($body))->data['saved']===true,'save valid');
 check($post(new Req($body))->code==='save','reject replay');
 $row=$routes['GET/scores']()->data['scores'][0];check(array_keys($row)===['alias','score','date']&&$row['alias']==='RACER','public only alias score date');
 check(array_keys($wpdb->items[0])===['alias','score','created_at','run_hash'],'private stored fields minimal');
+
+// Long runs: exact active-time distance formula used by the client, plus overtakes.
+foreach([15,30,60,180,300,600,900,1800,3600] as $duration){
+    $score=0.0;$speed=65.0;$dt=.1;$steps=(int)round($duration/$dt);
+    for($i=0;$i<$steps;$i++){$time=($i+1)*$dt;$top=min(300,185+$time*.65);$speed=min(305,$speed+min(24,($top-$speed)*.65)*$dt);$score+=$speed/3.6*$dt*(1+floor($time/30)*.15);}
+    $valid=(int)floor($score)+500*(int)floor(($duration*300/3.6)/45);
+    check($valid<=rm_touring_score_ceiling($duration),'long run ceiling '.$duration.'s');
+    $p=(time()-$duration).'.'.str_pad((string)$duration,24,'z');$t=$p.'.'.rm_touring_run_signature($p);
+    check($post(new Req(['alias'=>'LONG','score'=>$valid,'token'=>$t]))->data['saved']===true,'long run saved '.$duration.'s');
+    $bad=$post(new Req(['alias'=>'LONG','score'=>rm_touring_score_ceiling($duration)+1,'token'=>$t]));
+    check($bad instanceof WP_Error && $bad->code==='score','reject over ceiling '.$duration.'s');
+}
