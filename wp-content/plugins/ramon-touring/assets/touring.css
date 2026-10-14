@@ -22,3 +22,23 @@ body.rm-touring-shell{height:100dvh;overflow:hidden}body.rm-touring-shell #rm-to
 @media(min-width:900px){#rm-touring .start-screen{height:100%;padding:72px max(14%,32px)}#rm-touring .drive-options{left:300px}#rm-touring .drive-options button{font-size:10px;flex:1;max-width:150px}#rm-touring .instructions{max-width:80%;white-space:normal}}
 
 #rm-touring .start-screen{background:#10202970;backdrop-filter:blur(2px)}#rm-touring .instructions-card{background:#142a34f5;border:1px solid #71838a;border-radius:16px;padding:24px;max-width:700px;box-shadow:0 12px 50px #0005}#rm-touring .instructions-card p:last-child{font-size:12px;color:#bdcfcc}@media(max-width:600px){#rm-touring .instructions-card{padding:16px}#rm-touring .instructions-card p{font-size:12px}#rm-touring .start-screen{padding:12px}}
+
+/* Hidden overflow is scrollable by focus; clip keeps the desktop canvas fixed. */
+@media(min-width:900px){#rm-touring .racer{overflow:clip}#rm-touring .racer>.sr-only{top:0;left:0}}
+
+/* Section choices belong beside the reader, including expanded reading. */
+#rm-touring .workshop-nav{margin:0;border-top:1px solid #849a9f;padding:8px;flex:0 0 auto;gap:6px;background:#d6e1dc}#rm-touring .workshop-nav button{color:#203c46;background:#f6f9f5;font-size:11px}#rm-touring .reader-expanded .workshop-nav{max-height:18dvh;overflow:auto}
+#rm-touring .game-over{z-index:11;padding:18px 100px 18px 18px;justify-content:flex-start;gap:6px}#rm-touring .game-over>.leaderboard{width:min(100%,520px);text-align:left;flex:0 0 auto;background:#203a46;border-radius:8px;padding:10px 16px}#rm-touring .game-over .leaderboard ol{font-size:12px;margin:5px 0;line-height:1.6}#rm-touring .game-over .leaderboard p{font-size:11px}#rm-touring .game-over .score-form{flex:0 0 auto}#rm-touring .run-ended .driving-controls,#rm-touring .run-ended .drive-options,#rm-touring .run-ended .mode-bar,#rm-touring .run-ended .desktop-menu-toggle{visibility:hidden}@media(max-width:899px){#rm-touring .game-over{padding:12px 66px 12px 10px}}
+
+#rm-touring .run-ended>.game-menu{display:none}#rm-touring .run-ended .race-screen{min-height:600px}@media(min-width:900px){#rm-touring .run-ended .race-screen{min-height:0}}
+
+#rm-touring .run-ended .game-menu{display:none}#rm-touring .game-over{width:100%;min-width:0}#rm-touring .game-over>.leaderboard{width:100%;max-width:520px;min-width:0}#rm-touring .game-over .score-form{max-width:100%;min-width:0}#rm-touring .game-over .leaderboard li{overflow-wrap:anywhere}
+
+#rm-touring .run-ended .race-screen{aspect-ratio:auto;width:100%}#rm-touring .game-over .score-form label{display:flex;flex-direction:column;align-items:center;gap:6px}
+
+/* Existing workshop controls live in an in-game left settings panel. */
+#rm-touring .workshop-config{background:#1b323e;border:1px solid #71838a;border-radius:10px;color:#e8edeb;padding:10px;margin:0 0 12px;max-width:100%}#rm-touring .workshop-config summary{font-size:14px;font-weight:600;cursor:pointer;min-height:36px;line-height:36px}#rm-touring .workshop-config .workshop-tools{padding:6px 0 0;min-height:0}#rm-touring .workshop-config .workshop-tools label{display:flex;flex-direction:column;align-items:stretch;gap:5px;margin:6px 0 12px}#rm-touring .workshop-config select{min-height:44px;width:100%;font:inherit}#rm-touring .workshop-config .workshop-tools input{min-width:0;width:100%;flex:0 0 auto}#rm-touring .workshop-config button{width:100%;margin:0 0 9px}#rm-touring .workshop-config button:last-child{margin-bottom:0}@media(min-width:900px){#rm-touring .workshop{padding-left:224px;padding-right:76px}#rm-touring .workshop-config{position:absolute;left:14px;top:82px;width:190px}#rm-touring .workshop .hanging-panel{width:100%}#rm-touring .workshop-config .workshop-tools label{font-size:12px}#rm-touring .workshop-config .workshop-tools button{font-size:11px}#rm-touring .workshop-config .workshop-tools input{margin:0}}@media(max-width:899px){#rm-touring .workshop-config .workshop-tools{display:grid;grid-template-columns:1fr 1fr;gap:8px;align-items:center}#rm-touring .workshop-config .workshop-tools label{font-size:11px;margin:0}#rm-touring .workshop-config button{font-size:11px;margin:0}#rm-touring .workshop-config .workshop-tools input{margin:0}#rm-touring .workshop-config{margin:8px}}
+
+@media(max-width:700px){body.rm-touring-shell #rm-touring{padding-right:64px}}
+
+@media(max-width:700px){#rm-touring .game-over{padding:12px}}
