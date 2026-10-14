@@ -28,7 +28,9 @@ wp-content/w3tc-config/
 # Dependencias instaladas fuera del repositorio
 wp-admin/
 wp-includes/
-wp-content/plugins/
+wp-content/plugins/*
+!wp-content/plugins/ramon-touring/
+!wp-content/plugins/ramon-touring/**
 wp-content/mu-plugins/
 wp-content/themes/ohio/
 node_modules/

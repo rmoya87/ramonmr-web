@@ -5,6 +5,7 @@ on:
     paths:
       - 'wp-content/themes/ramon-native/**'
       - 'wp-content/plugins/ramon-site/**'
+      - 'wp-content/plugins/ramon-touring/**'
   workflow_dispatch:
     inputs:
       dry_run:
@@ -18,13 +19,13 @@ concurrency:
   cancel-in-progress: false
 jobs:
   deploy:
-    if: github.repository == 'rmoya87/ramonmr-web' && github.ref == 'refs/heads/main'
+    if: github.repository == 'rmoya87/ramonmr-web' && (github.ref == 'refs/heads/main' || (github.event_name == 'workflow_dispatch' && inputs.dry_run == true))
     runs-on: ubuntu-24.04
     timeout-minutes: 15
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
       - name: PHP syntax
-        run: find wp-content/themes/ramon-native wp-content/plugins/ramon-site -name '*.php' -print0 | xargs -0 -n1 php -l
+        run: find wp-content/themes/ramon-native wp-content/plugins/ramon-site wp-content/plugins/ramon-touring -name '*.php' -print0 | xargs -0 -n1 php -l
       - name: Install SFTP library
         run: python3 -m pip install 'paramiko==3.5.1'
       - name: Compare, back up, deploy and verify
@@ -57,7 +58,7 @@ jobs:
           except FileNotFoundError: deployed={}
           assert isinstance(deployed,dict)
           files=[]
-          for folder in ['wp-content/themes/ramon-native','wp-content/plugins/ramon-site']:
+          for folder in ['wp-content/themes/ramon-native','wp-content/plugins/ramon-site','wp-content/plugins/ramon-touring']:
               for p in pathlib.Path(folder).rglob('*'):
                   if p.is_file():
                       assert not p.is_symlink()
@@ -83,6 +84,10 @@ jobs:
                   with urllib.request.urlopen(req,timeout=30) as r:
                       body=r.read();assert r.status==200 and len(body)>1000
           health()
+          if dry:
+              assert os.environ['DRY_RUN'].lower()=='true'
+              print('Dry-run change paths:',json.dumps([name for name,new,old,mode in changes]))
+              print('Dry-run is read-only: no upload, rename, chmod, mkdir, backup or state update')
           if not dry:
               # Test upload/readback/atomic rename on a harmless unique temporary file.
               tag=str(int(time.time()))
