@@ -33,6 +33,6 @@ The checked-in assets/mesh.js and assets/world.js are compiled from src/*.ts usi
 * Distance points plus overtaking/combo bonus. Paused and workshop time do not raise difficulty.
 * Public top 10, shared across languages, only alias/score/date. Alias 3-12 ASCII letters/numbers/space/hyphen/underscore. Visitors explicitly submit after game over.
 * Creates only prefix_rm_touring_scores on activation. Stores alias, score, UTC date and a one-use run-token hash, not account/email/IP. Does not delete records on deactivation or uninstall.
-* REST run token is HMAC signed; submission checks origin, duration (15s-1h), integer score bounds, one-use token, and best-effort global throttle at 30 saved scores/minute (not atomic). These are abuse deterrents, not server-authoritative anti-cheat. Visitor-controlled clients can still forge plausible scores.
+* REST run token is HMAC signed; submission checks origin, duration (15s-1h), integer score bounds derived from distance multiplier and maximum passing bonus (including long runs), one-use token, and best-effort global throttle at 30 saved scores/minute (not atomic). These are abuse deterrents, not server-authoritative anti-cheat. Visitor-controlled clients can still forge plausible scores.
 * No audio, third-party services or cookie/localStorage requirement. Standard server logs may still exist outside this plugin.
 * Rollback: deactivate plugin, purge cache, restore 1.0 files; preserve own score table. Existing content and other plugins' tables unchanged.
