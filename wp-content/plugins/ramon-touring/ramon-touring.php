@@ -44,7 +44,7 @@ function rm_touring_catalog($lang) {
 /** Reader-only presentation. Keep full main, forms and consent scripts untouched. */
 add_action('wp_head', static function () {
     if (!isset($_GET['rm_reader']) || (string) $_GET['rm_reader'] !== '1' || is_admin()) { return; }
-    echo '<style id="rm-touring-reader-style">html{margin-top:0!important}body{margin:0!important}#rm-reader-unused,.wp-site-blocks .site-header,.wp-site-blocks .site-footer,#wpadminbar{display:none!important}.wp-site-blocks{padding-top:0!important}main.page-main{margin-top:0!important;padding-top:24px!important;min-width:0!important}main.page-main img,main.page-main video{max-width:100%;height:auto}</style>';
+    echo '<style id="rm-touring-reader-style">html{margin-top:0!important}body{margin:0!important}#rm-reader-unused,.wp-site-blocks .site-header,.wp-site-blocks .site-footer,#wpadminbar,.social-rail{display:none!important}.wp-site-blocks{padding-top:0!important}main.page-main{margin-top:0!important;padding-top:24px!important;min-width:0!important}main.page-main img,main.page-main video{max-width:100%;height:auto}</style>';
 }, 99);
 /** The optional mode selector replaces only the theme's social rail presentation. */
 function rm_touring_mode_css() {
