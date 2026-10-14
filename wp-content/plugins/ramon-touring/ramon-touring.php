@@ -2,14 +2,14 @@
 /**
  * Plugin Name: Ramon Touring
  * Description: Modo de conducción opcional con lectura del contenido publicado de WordPress.
- * Version: 1.1.0
+ * Version: 1.2.0
  * Requires at least: 6.5
  * Requires PHP: 8.1
  * Author: Ramón de Moya
  * License: GPL-2.0-or-later
  */
 if (!defined('ABSPATH')) { exit; }
-const RM_TOURING_VERSION = '1.1.0';
+const RM_TOURING_VERSION = '1.2.0';
 require_once __DIR__.'/src/scores.php';
 register_activation_hook(__FILE__,'rm_touring_scores_install');
 function rm_touring_lang() { return function_exists('pll_current_language') ? (pll_current_language('slug') ?: 'es') : 'es'; }
