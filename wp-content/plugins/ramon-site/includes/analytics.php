@@ -52,6 +52,13 @@ document.addEventListener('click',function(e){
     var t=document.querySelector('input.cmplz-consent-checkbox[data-category="cmplz_statistics"]');
     s=(t&&t.checked)?'granted':'denied';
   }
+  /* Kill switch reconciliado ANTES del update: granted lo limpia (por si
+     una recarga de retirada fallo y la vista sigue viva) y denied lo activa
+     si gtag esta cargado (retirada en caliente), para que la reaccion de la
+     libreria al propio update quede suprimida. Propiedad de window: muere
+     con la vista. */
+  var ld=!!document.querySelector('script[src*="googletagmanager.com/gtag"]');
+  try{window['ga-disable-G-1MRT7NG09T']=(s==='denied'&&ld);}catch(x){}
   try{window.gtag('consent','update',{'analytics_storage':s});}catch(x){}
 },true);
 </script>
@@ -108,12 +115,38 @@ add_action( 'wp_footer', function () {
      revocar (denied, incluida retirada desde preferencias sin recarga),
      sin flags persistentes ni lecturas de cookie que puedan quedar
      obsoletas. Si el evento no trae detail (otro emisor), se ignora: el
-     listener en fase de captura y el default del head ya cubren esas rutas. */
+     listener en fase de captura y el default del head ya cubren esas rutas.
+     Ademas, una retirada en caliente (denied con gtag cargado) fuerza
+     recarga: GA4 ya cargado seguiria emitiendo pings automaticos. */
   document.addEventListener('cmplz_status_change',function(e){
     var d=e&&e.detail;
     if(!d||d.category!=='statistics'){return;}
     var s=d.value==='allow'?'granted':'denied';
+    /* Kill switch reconciliado ANTES del update, igual que en el listener
+       en fase de captura: granted lo limpia (una recarga de retirada pudo
+       fallar y la vista seguir viva; sin esto un flag obsoleto dejaria GA
+       apagado pese al consentimiento) y denied lo activa si gtag esta
+       cargado. La libreria comprueba ga-disable-<id> en cada envio,
+       incluido el flush por sendBeacon al descargar la pagina. */
+    var ld=!!document.querySelector('script[src*="googletagmanager.com/gtag"]');
+    try{window['ga-disable-G-1MRT7NG09T']=(s==='denied'&&ld);}catch(x){}
     try{window.gtag('consent','update',{'analytics_storage':s});}catch(x){}
+    /* Retirada en caliente (denied con gtag cargado): Complianz NO recarga
+       al retirar statistics (solo con marketing) y GA4 ya cargado sigue
+       emitiendo pings automaticos sin cookie tras el denied (observado:
+       collect gcs=G100). Se fuerza recarga con la misma logica que
+       Complianz (parametro anti-cache en Firefox). Con el kill switch ya
+       activo, ni siquiera el unload puede emitir. Si gtag no esta cargado
+       no hay nada que parar y no se recarga. */
+    if(s==='denied'&&ld){
+      try{
+        if(navigator.userAgent.toLowerCase().indexOf('firefox')>=0){
+          var u=new URL(window.location.href);
+          u.searchParams.set('cmplz-force-reload',Date.now().toString());
+          window.location.href=u.toString();
+        }else{window.location.reload();}
+      }catch(x){}
+    }
   });
   function zone(el){
     var z=el.closest&&el.closest('header,footer,nav,main,section');
