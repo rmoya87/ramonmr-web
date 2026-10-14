@@ -2,14 +2,14 @@
 /**
  * Plugin Name: Ramon Touring
  * Description: Modo de conducción opcional con lectura del contenido publicado de WordPress.
- * Version: 1.2.0
+ * Version: 1.3.0
  * Requires at least: 6.5
  * Requires PHP: 8.1
  * Author: Ramón de Moya
  * License: GPL-2.0-or-later
  */
 if (!defined('ABSPATH')) { exit; }
-const RM_TOURING_VERSION = '1.2.0';
+const RM_TOURING_VERSION = '1.3.0';
 require_once __DIR__.'/src/scores.php';
 register_activation_hook(__FILE__,'rm_touring_scores_install');
 function rm_touring_lang() { return function_exists('pll_current_language') ? (pll_current_language('slug') ?: 'es') : 'es'; }
@@ -48,7 +48,7 @@ add_action('wp_head', static function () {
 }, 99);
 /** The optional mode selector replaces only the theme's social rail presentation. */
 function rm_touring_mode_css() {
-    return '.social-rail{display:none!important}#rm-mode-pill{position:fixed;right:24px;top:36%;z-index:24;background:#fff;color:#172a32;border:1px solid #ccd6d9;box-shadow:0 6px 24px #10202922;border-radius:28px;padding:8px 3px;display:flex;flex-direction:column;align-items:center;gap:8px;font:12px/1.3 system-ui,sans-serif}#rm-mode-pill>span{writing-mode:vertical-rl;text-orientation:upright;font-size:11px;font-weight:600}#rm-mode-pill a{display:flex;flex-direction:column;gap:4px;padding:3px;border-radius:22px;background:#e8eef0;color:#263f49;text-decoration:none}#rm-mode-pill a span{writing-mode:vertical-rl;text-orientation:upright;padding:8px 4px;min-width:20px;min-height:44px;text-align:center;border-radius:18px}#rm-mode-pill a[data-game="0"] .mode-web,#rm-mode-pill a[data-game="1"] .mode-game{background:#243f49;color:#fff}#rm-mode-pill a:focus-visible{outline:3px solid #c08216;outline-offset:3px}body.rm-reader-expanded #rm-mode-pill{display:none}@media(max-width:700px){body:not(.rm-touring-shell):not(.rm-reader-expanded){box-sizing:border-box;padding-right:58px!important}#rm-mode-pill{top:auto;bottom:12px;right:12px;padding:6px 3px;flex-direction:column;border-radius:24px;gap:5px}#rm-mode-pill a{flex-direction:column}#rm-mode-pill a span{padding:8px 4px;min-height:44px;min-width:20px}}';
+    return '.social-rail{display:none!important}#rm-mode-pill{position:fixed;right:24px;top:36%;z-index:24;background:#fff;color:#172a32;border:1px solid #ccd6d9;box-shadow:0 6px 24px #10202922;border-radius:28px;padding:8px 3px;display:flex;flex-direction:column;align-items:center;gap:8px;font:12px/1.3 system-ui,sans-serif}#rm-mode-pill>span{writing-mode:vertical-rl;transform:rotate(180deg);text-orientation:mixed;font-size:11px;font-weight:600}#rm-mode-pill a{display:flex;flex-direction:column;gap:4px;padding:3px;border-radius:22px;background:#e8eef0;color:#263f49;text-decoration:none}#rm-mode-pill a span{writing-mode:vertical-rl;transform:rotate(180deg);text-orientation:mixed;padding:8px 4px;min-width:20px;min-height:44px;text-align:center;border-radius:18px}#rm-mode-pill a[data-game="0"] .mode-web,#rm-mode-pill a[data-game="1"] .mode-game{background:#243f49;color:#fff}#rm-mode-pill a:focus-visible{outline:3px solid #c08216;outline-offset:3px}body.rm-reader-expanded #rm-mode-pill{display:none}@media(max-width:700px){body:not(.rm-touring-shell):not(.rm-reader-expanded){box-sizing:border-box;padding-right:58px!important}#rm-mode-pill{top:auto;bottom:12px;right:12px;padding:6px 3px;flex-direction:column;border-radius:24px;gap:5px}#rm-mode-pill a{flex-direction:column}#rm-mode-pill a span{padding:8px 4px;min-height:44px;min-width:20px}}';
 }
 function rm_touring_mode_selector($game=false) {
     $en=rm_touring_lang()==='en';$base=function_exists('pll_home_url')?pll_home_url(rm_touring_lang()):home_url('/');

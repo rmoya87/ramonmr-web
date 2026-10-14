@@ -13,15 +13,16 @@ function pine(a, x, z, size) {
         a.push({ c: '#365b45', v: [v(x - r, y, z - r), v(x - r, y, z + r), v(x, y + size * .55, z)] });
     }
 }
-export function drawRoad(c, s, w, h, color, camera, brake, light) {
+export function drawRoad(c, s, w, h, color, camera, brake, light, environment="coast") {
     c.clearRect(0, 0, w, h);
     let sky = c.createLinearGradient(0, 0, 0, h * .7);
-    sky.addColorStop(0, '#7898af');
-    sky.addColorStop(.7, '#d5d2bb');
-    sky.addColorStop(1, '#e9d8b6');
+    const night=environment==='night',beach=environment==='beach';
+    sky.addColorStop(0, night?'#091626':beach?'#61b6d4':'#7898af');
+    sky.addColorStop(.7, night?'#26364b':beach?'#bfe9ed':'#d5d2bb');
+    sky.addColorStop(1, night?'#44516a':'#e9d8b6');
     c.fillStyle = sky;
     c.fillRect(0, 0, w, h);
-    c.fillStyle = '#fff1cc';
+    c.fillStyle = night?'#e1e8f4':'#fff1cc';
     c.beginPath();
     c.arc(w * .76, h * .21, h * .035, 0, Math.PI * 2);
     c.fill();
@@ -35,14 +36,14 @@ export function drawRoad(c, s, w, h, color, camera, brake, light) {
         c.fillStyle = ['#8d9a94', '#82958b', '#698276'][k];
         c.fill();
     }
-    let biome = Math.floor(s.d / 1400) % 3;
+    let biome = beach?1:Math.floor(s.d / 1400) % 3;
     let base = curve(s.d), path = s.branch ? ramp(s.d - s.fork) : 0, px = s.x + path;
     let cam = renderer(c, w, h, { pos: v(s.camX, camera === 1 ? 1.7 : 3.15, camera === 1 ? -3.6 : -8.7), target: v(px + Math.sin(s.steer) * 2, camera === 1 ? 1.15 : .8, camera === 1 ? 22 : 13), fov: w * (w / h < 1 ? 1.03 : .8) * (1 - Math.min(1, s.speed / 210) * .12) }), a = [], objects = [];
     const cx = (z) => curve(s.d + z) - base;
     const far = Math.floor((s.d + 320) / 6) * 6;
     for (let world = far; world > s.d - 18; world -= 6) {
         let z = world - s.d, z2 = z + 6, x = cx(z), x2 = cx(z2);
-        quad(a, x, z, x2, z2, 140, ['#6c7959', '#9a8d70', '#607969'][biome], -.08);
+        quad(a, x, z, x2, z2, 140, night?'#273429':beach?'#d8c79d':['#6c7959', '#9a8d70', '#607969'][biome], -.08);
         quad(a, x - 43, z, x2 - 43, z2, 36, '#6b9b9c', -.06);
         quad(a, x, z, x2, z2, 12, '#4d5254');
         for (let side of [-1, 1]) {
@@ -73,7 +74,8 @@ export function drawRoad(c, s, w, h, color, camera, brake, light) {
     // Static world-space props: their identity and spacing do not change as the camera advances.
     for (let n = Math.floor((s.d - 20) / 28); n * 28 < s.d + 310; n++) {
         let world = n * 28, z = world - s.d, x = cx(z), t = world - s.fork, right = Math.max(14 + ((n % 4 + 4) % 4) * 3, t > -20 && t < 330 ? ramp(Math.max(0, t)) + 6 : 0);
-        if (biome !== 1 || n % 3 === 0)
+        if(beach){box(objects,x+right,.35,z,1.2,.7,1.1,'#d6c396');if(n%2===0){box(objects,x-14,3,z,.25,6,.25,'#866b44');for(let j=0;j<4;j++)box(objects,x-14+Math.cos(j*Math.PI/2)*1.2,5.8,z+Math.sin(j*Math.PI/2)*1.2,3.5,.12,.55,'#477e53',j*Math.PI/2);}}
+        else if (biome !== 1 || n % 3 === 0)
             pine(objects, x + right, z, 5 + ((n % 3 + 3) % 3));
         else
             box(objects, x + right, .8, z, 3, 1.6, 2.5, '#8d8575');
@@ -91,7 +93,7 @@ export function drawRoad(c, s, w, h, color, camera, brake, light) {
     for (let t of s.traffic) {
         let z = t.d - s.d;
         if (z > -10 && z < 155)
-            car(objects, cx(z) + t.x, z, t.color, { spin: (s.time * 85 / 3.6) / .44 });
+            car(objects, cx(z) + t.x, z, t.color, { angle:Math.atan2(cx(z+3)-cx(z-3),6),lights:night,spin: (s.time * 85 / 3.6) / .44 });
     }
     let signZ = s.fork - s.d - 100;
     if (signZ > -10 && signZ < 300) {
@@ -100,19 +102,21 @@ export function drawRoad(c, s, w, h, color, camera, brake, light) {
         box(objects, x - 2.5, 5.1, signZ, 7.5, 2.1, .15, '#235548');
     }
     if (camera === 0)
-        car(objects, px, 0, color, { angle: s.steer * .15, roll: -s.vx * .007 + (curve(s.d + 12) - 2 * curve(s.d) + curve(s.d - 12)) * .008, spin: s.d / .44, brake, lights: light });
+        car(objects, px, 0, color, { angle: s.yaw || 0, roll: -s.vx * .007 + (curve(s.d + 12) - 2 * curve(s.d) + curve(s.d - 12)) * .008, spin: s.d / .44, brake, lights: light });
     cam.draw(a);
     cam.draw(objects);
-    if (signZ > 8 && signZ < 280) {
-        let p = cam.project(v(cx(signZ) + 4.5, 5.1, signZ));
-        if (p.z > 0) {
-            let font = Math.max(8, Math.min(22, cam.project(v(0, 0, signZ)).z > 0 ? w / signZ * .56 : 10));
-            c.font = `600 ${font}px sans-serif`;
-            c.textAlign = 'center';
-            c.fillStyle = '#fff9df';
-            c.fillText(sectionLabels[s.exit] + ' ↗', p.x, p.y + font * .2);
-        }
+    // Sign lettering is projected from the exact board corners, not screen-sized text.
+    if(signZ>5&&signZ<280){
+      const x=cx(signZ)+4.5,half=3.58,y=5.1;
+      const corners=[v(x-half,y+.91,signZ-.09),v(x+half,y+.91,signZ-.09),v(x+half,y-.91,signZ-.09),v(x-half,y-.91,signZ-.09)].map(cam.project);
+      if(corners.every(p=>p.z>.2)){
+        let tex=document.createElement('canvas');tex.width=512;tex.height=128;let tc=tex.getContext('2d');tc.fillStyle='#235548';tc.fillRect(0,0,512,128);tc.strokeStyle='#fff9df';tc.lineWidth=5;tc.strokeRect(7,7,498,114);tc.fillStyle='#fff9df';tc.textAlign='center';tc.textBaseline='middle';let label=sectionLabels[s.exit]+' ↗',font=44;tc.font=`600 ${font}px sans-serif`;while(tc.measureText(label).width>475&&font>20){font--;tc.font=`600 ${font}px sans-serif`;}tc.fillText(label,256,64);
+        const tris=[[0,1,2],[0,2,3]],uv=[[0,0],[512,0],[512,128],[0,128]];
+        for(let tri of tris){let [A,B,C]=tri.map(i=>corners[i]),[u,vv,q]=tri.map(i=>uv[i]);let det=(vv[0]-u[0])*(q[1]-u[1])-(q[0]-u[0])*(vv[1]-u[1]);let aa=((B.x-A.x)*(q[1]-u[1])-(C.x-A.x)*(vv[1]-u[1]))/det,bb=((B.y-A.y)*(q[1]-u[1])-(C.y-A.y)*(vv[1]-u[1]))/det,cc=((C.x-A.x)*(vv[0]-u[0])-(B.x-A.x)*(q[0]-u[0]))/det,dd=((C.y-A.y)*(vv[0]-u[0])-(B.y-A.y)*(q[0]-u[0]))/det;c.save();c.beginPath();c.moveTo(A.x,A.y);c.lineTo(B.x,B.y);c.lineTo(C.x,C.y);c.closePath();c.clip();c.setTransform(aa,bb,cc,dd,A.x-aa*u[0]-cc*u[1],A.y-bb*u[0]-dd*u[1]);c.drawImage(tex,0,0);c.restore();}
+      }
     }
+    if(night){c.fillStyle='#07102055';c.fillRect(0,0,w,h);let glow=c.createRadialGradient(w*.5,h*.7,8,w*.5,h*.6,w*.5);glow.addColorStop(0,'#fff2bc20');glow.addColorStop(1,'#fff2bc00');c.fillStyle=glow;c.beginPath();c.moveTo(w*.38,h*.7);c.lineTo(w*.2,h*.48);c.lineTo(w*.8,h*.48);c.lineTo(w*.62,h*.7);c.fill();}
+    if(s.slip>.2&&camera===0){let p=cam.project(v(px, .25,-1.7));c.fillStyle='#ccd5d04a';for(let i=0;i<4;i++){c.beginPath();c.ellipse(p.x+(i-1.5)*w*.015,p.y+i*h*.007,w*.014,h*.01,0,0,Math.PI*2);c.fill();}}
     if (camera === 1) {
         c.fillStyle = '#18252c';
         c.beginPath();
@@ -137,7 +141,7 @@ export function drawGarage(c, w, h, angle, zoom, color, hood, lights, focus) {
     c.fillStyle = '#18222b';
     c.fillRect(0, 0, w, h);
     let a = [], objects = [];
-    let cam = renderer(c, w, h, { pos: v(Math.sin(angle) * zoom, 3.4, Math.cos(angle) * zoom), target: v(0, .6, 0), fov: w * (w / h < 1 ? .95 : .8) }, true);
+    let cam = renderer(c, w, h, { pos: v(Math.sin(angle) * zoom, 3.4, Math.cos(angle) * zoom), target: v(0, w/h<1?1.9:.8, 0), fov: w * (w / h < 1 ? .95 : .65) }, true);
     for (let x = -10; x < 10; x += 2)
         for (let z = -10; z < 10; z += 2)
             quad(a, x + 1, z, x + 1, z + 2, 1.97, (x + z) % 4 === 0 ? '#596369' : '#505b61', -.04);
