@@ -22,3 +22,6 @@ body.rm-touring-shell{height:100dvh;overflow:hidden}body.rm-touring-shell #rm-to
 @media(min-width:900px){#rm-touring .start-screen{height:100%;padding:72px max(14%,32px)}#rm-touring .drive-options{left:300px}#rm-touring .drive-options button{font-size:10px;flex:1;max-width:150px}#rm-touring .instructions{max-width:80%;white-space:normal}}
 
 #rm-touring .start-screen{background:#10202970;backdrop-filter:blur(2px)}#rm-touring .instructions-card{background:#142a34f5;border:1px solid #71838a;border-radius:16px;padding:24px;max-width:700px;box-shadow:0 12px 50px #0005}#rm-touring .instructions-card p:last-child{font-size:12px;color:#bdcfcc}@media(max-width:600px){#rm-touring .instructions-card{padding:16px}#rm-touring .instructions-card p{font-size:12px}#rm-touring .start-screen{padding:12px}}
+
+/* Hidden overflow is scrollable by focus; clip keeps the desktop canvas fixed. */
+@media(min-width:900px){#rm-touring .racer{overflow:clip}#rm-touring .racer>.sr-only{top:0;left:0}}
