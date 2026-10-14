@@ -1,14 +1,43 @@
 <?php
 /**
- * Ramon Site: eventos de medicion para GA4 (G-1MRT7NG09T).
+ * Ramon Site: eventos de medicion para GA4 (G-1MRT7NG09T) + Consent Mode basico.
  *
  * GA4 y la funcion gtag los carga Complianz solo tras aceptar las cookies de
- * estadisticas. Este script no carga nada y comprueba en cada evento que gtag
- * existe y que la cookie cmplz_statistics sigue en allow (si el visitante
- * rechaza o revoca, deja de enviar aunque gtag siga en memoria). Solo envia nombres de evento y etiquetas fijas
- * (idioma, zona de la pagina, red social); nunca texto escrito por el visitante.
+ * estadisticas. Antes de eso, este plugin declara el estado de consentimiento
+ * por defecto (wp_head): analytics_storage sigue la cookie cmplz_statistics y
+ * las tres senales de publicidad quedan siempre en denied (este sitio no usa
+ * Ads). Mientras no haya consentimiento no se carga gtag.js ni se envia nada:
+ * es Consent Mode en modo basico (bloqueo total hasta aceptar), no avanzado.
+ * Si el visitante acepta o revoca durante la visita, los eventos de Complianz
+ * (cmplz_status_change) actualizan el estado con gtag('consent','update').
+ * El script de eventos comprueba ademas en cada evento que gtag existe y que
+ * la cookie cmplz_statistics sigue en allow. Solo envia nombres de evento y
+ * etiquetas fijas (idioma, zona de la pagina, red social); nunca texto
+ * escrito por el visitante.
  */
 if ( ! defined( 'ABSPATH' ) ) { exit; }
+
+/**
+ * Estado de consentimiento por defecto, antes de que Complianz cargue gtag.js.
+ * Se encola en dataLayer y gtag.js lo aplica al cargar (asi funciona la API
+ * de consentimiento). Solo analitica sigue al visitante; publicidad siempre
+ * denied porque el sitio no usa Ads.
+ */
+add_action( 'wp_head', function () {
+	if ( is_admin() || is_feed() || is_robots() || wp_doing_ajax() || ( defined( 'REST_REQUEST' ) && REST_REQUEST ) ) { return; }
+	?>
+<script id="rsite-consent-default">
+window.dataLayer=window.dataLayer||[];
+function gtag(){dataLayer.push(arguments);}
+gtag('consent','default',{
+  'analytics_storage':/(?:^|;\s*)cmplz_statistics=allow(?:;|$)/.test(document.cookie)?'granted':'denied',
+  'ad_storage':'denied',
+  'ad_user_data':'denied',
+  'ad_personalization':'denied'
+});
+</script>
+	<?php
+}, 1 );
 
 /**
  * Titulo de la pagina de resultados de busqueda: Rank Math lo compone con lo que
@@ -48,6 +77,10 @@ add_action( 'wp_footer', function () {
     p=p||{};p.page_language=(document.documentElement.lang||'').slice(0,2);
     try{window.gtag('event',n,p);return true;}catch(e){return false;}
   }
+  document.addEventListener('cmplz_status_change',function(){
+    var s=/(?:^|;\s*)cmplz_statistics=allow(?:;|$)/.test(document.cookie)?'granted':'denied';
+    try{window.gtag('consent','update',{'analytics_storage':s});}catch(e){}
+  });
   function zone(el){
     var z=el.closest&&el.closest('header,footer,nav,main,section');
     if(!z){return 'page';}
