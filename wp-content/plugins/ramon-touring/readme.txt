@@ -2,37 +2,38 @@
 Contributors: rmoya87
 Requires at least: 6.5
 Requires PHP: 8.1
-Stable tag: 1.1.0
+Stable tag: 2.0.0
 License: GPLv2 or later
 
-Optional driving mode for ramonmr.com. The normal WordPress site remains the default.
+Optional RM Touring Lab driving mode for ramonmr.com. The normal WordPress site remains the default.
 
 == Installation ==
-Install the ramon-touring directory as its own plugin. Activation is a separate, explicit deployment step. Activation creates only the plugin score table; no existing content or settings are changed.
+Install the ramon-touring directory as its own plugin. Activation is a separate, explicit deployment step. Activation creates/updates only the plugin score table; no existing content or settings are changed.
 
 == Content ==
-The catalog uses published, non-password-protected public post types and Polylang's current language. Attachments and private content are excluded. Services, CV, projects, articles and contact have their own exits. Other published pages remain available in More pages. Full canonical WordPress pages are opened inside the workshop, with normal rendering, links, cookie consent and forms. There is always a separate full-page link. Content is not duplicated in JavaScript.
+The catalog uses published, non-password-protected public post types and Polylang's current language. Attachments and private content are excluded. Services, CV, projects, articles and contact have their own exits. Other published pages remain available in More pages. Full canonical WordPress pages open inside the workshop, with normal rendering, links, cookie consent and forms. There is always a separate full-page link. Content is not duplicated in JavaScript. Destinations can be hidden from the game via Settings → RM Touring Lab.
 
 == Accessibility and privacy ==
-The game does not start automatically. Read without driving reaches every section. Buttons, keyboard controls, a labeled page selector, iframe title, pause, focus indicators and non-driving links are provided. Moving counters are not live announcements. The normal site's accessibility and cookie behavior remain unchanged. No external libraries, telemetry, new cookies, API credentials or analytics are added. Voluntarily submitted public scores persist in the plugin table described below. The full page reader keeps the website's own consent controls.
-
-== Removal ==
-Deactivate the plugin to remove its entry link and game view. No existing content restoration is needed. The plugin score table is retained, not deleted. Existing canonical pages remain available. Files can then be removed by the approved deployment procedure.
+The game does not start automatically. Arcade, Explore and Read-without-driving are explicit choices. Buttons, keyboard controls, gamepad (optional), labeled page selector, iframe title, pause, focus indicators and non-driving links are provided. Moving counters are not live announcements. Reduce-motion and mute preferences are stored locally. No external libraries, telemetry, new cookies, API credentials or analytics are added. Voluntarily submitted public scores persist in the plugin table. The full page reader keeps the website's own consent controls.
 
 == Build ==
-The checked-in assets/mesh.js and assets/world.js are compiled from src/*.ts using TypeScript targeting ES2020 modules. No CDN or runtime build dependency is used. assets/touring.js is the standalone browser controller. assets/touring.css is scoped to #rm-touring.
+TypeScript sources in src/ (mesh.ts, world.ts, touring.ts, game/*) compile to assets/ with `npm run build` (ES2020 modules). No CDN or runtime build dependency. assets/touring.css is scoped to #rm-touring.
+
+== Rollback ==
+Deactivate the plugin, purge cache, restore previous plugin files from deployment backup; preserve the score table. Existing content and other plugins remain unchanged.
+
+== 2.0.0 ==
+* Modular TypeScript architecture with fixed 60 Hz simulation timestep.
+* Explicit start screen: Arcade, Explore, Read without driving, Instructions.
+* Arcade traffic AI (types, follow, lane changes), exploration mode without life game-over.
+* Missions, combos, local progression/unlocks, run resume after workshop.
+* Biomes (coast/forest/city/desert/snow), weather overlays, quality profiles, procedural audio.
+* Score version 2 board; legacy scores retained. Server ceiling aligned with client formula.
+* Admin settings for exit warn distance and destination visibility.
+* Restored canonical “open on regular website” reader link. Sources and assets kept in sync.
+
+== 1.3.0 ==
+* Environments, HUD icons, workshop poster reader, yaw/slip presentation.
 
 == 1.1.0 ==
-* Instructions are an in-game modal over a paused road, not a preceding page. Start is explicit; the optional read path remains accessible in the modal. Instructions can be reopened during play and pause the game.
-* Desktop Game (900px+) fills browser viewport, with HUD, driving controls and options inside. Sections/leaderboard open in an in-game panel; reading stays in an internal scrolling workshop. No OS fullscreen permission or page scroll.
-* Right-side Mode Web/Game switch replaces the native theme social rail while this plugin is active. Web remains default; no preference stored. Deactivation restores original rail. Mobile control is bottom-right; reader-expanded hides it to avoid overlap.
-* Expand reader to the viewport without replacing its iframe. Reader-only native header/footer presentation; normal site untouched.
-* Earlier exit sign, lane arrows and route cue; wider exit capture area.
-* Three road landscape palettes with deterministic roadside props and moderate curvature/roll.
-* Active-time difficulty: level each 30 seconds, automatic target speed rising from 185 to 300 km/h. Brake remains available. Three traffic impacts end the run.
-* Distance points plus overtaking/combo bonus. Paused and workshop time do not raise difficulty.
-* Public top 10, shared across languages, only alias/score/date. Alias 3-12 ASCII letters/numbers/space/hyphen/underscore. Visitors explicitly submit after game over.
-* Creates only prefix_rm_touring_scores on activation. Stores alias, score, UTC date and a one-use run-token hash, not account/email/IP. Does not delete records on deactivation or uninstall.
-* REST run token is HMAC signed; submission checks origin, duration (15s-1h), integer score bounds derived from distance multiplier and maximum passing bonus (including long runs), one-use token, and best-effort global throttle at 30 saved scores/minute (not atomic). These are abuse deterrents, not server-authoritative anti-cheat. Visitor-controlled clients can still forge plausible scores.
-* No audio, third-party services or cookie/localStorage requirement. Standard server logs may still exist outside this plugin.
-* Rollback: deactivate plugin, purge cache, restore 1.0 files; preserve own score table. Existing content and other plugins' tables unchanged.
+* Explicit start modal, desktop viewport shell, Mode Web/Game pill, public top 10 scores.

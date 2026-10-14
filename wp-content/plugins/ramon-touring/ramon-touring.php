@@ -1,17 +1,23 @@
 <?php
 /**
  * Plugin Name: Ramon Touring
- * Description: Modo de conducción opcional con lectura del contenido publicado de WordPress.
- * Version: 1.3.0
+ * Description: RM Touring Lab 2.0 — modo de conducción opcional con lectura del contenido publicado de WordPress.
+ * Version: 2.0.0
  * Requires at least: 6.5
  * Requires PHP: 8.1
  * Author: Ramón de Moya
  * License: GPL-2.0-or-later
  */
 if (!defined('ABSPATH')) { exit; }
-const RM_TOURING_VERSION = '1.3.0';
+const RM_TOURING_VERSION = '2.0.0';
 require_once __DIR__.'/src/scores.php';
+require_once __DIR__.'/src/admin.php';
 register_activation_hook(__FILE__,'rm_touring_scores_install');
+add_action('admin_init', static function () {
+    if (get_option('rm_touring_db_v') === '2') { return; }
+    rm_touring_scores_install();
+    update_option('rm_touring_db_v', '2', false);
+});
 function rm_touring_lang() { return function_exists('pll_current_language') ? (pll_current_language('slug') ?: 'es') : 'es'; }
 function rm_touring_url($lang = null) {
     $lang = $lang ?: rm_touring_lang();
@@ -46,7 +52,6 @@ add_action('wp_head', static function () {
     if (!isset($_GET['rm_reader']) || (string) $_GET['rm_reader'] !== '1' || is_admin()) { return; }
     echo '<style id="rm-touring-reader-style">html{margin-top:0!important}body{margin:0!important}#rm-reader-unused,.wp-site-blocks .site-header,.wp-site-blocks .site-footer,#wpadminbar,.social-rail{display:none!important}.wp-site-blocks{padding-top:0!important}main.page-main{margin-top:0!important;padding-top:24px!important;min-width:0!important}main.page-main img,main.page-main video{max-width:100%;height:auto}</style>';
 }, 99);
-/** The optional mode selector replaces only the theme's social rail presentation. */
 function rm_touring_mode_css() {
     return '.social-rail{display:none!important}#rm-mode-pill{position:fixed;right:24px;top:36%;z-index:24;background:#fff;color:#172a32;border:1px solid #ccd6d9;box-shadow:0 6px 24px #10202922;border-radius:28px;padding:8px 3px;display:flex;flex-direction:column;align-items:center;gap:8px;font:12px/1.3 system-ui,sans-serif}#rm-mode-pill>span{writing-mode:vertical-rl;transform:rotate(180deg);text-orientation:mixed;font-size:11px;font-weight:600}#rm-mode-pill a{display:flex;flex-direction:column;gap:4px;padding:3px;border-radius:22px;background:#e8eef0;color:#263f49;text-decoration:none}#rm-mode-pill a span{writing-mode:vertical-rl;transform:rotate(180deg);text-orientation:mixed;padding:8px 4px;min-width:20px;min-height:44px;text-align:center;border-radius:18px}#rm-mode-pill a[data-game="0"] .mode-web,#rm-mode-pill a[data-game="1"] .mode-game{background:#243f49;color:#fff}#rm-mode-pill a:focus-visible{outline:3px solid #c08216;outline-offset:3px}body.rm-reader-expanded #rm-mode-pill{display:none}@media(max-width:700px){body:not(.rm-touring-shell):not(.rm-reader-expanded){box-sizing:border-box;padding-right:58px!important}#rm-mode-pill{top:auto;bottom:12px;right:12px;padding:6px 3px;flex-direction:column;border-radius:24px;gap:5px}#rm-mode-pill a{flex-direction:column}#rm-mode-pill a span{padding:8px 4px;min-height:44px;min-width:20px}}';
 }
@@ -66,13 +71,13 @@ add_action('wp_footer', static function () {
 add_action('template_redirect', static function () {
     if (is_admin() || wp_doing_ajax() || is_feed() || (defined('REST_REQUEST') && REST_REQUEST)) { return; }
     if (!isset($_GET['rm_drive']) || (string)$_GET['rm_drive']!=='1') { return; }
-    // An independent opt-in view. Existing site templates and canonical URLs stay unchanged.
     nocache_headers();
     header('X-Robots-Tag: noindex, follow',true);
     $lang=rm_touring_lang();$en=$lang==='en';
     $base=function_exists('pll_home_url')?pll_home_url($lang):home_url('/');
     $asset=plugins_url('assets/',__FILE__);
-    $config=['lang'=>$lang,'home'=>$base,'sections'=>rm_touring_catalog($lang),'version'=>RM_TOURING_VERSION,'scores'=>rest_url('ramon-touring/v1/scores'),'run'=>rest_url('ramon-touring/v1/run')];
-    ?><!doctype html><html lang="<?php echo esc_attr($en?'en':'es'); ?>"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,follow"><meta name="referrer" content="strict-origin-when-cross-origin"><title><?php echo esc_html($en?'Driving mode | Ramón de Moya':'Modo conducción | Ramón de Moya'); ?></title><link rel="canonical" href="<?php echo esc_url($base); ?>"><link rel="stylesheet" href="<?php echo esc_url($asset.'touring.css?v='.RM_TOURING_VERSION); ?>"></head><body class="rm-touring-shell"><?php echo '<style>'.rm_touring_mode_css().'</style>'.rm_touring_mode_selector(true); ?><main id="rm-touring"><div class="header"><div><p>RM / TOURING LAB</p><h1><?php echo esc_html($en?'Your route through my work':'Tu ruta por mi trabajo'); ?></h1></div><a href="<?php echo esc_url($base); ?>"><?php echo esc_html($en?'Return to the regular website':'Volver a la web normal'); ?></a></div><div id="rm-touring-app"><p><?php echo esc_html($en?'Loading the optional driving mode. All content remains available on the regular website.':'Cargando el modo conducción opcional. Todo el contenido sigue disponible en la web normal.'); ?></p></div><noscript><p><?php echo esc_html($en?'Driving mode needs JavaScript. Use the regular website to read all content.':'El modo conducción necesita JavaScript. Puedes leer todo el contenido en la web normal.'); ?></p></noscript><script type="application/json" id="rm-touring-config"><?php echo wp_json_encode($config,JSON_HEX_TAG|JSON_HEX_AMP|JSON_HEX_APOS|JSON_HEX_QUOT); ?></script><script type="module" src="<?php echo esc_url($asset.'touring.js?v='.RM_TOURING_VERSION); ?>"></script></main></body></html><?php
+    $sections=rm_touring_filter_catalog(rm_touring_catalog($lang));
+    $config=['lang'=>$lang,'home'=>$base,'sections'=>$sections,'version'=>RM_TOURING_VERSION,'scoreVersion'=>2,'scores'=>rest_url('ramon-touring/v1/scores'),'run'=>rest_url('ramon-touring/v1/run')];
+    ?><!doctype html><html lang="<?php echo esc_attr($en?'en':'es'); ?>"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="robots" content="noindex,follow"><meta name="referrer" content="strict-origin-when-cross-origin"><title><?php echo esc_html($en?'Driving mode | Ramón de Moya':'Modo conducción | Ramón de Moya'); ?></title><link rel="canonical" href="<?php echo esc_url($base); ?>"><link rel="stylesheet" href="<?php echo esc_url($asset.'touring.css?v='.RM_TOURING_VERSION); ?>"></head><body class="rm-touring-shell"><?php echo '<style>'.rm_touring_mode_css().'</style>'.rm_touring_mode_selector(true); ?><main id="rm-touring"><div class="header"><div><p>RM / TOURING LAB 2.0</p><h1><?php echo esc_html($en?'Your route through my work':'Tu ruta por mi trabajo'); ?></h1></div><a href="<?php echo esc_url($base); ?>"><?php echo esc_html($en?'Return to the regular website':'Volver a la web normal'); ?></a></div><div id="rm-touring-app"><p><?php echo esc_html($en?'Loading the optional driving mode. All content remains available on the regular website.':'Cargando el modo conducción opcional. Todo el contenido sigue disponible en la web normal.'); ?></p></div><noscript><p><?php echo esc_html($en?'Driving mode needs JavaScript. Use the regular website to read all content.':'El modo conducción necesita JavaScript. Puedes leer todo el contenido en la web normal.'); ?></p></noscript><script type="application/json" id="rm-touring-config"><?php echo wp_json_encode($config,JSON_HEX_TAG|JSON_HEX_AMP|JSON_HEX_APOS|JSON_HEX_QUOT); ?></script><script type="module" src="<?php echo esc_url($asset.'touring.js?v='.RM_TOURING_VERSION); ?>"></script></main></body></html><?php
     exit;
 }, 0);
