@@ -1,15 +1,18 @@
 import { v, box, car, quad, renderer } from './mesh.js';
 export let sectionLabels = ['Servicios', 'Curriculum', 'Portfolio', 'Blog', 'Contacto'];
 export function setSectionLabels(labels) { sectionLabels = labels; }
-export const curve = (d) => Math.sin(d / 210) * 30 + Math.sin(d / 620) * 45;
+export const curve = (d) => Math.sin(d / 210) * 30 + Math.sin(d / 620) * 45 + Math.sin(d / 1050) * 35;
 export function ramp(t) { return 4.6 + Math.max(0, t) * .12 + Math.sin(Math.max(0, t) / 180) * 2; }
-function pine(a, x, z, size) { box(a, x, size * .4, z, .25, size * .8, .25, '#6b5945'); for (let j = 0; j < 3; j++) {
-    let y = size * (.55 + j * .25), r = size * (.35 - j * .08);
-    a.push({ c: j % 2 ? '#44634e' : '#385d49', v: [v(x - r, y, z - r), v(x + r, y, z - r), v(x, y + size * .55, z)] });
-    a.push({ c: '#294c3c', v: [v(x + r, y, z - r), v(x + r, y, z + r), v(x, y + size * .55, z)] });
-    a.push({ c: '#4c7056', v: [v(x - r, y, z + r), v(x + r, y, z + r), v(x, y + size * .55, z)] });
-    a.push({ c: '#365b45', v: [v(x - r, y, z - r), v(x - r, y, z + r), v(x, y + size * .55, z)] });
-} }
+function pine(a, x, z, size) {
+    box(a, x, size * .4, z, .25, size * .8, .25, '#6b5945');
+    for (let j = 0; j < 3; j++) {
+        let y = size * (.55 + j * .25), r = size * (.35 - j * .08);
+        a.push({ c: j % 2 ? '#44634e' : '#385d49', v: [v(x - r, y, z - r), v(x + r, y, z - r), v(x, y + size * .55, z)] });
+        a.push({ c: '#294c3c', v: [v(x + r, y, z - r), v(x + r, y, z + r), v(x, y + size * .55, z)] });
+        a.push({ c: '#4c7056', v: [v(x - r, y, z + r), v(x + r, y, z + r), v(x, y + size * .55, z)] });
+        a.push({ c: '#365b45', v: [v(x - r, y, z - r), v(x - r, y, z + r), v(x, y + size * .55, z)] });
+    }
+}
 export function drawRoad(c, s, w, h, color, camera, brake, light) {
     c.clearRect(0, 0, w, h);
     let sky = c.createLinearGradient(0, 0, 0, h * .7);
@@ -32,13 +35,14 @@ export function drawRoad(c, s, w, h, color, camera, brake, light) {
         c.fillStyle = ['#8d9a94', '#82958b', '#698276'][k];
         c.fill();
     }
+    let biome = Math.floor(s.d / 1400) % 3;
     let base = curve(s.d), path = s.branch ? ramp(s.d - s.fork) : 0, px = s.x + path;
     let cam = renderer(c, w, h, { pos: v(s.camX, camera === 1 ? 1.7 : 3.15, camera === 1 ? -3.6 : -8.7), target: v(px + Math.sin(s.steer) * 2, camera === 1 ? 1.15 : .8, camera === 1 ? 22 : 13), fov: w * (w / h < 1 ? 1.03 : .8) * (1 - Math.min(1, s.speed / 210) * .12) }), a = [], objects = [];
     const cx = (z) => curve(s.d + z) - base;
     const far = Math.floor((s.d + 320) / 6) * 6;
     for (let world = far; world > s.d - 18; world -= 6) {
         let z = world - s.d, z2 = z + 6, x = cx(z), x2 = cx(z2);
-        quad(a, x, z, x2, z2, 140, '#6c7959', -.08);
+        quad(a, x, z, x2, z2, 140, ['#6c7959', '#9a8d70', '#607969'][biome], -.08);
         quad(a, x - 43, z, x2 - 43, z2, 36, '#6b9b9c', -.06);
         quad(a, x, z, x2, z2, 12, '#4d5254');
         for (let side of [-1, 1]) {
@@ -58,11 +62,22 @@ export function drawRoad(c, s, w, h, color, camera, brake, light) {
         cam.draw(a, true);
         a.length = 0;
     }
+    // Grounded arrows lead along the right lane before the fork.
+    for (let offset of [-150, -100, -50, 10]) {
+        let z = s.fork + offset - s.d;
+        if (z > 8 && z < 240) {
+            let x = cx(z) + 4;
+            objects.push({ c: '#eedaa1', v: [v(x - .35, .04, z), v(x + .35, .04, z), v(x + .35, .04, z + 5), v(x + 1.05, .04, z + 5), v(x, .04, z + 8), v(x - 1.05, .04, z + 5), v(x - .35, .04, z + 5)] });
+        }
+    }
     // Static world-space props: their identity and spacing do not change as the camera advances.
     for (let n = Math.floor((s.d - 20) / 28); n * 28 < s.d + 310; n++) {
         let world = n * 28, z = world - s.d, x = cx(z), t = world - s.fork, right = Math.max(14 + ((n % 4 + 4) % 4) * 3, t > -20 && t < 330 ? ramp(Math.max(0, t)) + 6 : 0);
-        pine(objects, x + right, z, 5 + ((n % 3 + 3) % 3));
-        if (n % 2 === 0)
+        if (biome !== 1 || n % 3 === 0)
+            pine(objects, x + right, z, 5 + ((n % 3 + 3) % 3));
+        else
+            box(objects, x + right, .8, z, 3, 1.6, 2.5, '#8d8575');
+        if (n % 2 === 0 && biome !== 1)
             pine(objects, x - 13, z, 4.5);
     }
     for (let n = Math.floor((s.d - 12) / 12); n * 12 < s.d + 300; n++) {
@@ -78,14 +93,14 @@ export function drawRoad(c, s, w, h, color, camera, brake, light) {
         if (z > -10 && z < 155)
             car(objects, cx(z) + t.x, z, t.color, { spin: (s.time * 85 / 3.6) / .44 });
     }
-    let signZ = s.fork - s.d - 15;
+    let signZ = s.fork - s.d - 100;
     if (signZ > -10 && signZ < 300) {
         let x = cx(signZ) + 7;
         box(objects, x, 2.7, signZ, .15, 5.4, .15, '#9caaa5');
-        box(objects, x - 2.5, 5.1, signZ, 5.5, 1.65, .15, '#235548');
+        box(objects, x - 2.5, 5.1, signZ, 7.5, 2.1, .15, '#235548');
     }
     if (camera === 0)
-        car(objects, px, 0, color, { angle: s.steer * .15, roll: -s.vx * .007, spin: s.d / .44, brake, lights: light });
+        car(objects, px, 0, color, { angle: s.steer * .15, roll: -s.vx * .007 + (curve(s.d + 12) - 2 * curve(s.d) + curve(s.d - 12)) * .008, spin: s.d / .44, brake, lights: light });
     cam.draw(a);
     cam.draw(objects);
     if (signZ > 8 && signZ < 280) {
