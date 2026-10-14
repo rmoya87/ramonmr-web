@@ -4,3 +4,5 @@
 @media (min-width:782px){body.home .method-grid:has(>.method-item:nth-child(4):last-child){grid-template-columns:repeat(2,minmax(0,1fr))}}
 
 @media (min-width:782px) and (max-width:1023px){body.home .method-columns{flex-direction:column;align-items:stretch!important}body.home .method-columns>.wp-block-column{flex-basis:auto!important;width:100%}body.home .method-card h2{max-width:none;overflow-wrap:normal;word-break:normal}body.home .method-columns>.wp-block-column:first-child{transform:none}}
+
+@media (prefers-color-scheme:dark){.service-hero-art img[src$="3-servicios-anim.webp"]{content:url("images/3-servicios-anim-dark.webp");mix-blend-mode:normal!important}}
