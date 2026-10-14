@@ -18,6 +18,15 @@ function rm_touring_scores_install() {
     ) $charset;");
 }
 function rm_touring_run_signature($payload) { return hash_hmac('sha256',$payload,wp_salt('auth')); }
+/** Conservative ceiling for the actual client rules, not proof a score was earned. */
+function rm_touring_score_ceiling($elapsed) {
+    $blocks=intdiv($elapsed,30);$tail=$elapsed%30;
+    $weighted_seconds=30*($blocks+.15*$blocks*($blocks-1)/2)+$tail*(1+.15*$blocks);
+    $max_distance=305/3.6*$elapsed;
+    // At most nine initial cars plus one recycled car per 45m. Use 40m for slack.
+    $max_passes=9+ceil($max_distance/40);
+    return (int)ceil(305/3.6*$weighted_seconds+500*$max_passes+1000);
+}
 function rm_touring_score_error($code,$message,$status=400) { return new WP_Error($code,$message,['status'=>$status]); }
 add_action('rest_api_init',static function(){
     register_rest_route('ramon-touring/v1','/scores',['methods'=>'GET','permission_callback'=>'__return_true','callback'=>static function(){
@@ -39,7 +48,7 @@ add_action('rest_api_init',static function(){
         $parts=explode('.',$token);if(count($parts)!==3||!preg_match('/^[0-9]+$/D',$parts[0])||strlen($parts[1])!==24||!hash_equals(rm_touring_run_signature($parts[0].'.'.$parts[1]),$parts[2])){return rm_touring_score_error('run','Invalid run',403);}
         $elapsed=time()-(int)$parts[0];
         // Bounded plausibility, not authoritative anti-cheat: rendering runs on the visitor device.
-        if($elapsed<15||$elapsed>3600||!is_int($score)||$score<1||$score>min(2000000,$elapsed*250+1000)){return rm_touring_score_error('score','Invalid score');}
+        if($elapsed<15||$elapsed>3600||!is_int($score)||$score<1||$score>rm_touring_score_ceiling($elapsed)){return rm_touring_score_error('score','Invalid score');}
         $table=rm_touring_scores_table();$run_hash=hash('sha256',$token);
         if((int)$wpdb->get_var("SELECT COUNT(*) FROM $table WHERE created_at > UTC_TIMESTAMP() - INTERVAL 1 MINUTE")>=30){return rm_touring_score_error('busy','Try again shortly',429);}
         $saved=$wpdb->insert($table,['alias'=>$alias,'score'=>$score,'created_at'=>current_time('mysql',true),'run_hash'=>$run_hash],['%s','%d','%s','%s']);
