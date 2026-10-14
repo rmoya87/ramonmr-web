@@ -23,6 +23,8 @@ Deactivate the plugin to remove its entry link and game view. No existing conten
 The checked-in assets/mesh.js and assets/world.js are compiled from src/*.ts using TypeScript targeting ES2020 modules. No CDN or runtime build dependency is used. assets/touring.js is the standalone browser controller. assets/touring.css is scoped to #rm-touring.
 
 == 1.1.0 ==
+* Instructions are an in-game modal over a paused road, not a preceding page. Start is explicit; the optional read path remains accessible in the modal. Instructions can be reopened during play and pause the game.
+* Desktop Game (900px+) fills browser viewport, with HUD, driving controls and options inside. Sections/leaderboard open in an in-game panel; reading stays in an internal scrolling workshop. No OS fullscreen permission or page scroll.
 * Right-side Mode Web/Game switch replaces the native theme social rail while this plugin is active. Web remains default; no preference stored. Deactivation restores original rail. Mobile control is bottom-right; reader-expanded hides it to avoid overlap.
 * Expand reader to the viewport without replacing its iframe. Reader-only native header/footer presentation; normal site untouched.
 * Earlier exit sign, lane arrows and route cue; wider exit capture area.
