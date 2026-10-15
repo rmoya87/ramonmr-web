@@ -30,3 +30,11 @@ describe('Reader link restored', () => {
     assert.match(src, /data-reader-link/);
   });
 });
+
+describe('ESM cache bust', () => {
+  it('stamps relative imports with package version', () => {
+    const pkg = JSON.parse(readFileSync(join(root, 'package.json'), 'utf8'));
+    const src = readFileSync(join(root, 'assets/touring.js'), 'utf8');
+    assert.match(src, new RegExp(`from '\\./world\\.js\\?v=${pkg.version.replace(/\./g, '\\.')}'`));
+  });
+});
