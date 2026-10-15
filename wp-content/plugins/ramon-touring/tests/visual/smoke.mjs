@@ -11,7 +11,7 @@ import { fileURLToPath } from 'node:url';
 const root = join(dirname(fileURLToPath(import.meta.url)), '../..');
 
 describe('Built assets present', () => {
-  for (const f of ['assets/touring.js', 'assets/world.js', 'assets/mesh.js', 'assets/touring.css', 'assets/game/GameManager.js']) {
+  for (const f of ['assets/touring.js', 'assets/world.js', 'assets/mesh.js', 'assets/look.js', 'assets/touring.css', 'assets/game/GameManager.js']) {
     it(f, () => assert.ok(existsSync(join(root, f)), f));
   }
 });

@@ -145,7 +145,7 @@ export function car(
   color: string,
   opts: { angle?: number; roll?: number; spin?: number; hood?: number | boolean; lights?: boolean; brake?: boolean; steer?: number } = {},
 ): void {
-  const key = 'r7:' + color + ':' + !!opts.hood + ':' + !!opts.lights + ':' + !!opts.brake;
+  const key = 'r8:' + color + ':' + !!opts.hood + ':' + !!opts.lights + ':' + !!opts.brake;
   let b = carCache.get(key);
   if (!b) {
     b = [];
@@ -202,24 +202,25 @@ export function car(
       box(b, side * 0.8, 1.2, -0.88, 0.09, 0.4, 0.14, shade(color, 0.9));
     }
 
-    // Windshield — reflective glass
-    glassPane(b, [v(-0.72, 1.46, 0.12), v(0.72, 1.46, 0.12), v(0.8, 0.96, 0.98), v(-0.8, 0.96, 0.98)], '#1a3548', '#9ad0ec', '#f5fbff');
-    // Rear window — protrudes toward chase cam so it wins depth sort
-    glassPane(b, [v(-0.72, 1.46, -0.48), v(0.72, 1.46, -0.48), v(0.8, 0.96, -1.32), v(-0.8, 0.96, -1.32)], '#163040', '#7ec4e4', '#eef8ff');
+    // Glass hexes must match LOOK.glass in look.ts (avoid mesh↔look cycle)
+    const glassTint = '#1e3a4c';
+    const glassSky = '#8ec8e0';
+    const glassHi = '#eef6fc';
+    glassPane(b, [v(-0.72, 1.46, 0.12), v(0.72, 1.46, 0.12), v(0.8, 0.96, 0.98), v(-0.8, 0.96, 0.98)], glassTint, glassSky, glassHi);
+    glassPane(b, [v(-0.72, 1.46, -0.48), v(0.72, 1.46, -0.48), v(0.8, 0.96, -1.32), v(-0.8, 0.96, -1.32)], glassTint, glassSky, glassHi);
     b.push({
-      c: '#c8e8f8',
+      c: '#bee0f0',
       v: [v(-0.55, 1.32, -0.62), v(0.55, 1.32, -0.62), v(0.58, 1.18, -0.95), v(-0.58, 1.18, -0.95)],
     });
-    // Side windows
     for (const side of [-1, 1]) {
       glassPane(
         b,
         [v(side * 0.92, 1.4, 0.48), v(side * 0.92, 1.4, -0.78), v(side * 0.92, 1.0, -0.9), v(side * 0.92, 1.0, 0.58)],
-        '#183448',
-        '#8ec8e8',
-        '#f2f8fc',
+        glassTint,
+        glassSky,
+        glassHi,
       );
-      box(b, side * 0.93, 1.2, -0.12, 0.03, 0.42, 1.35, '#d0dce4');
+      box(b, side * 0.93, 1.2, -0.12, 0.03, 0.42, 1.35, glassHi);
     }
 
     if (opts.hood) {
