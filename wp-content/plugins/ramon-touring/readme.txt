@@ -2,7 +2,7 @@
 Contributors: rmoya87
 Requires at least: 6.5
 Requires PHP: 8.1
-Stable tag: 2.0.4
+Stable tag: 2.0.5
 License: GPLv2 or later
 
 Optional RM Touring Lab driving mode for ramonmr.com. The normal WordPress site remains the default.
@@ -21,6 +21,10 @@ TypeScript sources in src/ (mesh.ts, world.ts, touring.ts, game/*) compile to as
 
 == Rollback ==
 Deactivate the plugin, purge cache, restore previous plugin files from deployment backup; preserve the score table. Existing content and other plugins remain unchanged.
+
+== 2.0.5 ==
+* Mid-distance chase camera; remove yellow center line.
+* Visual refresh: biomes, sky haze, road, props, HUD glass panels.
 
 == 2.0.4 ==
 * Classic close chase camera so the player car fills the lower frame.
