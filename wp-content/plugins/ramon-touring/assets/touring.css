@@ -111,10 +111,10 @@ body.rm-touring-shell #rm-touring .reader-expanded .workshop .hanging-panel{heig
 #rm-touring .driving-controls button{border-radius:18px}
 #rm-touring .menu-burger{display:flex;flex-direction:column;justify-content:center;gap:5px;width:18px;height:14px;margin:0 auto}#rm-touring .menu-burger i{display:block;height:2px;background:currentColor;border-radius:1px}
 #rm-touring .hud-icons .desktop-menu-toggle{min-width:46px;padding:10px}
-#rm-touring .scene-car-tools{display:block;position:absolute;left:14px;top:112px;width:190px;z-index:4;padding:12px;border:1px solid #8da1a5;border-radius:10px;background:#142a34e8;max-height:calc(100dvh - 130px);overflow:auto}
+#rm-touring .scene-car-tools{display:block;position:absolute;left:14px;top:112px;width:190px;z-index:4;padding:12px;border:1px solid #8aa39a55;border-radius:22px;background:linear-gradient(180deg,#1a2e38f0,#132430f5);max-height:calc(100dvh - 130px);overflow:auto;box-shadow:0 12px 30px #0006}
 #rm-touring .scene-car-tools .workshop-tools{display:flex;flex-direction:column;gap:10px;padding:0;min-height:0}
 #rm-touring .scene-car-tools label{display:flex;flex-direction:column;align-items:stretch;font-size:12px;gap:5px;margin:0;color:#e8edeb}
-#rm-touring .scene-car-tools input,#rm-touring .scene-car-tools select{width:100%;min-width:0;min-height:44px;font:inherit;color:#20313a;background:#eef3f1;border:1px solid #71838a;border-radius:5px;padding:6px 8px}
+#rm-touring .scene-car-tools input,#rm-touring .scene-car-tools select{width:100%;min-width:0;min-height:44px;font:inherit;color:#20313a;background:#eef3f1;border:1px solid #71838a;border-radius:14px;padding:6px 8px}
 #rm-touring .scene-car-tools button{width:100%;margin:0}
 #rm-touring .reader-expanded .scene-car-tools,#rm-touring .reader-expanded .workshop-actions{display:none}
 #rm-touring .menu-tabs{grid-template-columns:repeat(5,1fr)}#rm-touring .options-modal [data-panel=settings] label{display:flex;flex-direction:column;gap:6px;margin:10px 0;font-size:13px}#rm-touring .options-modal [data-panel=drive] label{display:flex;flex-direction:column;gap:6px;margin:10px 0;font-size:13px}
@@ -130,7 +130,7 @@ body.rm-touring-shell #rm-touring .reader-expanded .workshop .hanging-panel{heig
 #rm-touring .game-over .leaderboard ol{margin:0;padding-left:22px;font:13px/1.7 monospace}
 #rm-touring .game-over .score-form{margin:0}
 #rm-touring .game-over .score-row{display:flex;gap:8px;align-items:stretch;width:100%}
-#rm-touring .game-over .score-row input{flex:1;min-width:0;min-height:46px;font:16px monospace;padding:8px 12px;border-radius:6px;border:1px solid #71838a;background:#eef3f1;color:#20313a}
+#rm-touring .game-over .score-row input{flex:1;min-width:0;min-height:46px;font:16px monospace;padding:8px 12px;border-radius:999px;border:1px solid #71838a;background:#eef3f1;color:#20313a}
 #rm-touring .game-over .score-row button{flex:0 0 auto;margin:0;min-height:46px;background:#d9c28f;color:#20313a;border-color:#d9c28f;font-weight:600}
 #rm-touring .game-over-actions{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between}
 #rm-touring .game-over-actions button{flex:1;min-width:140px}
@@ -138,4 +138,45 @@ body.rm-touring-shell #rm-touring .reader-expanded .workshop .hanging-panel{heig
 #rm-touring [data-mode=garage] .hud-icons{display:flex}#rm-touring [data-mode=garage] .hud-icons [data-action=pause-icon]{display:none}
 @media(max-width:899px),(pointer:coarse){#rm-touring .top-hud{left:12px;right:168px}#rm-touring .hud-icons{top:max(10px,env(safe-area-inset-top));right:max(8px,env(safe-area-inset-right));bottom:auto}#rm-touring .hud-icons button,#rm-touring .hud-icons .desktop-menu-toggle{min-height:42px;min-width:42px;padding:6px 8px;font-size:13px}#rm-touring .speed.gauge{width:72px;height:72px}#rm-touring .speed.gauge b{font-size:20px}#rm-touring .mission-bar{bottom:max(78px,calc(env(safe-area-inset-bottom) + 66px));font-size:10px}#rm-touring .speed,#rm-touring .route-cue{bottom:max(78px,calc(env(safe-area-inset-bottom) + 66px))}#rm-touring .menu-tabs{grid-template-columns:repeat(3,1fr)}#rm-touring .menu-tabs button{font-size:11px}#rm-touring .driving-controls{bottom:max(8px,env(safe-area-inset-bottom))}}
 @media(prefers-reduced-motion:reduce){#rm-touring .hud-toast{transition:none}}
+
+/* Final HUD language: win over older .top-hud>div { border-radius:3px } */
+#rm-touring .top-hud>div,
+#rm-touring .top-hud .hud-stack,
+#rm-touring .top-hud .level-box{
+  border-radius:999px!important;
+  border:1px solid #8aa39a55;
+  border-top-color:#8aa39a55;
+  background:linear-gradient(180deg,#1a2e38d6,#132430e8);
+  box-shadow:0 10px 28px #0005;
+  backdrop-filter:blur(8px);
+  padding:10px 16px;
+}
+#rm-touring .route-cue,
+#rm-touring .mission-bar,
+#rm-touring .hud-toast{
+  border-radius:999px!important;
+}
+#rm-touring .hud-icons button,
+#rm-touring .hud-icons .desktop-menu-toggle{
+  border-radius:50%!important;
+}
+#rm-touring .speed.gauge{
+  border-radius:50%!important;
+}
+#rm-touring .game-over-card,
+#rm-touring .start-card,
+#rm-touring dialog.options-modal{
+  border-radius:28px!important;
+}
+#rm-touring .racer button,
+#rm-touring .game-over .score-row input,
+#rm-touring .game-over .score-row button{
+  border-radius:999px!important;
+}
+#rm-touring .driving-controls button{
+  border-radius:18px!important;
+}
+#rm-touring .scene-car-tools{
+  border-radius:22px!important;
+}
 

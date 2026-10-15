@@ -101,49 +101,56 @@ export function car(
   color: string,
   opts: { angle?: number; roll?: number; spin?: number; hood?: number | boolean; lights?: boolean; brake?: boolean; steer?: number } = {},
 ): void {
-  const key = 'r3:' + color + ':' + !!opts.hood + ':' + !!opts.lights + ':' + !!opts.brake;
+  const key = 'r4:' + color + ':' + !!opts.hood + ':' + !!opts.lights + ':' + !!opts.brake;
   let b = carCache.get(key);
   if (!b) {
     b = [];
-    // Soft underbody + rounded rocker via stepped boxes
-    box(b, 0, 0.34, 0, 2.05, 0.38, 4.2, shade(color, 0.72));
-    box(b, 0, 0.48, 0, 1.95, 0.28, 4.0, shade(color, 0.85));
-    // Hood / nose (tapered steps)
-    box(b, 0, 0.72, 1.55, 1.85, 0.22, 1.25, shade(color, 1.06));
-    box(b, 0, 0.82, 1.7, 1.55, 0.1, 0.85, shade(color, 1.12));
-    // Cabin bubble
-    box(b, 0, 0.95, -0.05, 1.88, 0.36, 1.7, color);
-    box(b, 0, 1.28, -0.12, 1.55, 0.28, 1.35, shade(color, 0.96));
-    box(b, 0, 1.48, -0.2, 1.28, 0.12, 1.05, shade(color, 0.9));
-    // Trunk curve
-    box(b, 0, 0.85, -1.7, 1.82, 0.26, 0.95, shade(color, 0.94));
-    box(b, 0, 0.98, -1.95, 1.55, 0.12, 0.55, shade(color, 0.88));
-    // Rounded bumper tips with cylinders
-    cylinder(b, 0, 0.38, 2.15, 0.22, 1.9, '#1a2228', 0);
-    cylinder(b, 0, 0.4, -2.15, 0.2, 1.85, '#1a2228', 0);
-    box(b, 0, 0.52, -2.28, 1.45, 0.06, 0.05, '#d8d2c4');
+    // Rounded side silhouette (prism) instead of stacked cubes
+    prism(
+      b,
+      [
+        [0.22, 2.05],
+        [0.48, 2.18],
+        [0.72, 2.05],
+        [0.9, 1.55],
+        [0.98, 0.85],
+        [1.42, 0.35],
+        [1.48, -0.15],
+        [1.42, -0.75],
+        [1.05, -1.45],
+        [0.88, -1.95],
+        [0.55, -2.18],
+        [0.28, -2.1],
+        [0.18, -1.6],
+        [0.16, 1.5],
+      ],
+      1.92,
+      color,
+    );
+    // Soft underbody + rocker
+    box(b, 0, 0.28, 0, 1.78, 0.22, 3.7, shade(color, 0.7));
+    cylinder(b, 0, 0.36, 2.08, 0.2, 1.72, '#1a2228', 0);
+    cylinder(b, 0, 0.38, -2.08, 0.18, 1.68, '#1a2228', 0);
+    box(b, 0, 0.5, -2.2, 1.3, 0.05, 0.04, '#d8d2c4');
+    // Cabin glass bubble
+    prism(b, [[1.0, -0.95], [1.4, -0.55], [1.42, 0.2], [1.05, 0.75]], 1.35, '#3a4e58');
+    b.push({ c: '#b4d8e8', v: [v(-0.62, 1.38, 0.22), v(0.62, 1.38, 0.22), v(0.7, 1.02, 0.78), v(-0.7, 1.02, 0.78)] });
+    b.push({ c: '#5a7a88', v: [v(-0.62, 1.38, -0.55), v(0.62, 1.38, -0.55), v(0.7, 1.02, -0.98), v(-0.7, 1.02, -0.98)] });
     if (opts.hood) {
-      box(b, 0, 0.87, 1.36, 1.55, 0.06, 1.25, '#192228');
-      box(b, 0, 1.03, 1.4, 0.75, 0.2, 0.65, '#8e989d');
+      box(b, 0, 0.9, 1.3, 1.4, 0.05, 1.1, '#192228');
+      box(b, 0, 1.05, 1.35, 0.7, 0.18, 0.55, '#8e989d');
     }
-    prism(b, [[0.95, -1.05], [1.35, -0.65], [1.38, 0.28], [0.95, 0.9]], 1.4, '#3a4e58');
-    // Curved-looking glass
-    b.push({ c: '#b4d8e8', v: [v(-0.68, 1.42, 0.28), v(0.68, 1.42, 0.28), v(0.74, 1.0, 0.92), v(-0.74, 1.0, 0.92)] });
-    b.push({ c: '#5a7a88', v: [v(-0.68, 1.42, -0.65), v(0.68, 1.42, -0.65), v(0.74, 1.0, -1.08), v(-0.74, 1.0, -1.08)] });
     for (const side of [-1, 1]) {
-      box(b, side * 0.78, 1.18, -0.15, 0.05, 0.36, 0.08, shade(color, 1.04));
-      box(b, side * 0.9, 1.18, -0.12, 0.03, 0.26, 1.0, '#7eb0c2');
-      // Wheel arches (rounded)
-      cylinder(b, side * 0.95, 0.42, 1.35, 0.5, 0.2, shade(color, 0.8), 0);
-      cylinder(b, side * 0.95, 0.42, -1.35, 0.5, 0.2, shade(color, 0.8), 0);
-      for (const f of [-1, 1]) cylinder(b, side * 1.05, 0.4, f * 1.35, 0.42, 0.3, '#1a1e22', 0);
-      // Soft light clusters
-      cylinder(b, side * 0.62, 0.68, -2.18, 0.16, 0.12, opts.brake ? '#ff3a28' : '#e04030', Math.PI / 2);
-      cylinder(b, side * 0.62, 0.66, 2.18, 0.16, 0.12, opts.lights ? '#fff8d0' : '#e8e4c8', Math.PI / 2);
+      box(b, side * 0.86, 1.12, -0.1, 0.04, 0.28, 0.9, '#7eb0c2');
+      cylinder(b, side * 0.92, 0.4, 1.32, 0.48, 0.18, shade(color, 0.82), 0);
+      cylinder(b, side * 0.92, 0.4, -1.32, 0.48, 0.18, shade(color, 0.82), 0);
+      for (const f of [-1, 1]) cylinder(b, side * 1.02, 0.38, f * 1.32, 0.4, 0.28, '#1a1e22', 0);
+      cylinder(b, side * 0.58, 0.66, -2.12, 0.15, 0.11, opts.brake ? '#ff3a28' : '#e04030', Math.PI / 2);
+      cylinder(b, side * 0.58, 0.64, 2.12, 0.15, 0.11, opts.lights ? '#fff8d0' : '#e8e4c8', Math.PI / 2);
     }
     if (opts.hood) {
       const panel: Face[] = [];
-      box(panel, 0, 1.02, 1.45, 1.62, 0.065, 1.1, color);
+      box(panel, 0, 1.02, 1.45, 1.55, 0.06, 1.05, color);
       for (const f of panel) {
         b.push({
           c: f.c,
@@ -154,8 +161,8 @@ export function car(
           }),
         });
       }
-      box(b, 0, 0.99, 1.5, 1.34, 0.04, 0.9, '#192228');
-      box(b, 0, 1.08, 1.4, 0.7, 0.14, 0.55, '#8e989d');
+      box(b, 0, 0.99, 1.5, 1.28, 0.04, 0.85, '#192228');
+      box(b, 0, 1.08, 1.4, 0.66, 0.14, 0.5, '#8e989d');
     }
     carCache.set(key, b);
   }

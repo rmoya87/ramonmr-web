@@ -119,6 +119,37 @@ export function drawRoad(c, s, w, h, opts) {
     haze.addColorStop(1, '#ffffff00');
     c.fillStyle = haze;
     c.fillRect(0, h * 0.28, w, h * 0.24);
+    // Stable 2D road bed so the lower frame never becomes a void if a 3D quad clips badly.
+    const asphalt2d = night ? '#3a4248' : '#545c62';
+    const verge2d = beach ? '#c8b888' : '#6a7a58';
+    const roadTop = h * 0.5;
+    const cxScreen = w * 0.5 + Math.sin(s.d / 210) * w * 0.02;
+    c.fillStyle = beach ? '#d4c294' : ground[0];
+    c.fillRect(0, roadTop, w, h - roadTop);
+    c.fillStyle = verge2d;
+    c.beginPath();
+    c.moveTo(cxScreen - w * 0.06, roadTop);
+    c.lineTo(cxScreen + w * 0.06, roadTop);
+    c.lineTo(cxScreen + w * 0.62, h);
+    c.lineTo(cxScreen - w * 0.62, h);
+    c.closePath();
+    c.fill();
+    c.fillStyle = asphalt2d;
+    c.beginPath();
+    c.moveTo(cxScreen - w * 0.045, roadTop);
+    c.lineTo(cxScreen + w * 0.045, roadTop);
+    c.lineTo(cxScreen + w * 0.48, h);
+    c.lineTo(cxScreen - w * 0.48, h);
+    c.closePath();
+    c.fill();
+    c.strokeStyle = '#ebe4cc88';
+    c.lineWidth = Math.max(2, w * 0.004);
+    for (const side of [-1, 1]) {
+        c.beginPath();
+        c.moveTo(cxScreen + side * w * 0.042, roadTop);
+        c.lineTo(cxScreen + side * w * 0.45, h);
+        c.stroke();
+    }
     const base = curve(s.d);
     const path = s.branch ? ramp(s.d - s.fork) : 0;
     const px = s.x + path;
@@ -132,23 +163,28 @@ export function drawRoad(c, s, w, h, opts) {
     const objects = [];
     const cx = (z) => curve(s.d + z) - base;
     const far = Math.floor((s.d + quality.drawDistance) / 6) * 6;
-    // Road strips ahead of the camera only — behind-camera quads can project as a full-screen asphalt slab.
-    for (let world = far; world > s.d - 6; world -= 6) {
+    // Only strips clearly in front of the camera. Near-plane / behind-camera quads
+    // project as full-screen asphalt and wipe the sky.
+    for (let world = far; world > s.d + 2; world -= 6) {
         const z = world - s.d;
         const z2 = z + 6;
-        if (z2 < -1.5)
+        if (z < 2)
             continue;
         const x = cx(z);
         const x2 = cx(z2);
         const asphalt = night ? '#3a4248' : ((Math.floor(world / 6) % 2) ? '#5a6268' : '#545c62');
-        quad(a, x, z, x2, z2, 150, beach ? '#d4c294' : ground[0], -0.08);
-        quad(a, x - 46, z, x2 - 46, z2, 40, night ? '#2e4e58' : biomeA.water, -0.06);
+        // Keep ground strips narrower near the camera to avoid projective blow-ups.
+        const groundW = Math.min(90, 28 + z * 0.55);
+        quad(a, x, z, x2, z2, groundW, beach ? '#d4c294' : ground[0], -0.08);
+        if (z > 40) {
+            quad(a, x - groundW * 0.35, z, x2 - groundW * 0.35, z2, groundW * 0.28, night ? '#2e4e58' : biomeA.water, -0.06);
+        }
         quad(a, x, z, x2, z2, 12.6, asphalt);
         // Soft roadside verge
         for (const side of [-1, 1]) {
             quad(a, x + side * 6.5, z, x2 + side * 6.5, z2, 0.55, beach ? '#c8b888' : '#6a7a58');
             quad(a, x + side * 5.95, z, x2 + side * 5.95, z2, 0.16, '#ebe4cc', 0.016);
-            if (quality.shadows) {
+            if (quality.shadows && z < 180) {
                 box(objects, x + side * 6.7, 0.52, z, 0.12, 0.72, 0.12, '#9aaca4');
                 box(objects, x + side * 6.7, 0.9, z, 0.16, 0.1, 0.16, side < 0 ? '#efe8d0' : '#c24a38');
             }
