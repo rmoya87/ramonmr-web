@@ -4,7 +4,11 @@ export function targetTopSpeed(s) {
         return 65;
     if (s.mode === 'explore')
         return PHYSICS.exploreTop;
-    return Math.min(PHYSICS.maxSpeed - 5, PHYSICS.arcadeTopBase + s.time * PHYSICS.arcadeTopRamp);
+    const level = 1 + Math.floor(s.time / SCORE.levelSeconds);
+    // Level 10 ≈ arcadeTopBase + 9*perLevel (+ soft time drip), near the absolute ceiling.
+    const byLevel = PHYSICS.arcadeTopBase + (level - 1) * PHYSICS.arcadeTopPerLevel;
+    const byTime = s.time * PHYSICS.arcadeTopRamp;
+    return Math.min(PHYSICS.maxSpeed - 5, byLevel + byTime);
 }
 /** Arcade vehicle integration for one fixed dt step. */
 export function stepVehicle(s, steerAxis, brake, dt, rain = false) {

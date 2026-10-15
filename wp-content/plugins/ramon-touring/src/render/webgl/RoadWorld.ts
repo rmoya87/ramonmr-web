@@ -131,7 +131,8 @@ export class RoadWorld {
   private laneR: THREE.Mesh | null = null;
   private edgeL: THREE.Mesh | null = null;
   private edgeR: THREE.Mesh | null = null;
-  private wearMesh: THREE.Mesh | null = null;
+  private wearL: THREE.Mesh | null = null;
+  private wearR: THREE.Mesh | null = null;
   private sign: THREE.Mesh | null = null;
   private playerShadow: THREE.Mesh;
   private lastRoadKey = '';
@@ -334,7 +335,8 @@ export class RoadWorld {
       this.laneR,
       this.edgeL,
       this.edgeR,
-      this.wearMesh,
+      this.wearL,
+      this.wearR,
     ]) {
       if (m) {
         this.roadGroup.remove(m);
@@ -369,19 +371,25 @@ export class RoadWorld {
       buildRibbon(centers.map((c) => ({ x: c.x + 5.9, z: c.z })), 0.13, 0.05),
       this.chalkMat,
     );
-    this.wearMesh = new THREE.Mesh(
-      buildRibbon(centers.map((c) => ({ x: c.x - 2.1, z: c.z })), 0.6, 0.025),
+    // Soft wheel wear in outer lanes only (never a painted center stripe).
+    this.wearL = new THREE.Mesh(
+      buildRibbon(centers.map((c) => ({ x: c.x - 3.6, z: c.z })), 0.45, 0.024),
       this.wearMat,
     );
+    this.wearR = new THREE.Mesh(
+      buildRibbon(centers.map((c) => ({ x: c.x + 3.6, z: c.z })), 0.45, 0.024),
+      this.wearMat,
+    );
+    // Three lanes at x≈-4 / 0 / +4 → dashed dividers only at ±2.
     this.laneL = new THREE.Mesh(
-      buildDashes(centers.map((c) => ({ x: c.x - 2.05, z: c.z })), 0.075, 0.045),
+      buildDashes(centers.map((c) => ({ x: c.x - 2, z: c.z })), 0.08, 0.046, 2, 1),
       this.chalkMat,
     );
     this.laneR = new THREE.Mesh(
-      buildDashes(centers.map((c) => ({ x: c.x + 2.05, z: c.z })), 0.075, 0.045),
+      buildDashes(centers.map((c) => ({ x: c.x + 2, z: c.z })), 0.08, 0.046, 2, 1),
       this.chalkMat,
     );
-    this.chalkMesh = new THREE.Mesh(buildDashes(centers, 0.1, 0.05, 2, 1), this.chalkMat);
+    this.chalkMesh = null;
 
     const beach = env === 'beach' || env === 'coast' || Math.floor(s.d / 1600) % BIOMES.length === 0;
     if (beach) {
@@ -408,14 +416,14 @@ export class RoadWorld {
     this.roadGroup.add(
       this.skirt,
       this.roadMesh,
-      this.wearMesh,
+      this.wearL,
+      this.wearR,
       this.vergeL,
       this.vergeR,
       this.edgeL,
       this.edgeR,
       this.laneL,
       this.laneR,
-      this.chalkMesh,
     );
     if (this.water) this.roadGroup.add(this.water);
     if (this.rampMesh) this.roadGroup.add(this.rampMesh);

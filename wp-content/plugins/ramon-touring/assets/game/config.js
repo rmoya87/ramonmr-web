@@ -1,21 +1,24 @@
 /** Centralized tunable constants for RM Touring Lab 2.0 */
-export const VERSION = '3.0.4';
+export const VERSION = '3.0.5';
 export const SCORE_VERSION = 2;
 export const FIXED_DT = 1 / 60;
 export const MAX_FRAME_DT = 0.1;
 export const MAX_PHYSICS_STEPS = 5;
 export const PHYSICS = {
-    baseSpeed: 105,
-    maxSpeed: 280,
-    arcadeTopBase: 195,
-    arcadeTopRamp: 0.85,
-    exploreTop: 160,
-    accelGain: 1.15,
-    accelCap: 48,
+    baseSpeed: 98,
+    maxSpeed: 285,
+    /** Level-1 cruise ceiling; each level adds arcadeTopPerLevel. */
+    arcadeTopBase: 158,
+    arcadeTopPerLevel: 13.5,
+    /** Soft time drip so mid-level still climbs a little. */
+    arcadeTopRamp: 0.22,
+    exploreTop: 150,
+    accelGain: 1.05,
+    accelCap: 42,
     brakeDecel: 55,
-    shoulderPenalty: 30,
-    steerSpeedFactor: 200,
-    steerLerp: 20,
+    shoulderPenalty: 32,
+    steerSpeedFactor: 190,
+    steerLerp: 18,
     yawLerp: 12,
     vxLerp: 14,
     driftVxLerp: 4,
@@ -25,10 +28,10 @@ export const PHYSICS = {
     roadHalfWidth: 6.9,
     branchHalfWidth: 1.6,
     shoulderAbsX: 5.65,
-    hitSpeedMul: 0.55,
-    invulnerability: 2.2,
-    startInvulnerability: 4.2,
-    workshopInvulnerability: 4,
+    hitSpeedMul: 0.52,
+    invulnerability: 1.85,
+    startInvulnerability: 3.6,
+    workshopInvulnerability: 3.5,
     rainGripMul: 0.85,
 };
 export const COLLISION = {
@@ -37,14 +40,14 @@ export const COLLISION = {
 };
 export const TRAFFIC = {
     lanes: [-4, 0, 4],
-    poolArcade: 12,
+    poolArcade: 14,
     poolExplore: 6,
     spawnAheadMin: 85,
     spawnAheadMax: 220,
     recycleBehind: 28,
-    minGap: 44,
-    safeGap: 20,
-    laneChangeCooldown: 2.4,
+    minGap: 40,
+    safeGap: 18,
+    laneChangeCooldown: 2.1,
     overtakeCloseDist: 2.0,
 };
 export const SCORE = {
@@ -57,8 +60,9 @@ export const SCORE = {
     missionHard: 1500,
     cleanStretch: 500,
     discoverZone: 750,
-    distanceMulPerLevel: 0.15,
-    levelSeconds: 30,
+    distanceMulPerLevel: 0.18,
+    /** ~55s/level → level 10 after ~8+ minutes of clean survival. */
+    levelSeconds: 55,
 };
 export const EXIT = {
     firstFork: 430,

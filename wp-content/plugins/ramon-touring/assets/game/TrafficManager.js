@@ -64,13 +64,15 @@ function frontCar(traffic, me) {
 }
 /** Advance NPCs, lane AI, recycle. Returns overtake events. */
 export function stepTraffic(s, dt) {
-    const level = Math.floor(s.time / SCORE.levelSeconds);
-    const densityBoost = s.mode === 'explore' ? 0.6 : 1 + Math.min(0.8, level * 0.05);
+    const level = 1 + Math.floor(s.time / SCORE.levelSeconds);
+    // Late levels pack faster packs and tighter gaps — level 10 should feel brutal.
+    const densityBoost = s.mode === 'explore' ? 0.6 : 1 + Math.min(1.35, (level - 1) * 0.12 + Math.min(0.4, s.time * 0.0015));
     const events = [];
     for (const o of s.traffic) {
         const def = VEHICLE_TYPES[o.type];
         const front = frontCar(s.traffic, o);
-        let desired = def.preferred + Math.min(25, s.time * 0.12) * (s.mode === 'arcade' ? 1 : 0.5);
+        let desired = def.preferred +
+            (s.mode === 'arcade' ? Math.min(55, (level - 1) * 5.5 + s.time * 0.06) : Math.min(18, s.time * 0.08));
         if (front) {
             const gap = front.d - o.d;
             if (gap < def.gap) {
@@ -125,7 +127,7 @@ export function stepTraffic(s, dt) {
 }
 function recycleCar(s, o, level) {
     const maxD = Math.max(...s.traffic.map((x) => x.d), s.d);
-    const gap = Math.max(TRAFFIC.minGap, 58 - level * 3) * (s.mode === 'explore' ? 1.4 : 1);
+    const gap = Math.max(26, TRAFFIC.minGap - (level - 1) * 1.6) * (s.mode === 'explore' ? 1.4 : 1);
     let d = maxD + gap + Math.random() * 20;
     // Never spawn suddenly in front close to the player
     if (d - s.d < TRAFFIC.spawnAheadMin)

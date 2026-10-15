@@ -95,7 +95,8 @@ export class RoadWorld {
         this.laneR = null;
         this.edgeL = null;
         this.edgeR = null;
-        this.wearMesh = null;
+        this.wearL = null;
+        this.wearR = null;
         this.sign = null;
         this.lastRoadKey = '';
         this.scene.fog = new THREE.FogExp2(0xd8e4e8, 0.009);
@@ -271,7 +272,8 @@ export class RoadWorld {
             this.laneR,
             this.edgeL,
             this.edgeR,
-            this.wearMesh,
+            this.wearL,
+            this.wearR,
         ]) {
             if (m) {
                 this.roadGroup.remove(m);
@@ -292,10 +294,13 @@ export class RoadWorld {
         this.skirt.receiveShadow = true;
         this.edgeL = new THREE.Mesh(buildRibbon(centers.map((c) => ({ x: c.x - 5.9, z: c.z })), 0.13, 0.05), this.chalkMat);
         this.edgeR = new THREE.Mesh(buildRibbon(centers.map((c) => ({ x: c.x + 5.9, z: c.z })), 0.13, 0.05), this.chalkMat);
-        this.wearMesh = new THREE.Mesh(buildRibbon(centers.map((c) => ({ x: c.x - 2.1, z: c.z })), 0.6, 0.025), this.wearMat);
-        this.laneL = new THREE.Mesh(buildDashes(centers.map((c) => ({ x: c.x - 2.05, z: c.z })), 0.075, 0.045), this.chalkMat);
-        this.laneR = new THREE.Mesh(buildDashes(centers.map((c) => ({ x: c.x + 2.05, z: c.z })), 0.075, 0.045), this.chalkMat);
-        this.chalkMesh = new THREE.Mesh(buildDashes(centers, 0.1, 0.05, 2, 1), this.chalkMat);
+        // Soft wheel wear in outer lanes only (never a painted center stripe).
+        this.wearL = new THREE.Mesh(buildRibbon(centers.map((c) => ({ x: c.x - 3.6, z: c.z })), 0.45, 0.024), this.wearMat);
+        this.wearR = new THREE.Mesh(buildRibbon(centers.map((c) => ({ x: c.x + 3.6, z: c.z })), 0.45, 0.024), this.wearMat);
+        // Three lanes at x≈-4 / 0 / +4 → dashed dividers only at ±2.
+        this.laneL = new THREE.Mesh(buildDashes(centers.map((c) => ({ x: c.x - 2, z: c.z })), 0.08, 0.046, 2, 1), this.chalkMat);
+        this.laneR = new THREE.Mesh(buildDashes(centers.map((c) => ({ x: c.x + 2, z: c.z })), 0.08, 0.046, 2, 1), this.chalkMat);
+        this.chalkMesh = null;
         const beach = env === 'beach' || env === 'coast' || Math.floor(s.d / 1600) % BIOMES.length === 0;
         if (beach) {
             this.water = new THREE.Mesh(buildRibbon(centers.filter((c) => c.z > 30).map((c) => ({ x: c.x - 40, z: c.z })), 14, -0.05), this.waterMat);
@@ -311,7 +316,7 @@ export class RoadWorld {
             }
         }
         this.rampMesh = rampCenters.length > 2 ? new THREE.Mesh(buildRibbon(rampCenters, 2.2, 0.038), this.asphaltMat) : null;
-        this.roadGroup.add(this.skirt, this.roadMesh, this.wearMesh, this.vergeL, this.vergeR, this.edgeL, this.edgeR, this.laneL, this.laneR, this.chalkMesh);
+        this.roadGroup.add(this.skirt, this.roadMesh, this.wearL, this.wearR, this.vergeL, this.vergeR, this.edgeL, this.edgeR, this.laneL, this.laneR);
         if (this.water)
             this.roadGroup.add(this.water);
         if (this.rampMesh)

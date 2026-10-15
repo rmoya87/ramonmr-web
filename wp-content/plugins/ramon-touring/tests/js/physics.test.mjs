@@ -1,6 +1,6 @@
 import { describe, it } from 'node:test';
 import assert from 'node:assert/strict';
-import { FIXED_DT, PHYSICS } from '../../assets/game/config.js';
+import { FIXED_DT, PHYSICS, SCORE } from '../../assets/game/config.js';
 import { createRun } from '../../assets/game/GameManager.js';
 import { stepVehicle, targetTopSpeed } from '../../assets/game/VehicleController.js';
 import { resolveCollisions } from '../../assets/game/CollisionManager.js';
@@ -37,7 +37,18 @@ describe('VehicleController', () => {
   it('reaches a punchy arcade top speed quickly', () => {
     const s = createRun('arcade');
     for (let i = 0; i < 180; i++) stepVehicle(s, 0, false, FIXED_DT);
-    assert.ok(s.speed >= 170, `expected >= 170 km/h, got ${s.speed}`);
+    assert.ok(s.speed >= 145, `expected >= 145 km/h early, got ${s.speed}`);
+  });
+
+  it('raises the speed ceiling hard by level 10', () => {
+    const early = createRun('arcade');
+    early.time = 10;
+    const late = createRun('arcade');
+    late.time = SCORE.levelSeconds * 9 + 5; // level 10
+    const tEarly = targetTopSpeed(early);
+    const tLate = targetTopSpeed(late);
+    assert.ok(tLate > tEarly + 90, `level 10 top (${tLate}) should crush level 1 (${tEarly})`);
+    assert.ok(tLate >= 270, `level 10 should approach the ceiling, got ${tLate}`);
   });
 });
 
