@@ -40,19 +40,21 @@ function addCabin(g, paint, bodyW, wheelR, bodyH, cabinH, cabinL, cabinZ) {
     const cabinY = wheelR + bodyH * 0.85 + cabinH * 0.45;
     const glass = glassMat();
     const pillar = new THREE.MeshStandardMaterial({ color: paint.color.clone().offsetHSL(0, 0, -0.06), roughness: 0.5 });
-    // Opaque cabin shell (sides + rear bulk) under the roof
+    // Opaque cabin shell under the roof
     const shell = new THREE.Mesh(new THREE.BoxGeometry(bodyW * 0.8, cabinH * 0.55, cabinL * 0.92), paint);
     shell.position.set(0, cabinY - cabinH * 0.12, cabinZ);
     g.add(shell);
-    // Solid roof — must read clearly from behind
-    const roof = new THREE.Mesh(new THREE.BoxGeometry(bodyW * 0.76, 0.12, cabinL * 0.88), paint);
-    roof.position.set(0, cabinY + cabinH * 0.42, cabinZ - 0.02);
+    // Thick opaque roof — readable from the chase camera (not a convertible).
+    const roof = new THREE.Mesh(new THREE.BoxGeometry(bodyW * 0.82, 0.2, cabinL * 0.95), paint);
+    roof.position.set(0, cabinY + cabinH * 0.48, cabinZ - 0.04);
     roof.castShadow = true;
     g.add(roof);
-    // Roof rails
+    const roofLip = new THREE.Mesh(new THREE.BoxGeometry(bodyW * 0.78, 0.08, 0.22), pillar);
+    roofLip.position.set(0, cabinY + cabinH * 0.42, cabinZ - cabinL * 0.42);
+    g.add(roofLip);
     for (const side of [-1, 1]) {
-        const rail = new THREE.Mesh(new THREE.BoxGeometry(0.07, 0.06, cabinL * 0.82), pillar);
-        rail.position.set(side * bodyW * 0.34, cabinY + cabinH * 0.5, cabinZ);
+        const rail = new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.07, cabinL * 0.85), pillar);
+        rail.position.set(side * bodyW * 0.36, cabinY + cabinH * 0.58, cabinZ);
         g.add(rail);
     }
     // A / C pillars

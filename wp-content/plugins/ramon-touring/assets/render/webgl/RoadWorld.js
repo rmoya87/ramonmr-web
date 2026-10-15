@@ -2,7 +2,7 @@ import * as THREE from 'three';
 import { BIOMES, effectiveNight } from '../../game/EnvironmentManager.js';
 import { cameraPose } from '../../game/CameraController.js';
 import { LOOK } from '../../look.js';
-import { curve, depthPresence, inExitClearance, mirrorChaseProjection, ramp, roadYaw } from './path.js';
+import { curve, depthPresence, inExitClearance, mirrorChaseProjection, ramp } from './path.js';
 import { PropField } from './Props.js';
 import { createVehicle, setVehicleLights } from './Vehicles.js';
 function hex(c) {
@@ -97,7 +97,7 @@ export class RoadWorld {
         this.edgeR = null;
         this.wearL = null;
         this.wearR = null;
-        this.sign = null;
+        this.signs = [];
         this.lastRoadKey = '';
         this.scene.fog = new THREE.FogExp2(0xd8e4e8, 0.009);
         this.hemi = new THREE.HemisphereLight(0xc8e0f0, 0x6a7a58, 0.95);
@@ -292,14 +292,14 @@ export class RoadWorld {
         this.vergeR = new THREE.Mesh(buildRibbon(centers.map((c) => ({ x: c.x + 6.55, z: c.z })), 0.75, 0.035), this.groundMat);
         this.skirt = new THREE.Mesh(buildRibbon(centers, 75, -0.1), this.groundMat);
         this.skirt.receiveShadow = true;
-        this.edgeL = new THREE.Mesh(buildRibbon(centers.map((c) => ({ x: c.x - 5.9, z: c.z })), 0.13, 0.05), this.chalkMat);
-        this.edgeR = new THREE.Mesh(buildRibbon(centers.map((c) => ({ x: c.x + 5.9, z: c.z })), 0.13, 0.05), this.chalkMat);
-        // Soft wheel wear in outer lanes only (never a painted center stripe).
-        this.wearL = new THREE.Mesh(buildRibbon(centers.map((c) => ({ x: c.x - 3.6, z: c.z })), 0.45, 0.024), this.wearMat);
-        this.wearR = new THREE.Mesh(buildRibbon(centers.map((c) => ({ x: c.x + 3.6, z: c.z })), 0.45, 0.024), this.wearMat);
-        // Three lanes at x≈-4 / 0 / +4 → dashed dividers only at ±2.
-        this.laneL = new THREE.Mesh(buildDashes(centers.map((c) => ({ x: c.x - 2, z: c.z })), 0.08, 0.046, 2, 1), this.chalkMat);
-        this.laneR = new THREE.Mesh(buildDashes(centers.map((c) => ({ x: c.x + 2, z: c.z })), 0.08, 0.046, 2, 1), this.chalkMat);
+        // Thin edge lines (not fat chalk walls).
+        this.edgeL = new THREE.Mesh(buildRibbon(centers.map((c) => ({ x: c.x - 5.95, z: c.z })), 0.045, 0.05), this.chalkMat);
+        this.edgeR = new THREE.Mesh(buildRibbon(centers.map((c) => ({ x: c.x + 5.95, z: c.z })), 0.045, 0.05), this.chalkMat);
+        this.wearL = new THREE.Mesh(buildRibbon(centers.map((c) => ({ x: c.x - 3.7, z: c.z })), 0.28, 0.024), this.wearMat);
+        this.wearR = new THREE.Mesh(buildRibbon(centers.map((c) => ({ x: c.x + 3.7, z: c.z })), 0.28, 0.024), this.wearMat);
+        // Three lanes (−4 / 0 / +4): two dashed separators at ±2.
+        this.laneL = new THREE.Mesh(buildDashes(centers.map((c) => ({ x: c.x - 2, z: c.z })), 0.1, 0.048, 2, 1), this.chalkMat);
+        this.laneR = new THREE.Mesh(buildDashes(centers.map((c) => ({ x: c.x + 2, z: c.z })), 0.1, 0.048, 2, 1), this.chalkMat);
         this.chalkMesh = null;
         const beach = env === 'beach' || env === 'coast' || Math.floor(s.d / 1600) % BIOMES.length === 0;
         if (beach) {
@@ -323,45 +323,73 @@ export class RoadWorld {
             this.roadGroup.add(this.rampMesh);
         void inExitClearance;
     }
-    syncSign(s, labels) {
-        const signZ = s.fork - s.d - 100;
-        if (signZ < 8 || signZ > 260) {
-            if (this.sign)
-                this.sign.visible = false;
-            return;
-        }
-        if (!this.sign) {
-            const canvas = document.createElement('canvas');
-            canvas.width = 512;
-            canvas.height = 160;
-            const tex = new THREE.CanvasTexture(canvas);
-            const mat = new THREE.MeshBasicMaterial({ map: tex, transparent: true });
-            this.sign = new THREE.Mesh(new THREE.PlaneGeometry(8.2, 2.5), mat);
-            this.sign.userData.canvas = canvas;
-            this.sign.userData.tex = tex;
-            this.scene.add(this.sign);
-        }
-        this.sign.visible = true;
-        const canvas = this.sign.userData.canvas;
-        const tex = this.sign.userData.tex;
+    ensureSign(i) {
+        let g = this.signs[i];
+        if (g)
+            return g;
+        g = new THREE.Group();
+        const postMat = new THREE.MeshStandardMaterial({ color: hex(LOOK.sign.post), roughness: 0.7 });
+        const post = new THREE.Mesh(new THREE.CylinderGeometry(0.12, 0.14, 5.4, 8), postMat);
+        post.position.y = 2.7;
+        const canvas = document.createElement('canvas');
+        canvas.width = 512;
+        canvas.height = 180;
+        const tex = new THREE.CanvasTexture(canvas);
+        tex.colorSpace = THREE.SRGBColorSpace;
+        const board = new THREE.Mesh(new THREE.PlaneGeometry(9.2, 3.1), new THREE.MeshBasicMaterial({ map: tex, transparent: true, side: THREE.DoubleSide, depthWrite: false }));
+        board.position.set(-2.6, 5.4, 0);
+        g.add(post, board);
+        g.userData.canvas = canvas;
+        g.userData.tex = tex;
+        g.userData.board = board;
+        this.signs[i] = g;
+        this.scene.add(g);
+        return g;
+    }
+    paintSign(g, title, meters) {
+        const canvas = g.userData.canvas;
+        const tex = g.userData.tex;
         const tc = canvas.getContext('2d');
+        tc.clearRect(0, 0, 512, 180);
         tc.fillStyle = LOOK.sign.face;
-        tc.fillRect(0, 0, 512, 160);
+        tc.fillRect(0, 0, 512, 180);
         tc.strokeStyle = LOOK.sign.ink;
-        tc.lineWidth = 6;
-        tc.strokeRect(8, 8, 496, 144);
+        tc.lineWidth = 8;
+        tc.strokeRect(10, 10, 492, 160);
         tc.fillStyle = LOOK.sign.ink;
         tc.textAlign = 'center';
         tc.textBaseline = 'middle';
-        const name = (labels[s.exit] || '').trim();
-        tc.font = '700 36px sans-serif';
-        tc.fillText(name, 256, 58);
-        tc.font = '600 28px sans-serif';
-        tc.fillText(`↗  ${Math.max(0, Math.round(s.fork - s.d))} m`, 256, 110);
+        tc.font = '800 40px system-ui,sans-serif';
+        tc.fillText((title || 'EXIT').slice(0, 22), 256, 68);
+        tc.font = '700 32px system-ui,sans-serif';
+        tc.fillText(`↗  ${Math.max(0, meters)} m`, 256, 122);
         tex.needsUpdate = true;
+    }
+    /** Exit boards at ~280 m and ~110 m ahead of the fork (right shoulder). */
+    syncSign(s, labels) {
+        const name = (labels[s.exit] || '').trim();
+        const approach = Math.round(s.fork - s.d);
+        const slots = [
+            { dist: 280, i: 0 },
+            { dist: 110, i: 1 },
+        ];
         const base = curve(s.d);
-        this.sign.position.set(curve(s.d + signZ) - base + 4.2, 5.2, signZ);
-        this.sign.lookAt(this.camera.position.x, 5.2, this.camera.position.z);
+        for (const slot of slots) {
+            const signZ = s.fork - s.d - slot.dist;
+            const g = this.ensureSign(slot.i);
+            // Keep visible from far until the player passes them.
+            if (signZ < -6 || signZ > 340 || s.branch) {
+                g.visible = false;
+                continue;
+            }
+            g.visible = true;
+            this.paintSign(g, name, approach);
+            const x = curve(s.d + signZ) - base + 7.4;
+            g.position.set(x, 0, signZ);
+            // Billboard toward camera (works with mirrored chase projection).
+            g.quaternion.copy(this.camera.quaternion);
+            g.rotateY(Math.PI);
+        }
     }
     update(s, opts, aspect) {
         this.atmosphere(s, opts.environment, opts.weather);
@@ -389,9 +417,10 @@ export class RoadWorld {
             this.player.userData.color = opts.color;
         }
         this.player.position.set(px, 0, 0.02);
-        const roadBank = roadYaw(s.d, 0) * 0.35;
-        this.player.rotation.y = -(s.yaw + roadBank);
-        this.player.rotation.z = THREE.MathUtils.clamp(-s.vx * 0.01, -0.1, 0.1);
+        // Arcade chase: cars face down the road (+Z). Only a tiny steer yaw — never ribbon yaw
+        // (that made every car look sideways relative to the lane paint).
+        this.player.rotation.y = THREE.MathUtils.clamp(-s.yaw * 0.35, -0.12, 0.12);
+        this.player.rotation.z = THREE.MathUtils.clamp(-s.vx * 0.008, -0.08, 0.08);
         setVehicleLights(this.player, opts.lights, opts.brake);
         this.playerShadow.position.set(px, 0.03, 0.02);
         this.playerShadow.scale.set(1 + Math.abs(s.vx) * 0.02, 1, 1.1);
@@ -417,11 +446,11 @@ export class RoadWorld {
             }
             const x = curve(s.d + z) - base + t.x;
             mesh.position.set(x, 0, z);
-            // Follow the ribbon; lateral lane-change adds only a small yaw.
-            const laneYaw = THREE.MathUtils.clamp((t.targetX - t.x) * 0.04, -0.12, 0.12);
-            mesh.rotation.y = -(roadYaw(s.d, z) + laneYaw);
+            const laneYaw = THREE.MathUtils.clamp((t.targetX - t.x) * 0.03, -0.08, 0.08);
+            mesh.rotation.y = -laneYaw;
+            mesh.rotation.z = 0;
             const sc = 0.35 + 0.65 * presence;
-            mesh.scale.set(sc, sc * (0.6 + 0.4 * presence), sc);
+            mesh.scale.setScalar(sc);
             mesh.visible = true;
             drawn++;
         }

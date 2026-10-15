@@ -2,7 +2,7 @@
 Contributors: rmoya87
 Requires at least: 6.5
 Requires PHP: 8.1
-Stable tag: 3.0.5
+Stable tag: 3.0.6
 License: GPLv2 or later
 
 Optional RM Touring Lab driving mode for ramonmr.com. The normal WordPress site remains the default.
@@ -21,6 +21,10 @@ TypeScript in src/ typechecks with tsc; the browser entry is an esbuild ESM bund
 
 == Rollback ==
 Deactivate the plugin, purge cache, restore previous plugin files from deployment backup; preserve the score table. Existing content and other plugins remain unchanged.
+
+== 3.0.6 ==
+* Cars face forward (no sideways ribbon yaw); thinner edge lines; two clear dashed lane splits.
+* Exit signs with posts at ~280 m and ~110 m, billboarded to the camera.
 
 == 3.0.5 ==
 * Three-lane road: dashed dividers at ±2 only (no center stripe).

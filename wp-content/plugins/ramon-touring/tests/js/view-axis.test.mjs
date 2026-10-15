@@ -1,7 +1,7 @@
 import { describe, it } from 'node:test';
 import assert from 'node:assert/strict';
 import * as THREE from 'three';
-import { depthPresence, mirrorChaseProjection, roadYaw } from '../../assets/render/webgl/path.js';
+import { depthPresence, mirrorChaseProjection } from '../../assets/render/webgl/path.js';
 
 describe('chase camera view axis', () => {
   it('maps gameplay +X to screen-right after projection mirror', () => {
@@ -35,9 +35,4 @@ describe('chase camera view axis', () => {
     assert.ok(depthPresence(-12, far) < 0.05);
   });
 
-  it('keeps road yaw shallow so cars are not sideways', () => {
-    for (let d = 0; d < 2000; d += 47) {
-      assert.ok(Math.abs(roadYaw(d, 20)) <= 0.32);
-    }
-  });
 });
