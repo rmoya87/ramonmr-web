@@ -25,7 +25,7 @@
 <!-- /wp:paragraph -->
 
 <!-- wp:paragraph -->
-<p><a href="/servicios/diseno-de-producto/">Diseño de producto</a><br><a href="/servicios/marketing-digital/">Marketing digital</a><br><a href="/servicios/necesidades-de-negocio/">Necesidades de negocio</a></p>
+<p><a href="/servicios/diseno-de-producto/">Diseño de producto</a><br><a href="/servicios/marketing-digital/">Marketing digital</a><br><a href="/servicios/necesidades-de-negocio/">Soluciones digitales</a></p>
 <!-- /wp:paragraph --></div>
 <!-- /wp:column -->
 
