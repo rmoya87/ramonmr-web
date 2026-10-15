@@ -78,23 +78,22 @@ const text = {
   brake: tr('↓ Freno', '↓ Brake'),
   auto: tr('Aceleración automática', 'Automatic acceleration'),
   read: tr('Leer sin conducir', 'Read without driving'),
-  arcade: tr('Conducir — Arcade', 'Drive — Arcade'),
-  explore: tr('Explorar mi web', 'Explore my site'),
   open: tr('Abrir capó', 'Open hood'),
   close: tr('Cerrar capó', 'Close hood'),
 };
+
+const menuIcon = `<span class="menu-burger" aria-hidden="true"><i></i><i></i><i></i></span>`;
 
 root.innerHTML = `
 <div class="racer" data-v="${VERSION}">
   <section class="start-screen" role="dialog" aria-modal="true" aria-label="${tr('Instrucciones del juego', 'Game instructions')}">
     <div class="instructions-card start-card">
-      <header><small>RM / TOURING LAB</small><h2>${tr('Cómo conducir', 'How to drive')}</h2></header>
+      <header><h2>${tr('Cómo conducir', 'How to drive')}</h2></header>
       <p>${tr('← → o A / D: girar. ↓ o S: frenar. En móvil, usa las flechas y el freno. El coche acelera al soltar el freno.', '← → or A / D: steer. ↓ or S: brake. On mobile, use the arrows and brake. The car accelerates when you release the brake.')}</p>
       <p>${tr('Ⅱ o P: pausa. Toma el carril derecho cerca de la salida para entrar al taller y leer las secciones de la web.', 'Ⅱ or P: pause. Take the right lane near the exit to enter the workshop and read the site sections.')}</p>
-      <p>${tr('Adelanta sin chocar para sumar puntos. Tres golpes terminan la partida en Arcade.', 'Pass traffic without crashing to score. Three hits end an Arcade run.')}</p>
+      <p>${tr('Adelanta sin chocar para sumar puntos. Tres golpes terminan la partida.', 'Pass traffic without crashing to score. Three hits end the run.')}</p>
       <div class="start-actions start-actions-play">
         <button class="start-play" data-action="arcade" autofocus>▶ ${tr('Jugar', 'Play')}</button>
-        <button data-action="explore">${text.explore}</button>
         <button data-action="read">${text.read}</button>
       </div>
     </div>
@@ -102,18 +101,16 @@ root.innerHTML = `
   <div class="hud-icons">
     <button data-action="help" aria-label="${tr('Instrucciones', 'Instructions')}">?</button>
     <button data-action="pause-icon" aria-label="${tr('Pausa', 'Pause')}">Ⅱ</button>
-    <button class="desktop-menu-toggle" data-action="game-menu" aria-expanded="false" aria-haspopup="dialog">${tr('Menú', 'Menu')}</button>
+    <button class="desktop-menu-toggle" data-action="game-menu" aria-expanded="false" aria-haspopup="dialog" aria-label="${tr('Menú', 'Menu')}">${menuIcon}</button>
   </div>
   <section class="road" hidden>
     <div class="race-screen" tabindex="0" role="group" aria-label="${tr('Conducción', 'Driving')}">
       <canvas aria-hidden="true"></canvas>
       <div class="top-hud">
         <div class="hud-stack">
-          <small>${tr('NIVEL', 'LEVEL')} · <span data-hud="biome"></span></small>
           <b><span data-hud="level">1</span> · <span data-hud="distance">0.00 km</span></b>
         </div>
         <div class="hud-stack">
-          <small>${tr('PUNTOS', 'SCORE')}</small>
           <b data-hud="score">0</b>
         </div>
         <div class="level-box"><span data-hud="lives"></span></div>
@@ -123,23 +120,30 @@ root.innerHTML = `
       <div class="mission-bar" data-hud="mission-wrap" hidden><small>${tr('MISIÓN', 'MISSION')}</small><span data-hud="mission"></span></div>
       <div class="route-cue" aria-hidden="true"><b>↗</b><span data-route-label></span></div>
       <div class="game-over" hidden>
-        <h2>${tr('Fin de partida', 'Run over')}</h2>
-        <p data-final-score></p>
-        <p data-final-stats></p>
-        <section class="leaderboard">
-          <h2>${tr('RÉCORDS · TOP 10', 'HIGH SCORES · TOP 10')}</h2>
-          <p>${tr('Alias voluntario. Clasificación Arcade v2.', 'Voluntary alias. Arcade v2 leaderboard.')}</p>
-          <ol data-scores></ol>
-          <p data-board-status role="status"></p>
-          <button data-action="refresh-scores">${tr('Actualizar', 'Refresh')}</button>
-        </section>
-        <form class="score-form">
-          <label>${tr('Alias (3-12)', 'Alias (3-12)')} <input name="alias" minlength="3" maxlength="12" pattern="[A-Za-z0-9][A-Za-z0-9 _-]{1,10}[A-Za-z0-9]" required autocomplete="off"></label>
-          <button type="submit">${tr('Guardar récord', 'Save score')}</button>
-          <p data-score-status role="status"></p>
-        </form>
-        <button data-action="reset">${tr('Otra partida', 'Play again')}</button>
-        <button data-action="read">${tr('Ver secciones', 'Browse sections')}</button>
+        <div class="game-over-card">
+          <header class="game-over-head">
+            <h2>${tr('Fin de partida', 'Run over')}</h2>
+            <p class="final-score" data-final-score></p>
+            <p class="final-stats" data-final-stats></p>
+          </header>
+          <section class="leaderboard">
+            <h3>${tr('Récords · Top 10', 'High scores · Top 10')}</h3>
+            <ol data-scores></ol>
+            <p data-board-status role="status"></p>
+          </section>
+          <form class="score-form">
+            <label class="score-row">
+              <span class="sr-only">${tr('Alias (3-12)', 'Alias (3-12)')}</span>
+              <input name="alias" minlength="3" maxlength="12" pattern="[A-Za-z0-9][A-Za-z0-9 _-]{1,10}[A-Za-z0-9]" required autocomplete="off" placeholder="${tr('Alias (3-12)', 'Alias (3-12)')}">
+              <button type="submit">${tr('Guardar récord', 'Save score')}</button>
+            </label>
+            <p data-score-status role="status"></p>
+          </form>
+          <div class="game-over-actions">
+            <button data-action="reset">${tr('Otra partida', 'Play again')}</button>
+            <a class="web-return" href="${esc(cfg.home)}">${tr('Volver a versión web', 'Back to web version')} ↗</a>
+          </div>
+        </div>
       </div>
     </div>
     <div class="driving-controls">
@@ -154,18 +158,29 @@ root.innerHTML = `
       <button data-action="restore">${tr('Restablecer vista', 'Reset view')}</button>
       <button data-action="resume">${text.back}</button>
     </div>
-    <div class="workshop-tools" hidden>
-      <label>${tr('Pintura', 'Paint')} <select data-setting="color">
-        <option value="#b12f3c">${tr('Rojo', 'Red')}</option>
-        <option value="#254d6d">${tr('Azul', 'Blue')}</option>
-        <option value="#d1c9b6">${tr('Marfil', 'Ivory')}</option>
-        <option value="#3a454a">${tr('Grafito', 'Graphite')}</option>
-        <option value="#c9a24a">${tr('Oro', 'Gold')}</option>
-        <option value="#2a7a6e">${tr('Verde', 'Teal')}</option>
-      </select></label>
-      <button data-action="hood" aria-pressed="false">${text.open}</button>
-      <label>${tr('Acercamiento', 'Zoom')} <input data-setting="zoom" type="range" min="6" max="11" step=".25" value="8"></label>
-    </div>
+    <aside class="scene-car-tools" aria-label="${tr('Opciones del coche', 'Car options')}">
+      <div class="workshop-tools">
+        <label>${tr('Vista', 'View')}
+          <select data-setting="car-view">
+            <option value="rear">${tr('Trasera', 'Rear')}</option>
+            <option value="side">${tr('Lateral', 'Side')}</option>
+            <option value="front">${tr('Frontal', 'Front')}</option>
+            <option value="hood">${tr('Capó', 'Hood')}</option>
+          </select>
+        </label>
+        <label>${tr('Pintura', 'Paint')} <select data-setting="color">
+          <option value="#b12f3c">${tr('Rojo', 'Red')}</option>
+          <option value="#254d6d">${tr('Azul', 'Blue')}</option>
+          <option value="#d1c9b6">${tr('Marfil', 'Ivory')}</option>
+          <option value="#3a454a">${tr('Grafito', 'Graphite')}</option>
+          <option value="#c9a24a">${tr('Oro', 'Gold')}</option>
+          <option value="#2a7a6e">${tr('Verde', 'Teal')}</option>
+        </select></label>
+        <button data-action="hood" aria-pressed="false">${text.open}</button>
+        <button data-action="lights" aria-pressed="false">${tr('Luces', 'Lights')}</button>
+        <label>${tr('Acercamiento', 'Zoom')} <input data-setting="zoom" type="range" min="6" max="11" step=".25" value="8"></label>
+      </div>
+    </aside>
     <div class="garage-scene">
       <div class="hanging-panel">
         <button class="poster-toggle" data-action="expand-reader">${tr('Ampliar póster', 'Expand poster')}</button>
@@ -206,12 +221,10 @@ const stage = $('.orbit-stage');
 const menu = document.createElement('dialog');
 menu.className = 'options-modal';
 menu.setAttribute('aria-label', tr('Menú del juego', 'Game menu'));
-menu.innerHTML = `<header><div><small>RM / TOURING 2.0</small><h2>${tr('Menú', 'Menu')}</h2></div><button data-action="close-menu" aria-label="${tr('Cerrar', 'Close')}">✕</button></header>
-<nav class="menu-tabs">${['drive', 'car', 'sections', 'scores', 'settings'].map((id, i) => `<button data-tab="${id}" aria-pressed="${i === 0}">${[tr('Conducir', 'Drive'), tr('Coche', 'Car'), tr('Secciones', 'Sections'), tr('Récords', 'Scores'), tr('Ajustes', 'Settings')][i]}</button>`).join('')}</nav>
+menu.innerHTML = `<header><div><h2>${tr('Menú', 'Menu')}</h2></div><button data-action="close-menu" aria-label="${tr('Cerrar', 'Close')}">✕</button></header>
+<nav class="menu-tabs">${['drive', 'car', 'sections', 'scores', 'settings'].map((id, i) => `<button data-tab="${id}" aria-pressed="${i === 0}">${[tr('Ambiente', 'World'), tr('Coche', 'Car'), tr('Secciones', 'Sections'), tr('Récords', 'Scores'), tr('Ajustes', 'Settings')][i]}</button>`).join('')}</nav>
 <div class="menu-body">
-  <section data-panel="drive"><h3>${tr('Conducir', 'Drive')}</h3>
-    <button data-action="arcade">${text.arcade}</button>
-    <button data-action="explore">${text.explore}</button>
+  <section data-panel="drive"><h3>${tr('Ambiente', 'World')}</h3>
     <label class="environment-picker">${tr('Ambiente', 'Environment')}
       <select data-setting="environment">
         <option value="auto">${tr('Automático', 'Automatic')}</option>
@@ -235,7 +248,8 @@ menu.innerHTML = `<header><div><small>RM / TOURING 2.0</small><h2>${tr('Menú', 
     </label>
   </section>
   <section data-panel="car" hidden><h3>${tr('Coche', 'Car')}</h3>
-    <button data-action="inspect-car">${tr('Ver en el taller', 'Inspect in workshop')}</button>
+    <p>${tr('Pintura, capó y vista están en el taller, a la izquierda del coche.', 'Paint, hood and view are in the workshop, left of the car.')}</p>
+    <button data-action="inspect-car">${tr('Abrir taller', 'Open workshop')}</button>
   </section>
   <section data-panel="sections" hidden><h3>${tr('Secciones', 'Sections')}</h3>
     <nav class="garage-nav" aria-label="${tr('Destinos', 'Destinations')}"></nav>
@@ -276,9 +290,10 @@ pauseDialog.innerHTML = `<header><h2>${tr('Pausa', 'Paused')}</h2><button data-a
 <div class="pause-actions"><button data-action="play-icon">▶</button><button data-action="reset">↻</button></div>`;
 $('.racer').append(pauseDialog);
 
-menu.querySelector('[data-panel=car]')!.append($('.workshop-tools'));
 const navHtml = sections.map((x, i) => `<button data-section="${i}">${esc(x.name)}</button>`).join('');
 menu.querySelector('.garage-nav')!.innerHTML = navHtml;
+const colorSelect = $('[data-setting=color]') as HTMLSelectElement;
+if ([...colorSelect.options].some((o) => o.value === color)) colorSelect.value = color;
 
 const pill = document.getElementById('rm-mode-pill');
 if (pill) pill.hidden = true;
@@ -474,7 +489,6 @@ root.addEventListener('click', (e) => {
   if (b.dataset.page !== undefined) { loadPage(+b.dataset.page); closeMenu(false); expandReader(true); return; }
   switch (b.dataset.action) {
     case 'arcade': closeMenu(false); startDrive('arcade'); break;
-    case 'explore': closeMenu(false); startDrive('explore'); break;
     case 'resume':
       closeMenu(false);
       if (mode === 'garage') {
@@ -508,11 +522,20 @@ root.addEventListener('click', (e) => {
       hood = !hood; angle = 0.6;
       b.textContent = hood ? text.close : text.open;
       b.setAttribute('aria-pressed', String(hood));
+      ($('[data-setting=car-view]') as HTMLSelectElement).value = hood ? 'hood' : 'front';
+      break;
+    case 'lights':
+      lights = !lights;
+      b.setAttribute('aria-pressed', String(lights));
+      drawKey = '';
       break;
     case 'restore':
-      angle = Math.PI + 0.45; zoom = 8; hood = false;
+      angle = Math.PI + 0.45; zoom = 8; hood = false; lights = false;
       ($('[data-setting=zoom]') as HTMLInputElement).value = '8';
+      ($('[data-setting=car-view]') as HTMLSelectElement).value = 'rear';
       $('[data-action=hood]').textContent = text.open;
+      $('[data-action=hood]').setAttribute('aria-pressed', 'false');
+      $('[data-action=lights]').setAttribute('aria-pressed', 'false');
       break;
     default: break;
   }
@@ -523,7 +546,24 @@ root.addEventListener('change', (e) => {
   if (t.id === 'rm-touring-select') loadPage(+t.value);
   if (t.dataset.setting === 'environment') { environment = t.value as EnvironmentId; lights = environment === 'night'; drawKey = ''; }
   if (t.dataset.setting === 'weather') weather = t.value as WeatherId;
-  if (t.dataset.setting === 'color') { color = t.value; progress.color = color; saveProgress(progress); }
+  if (t.dataset.setting === 'color') { color = t.value; progress.color = color; saveProgress(progress); drawKey = ''; }
+  if (t.dataset.setting === 'car-view') {
+    const presets: Record<string, { angle: number; zoom: number; hood: boolean }> = {
+      rear: { angle: Math.PI + 0.45, zoom: 8, hood: false },
+      side: { angle: Math.PI / 2 + 0.15, zoom: 8.5, hood: false },
+      front: { angle: 0.35, zoom: 8, hood: false },
+      hood: { angle: 0.6, zoom: 7, hood: true },
+    };
+    const p = presets[t.value] || presets.rear;
+    angle = p.angle;
+    zoom = p.zoom;
+    hood = p.hood;
+    ($('[data-setting=zoom]') as HTMLInputElement).value = String(zoom);
+    const hoodBtn = $('[data-action=hood]');
+    hoodBtn.textContent = hood ? text.close : text.open;
+    hoodBtn.setAttribute('aria-pressed', String(hood));
+    drawKey = '';
+  }
   if (t.dataset.setting === 'quality') { perf.setProfile(t.value as QualityProfile); progress.quality = t.value; saveProgress(progress); }
   if (t.dataset.setting === 'muted') { audio.muted = (t as HTMLInputElement).checked; progress.muted = audio.muted; saveProgress(progress); }
   if (t.dataset.setting === 'reduceMotion') { progress.reduceMotion = (t as HTMLInputElement).checked; saveProgress(progress); }
@@ -696,7 +736,6 @@ const loop = new GameLoop({
         $('[data-hud=score]').textContent = String(hud.score);
         $('[data-hud=level]').textContent = String(hud.level);
         $('[data-hud=lives]').textContent = hud.livesText;
-        $('[data-hud=biome]').textContent = hud.biome;
         $('[data-route-label]').textContent = hud.branch
           ? tr('AL TALLER', 'TO WORKSHOP')
           : `${hud.exitName} · ${hud.approach} m`;
@@ -730,4 +769,4 @@ window.addEventListener('pagehide', () => {
   }
 });
 
-console.info(`RM Touring Lab ${VERSION}`);
+console.info(`Touring ${VERSION}`);

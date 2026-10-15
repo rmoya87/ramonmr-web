@@ -207,8 +207,8 @@ export function drawRoad(c, s, w, h, opts) {
             box(objects, x - 3.1, 5.35, signZ, 8.6, dist === 100 ? 2.8 : 2.4, 0.15, '#235548');
         }
     }
-    // Always draw the driven car (chase camera).
-    car(objects, px, 0, opts.color, {
+    // Player car last so it stays visible over road props.
+    car(objects, px, 0.02, opts.color, {
         angle: s.yaw || 0,
         roll: -s.vx * 0.007 + (curve(s.d + 12) - 2 * curve(s.d) + curve(s.d - 12)) * 0.008,
         spin: s.d / 0.44,
