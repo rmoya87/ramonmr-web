@@ -32,18 +32,22 @@ function buildRibbon(centers, halfW, y) {
     geo.computeVertexNormals();
     return geo;
 }
-function buildDashes(centers, halfW, y, on = 2, off = 1) {
+/**
+ * Lane dashes keyed to world distance so they scroll under the car.
+ * Using only the local segment index made the pattern stick to the camera.
+ */
+function buildDashes(centers, halfW, y, worldD, dashOn = 3.5, dashOff = 4.5) {
     const positions = [];
     const indices = [];
-    let seg = 0;
     let vertBase = 0;
+    const period = dashOn + dashOff;
     for (let i = 0; i < centers.length - 1; i++) {
-        const phase = seg % (on + off);
-        seg++;
-        if (phase >= on)
-            continue;
         const c = centers[i];
         const next = centers[i + 1];
+        const worldZ = worldD + (c.z + next.z) * 0.5;
+        const phase = ((worldZ % period) + period) % period;
+        if (phase >= dashOn)
+            continue;
         const dx = next.x - c.x;
         const dz = next.z - c.z || 1;
         const len = Math.hypot(dx, dz) || 1;
@@ -256,7 +260,8 @@ export class RoadWorld {
         });
     }
     rebuildRoad(s, drawDistance, env) {
-        const key = `${Math.floor(s.d / 2)}:${Math.floor(s.fork)}:${env}:${s.branch ? 1 : 0}`;
+        // Dash period is ~8 m; rebuild every ~0.35 m so the pattern scrolls under the car.
+        const key = `${Math.floor(s.d / 0.35)}:${Math.floor(s.fork)}:${env}:${s.branch ? 1 : 0}`;
         if (key === this.lastRoadKey)
             return;
         this.lastRoadKey = key;
@@ -297,9 +302,9 @@ export class RoadWorld {
         this.edgeR = new THREE.Mesh(buildRibbon(centers.map((c) => ({ x: c.x + 5.95, z: c.z })), 0.045, 0.05), this.chalkMat);
         this.wearL = new THREE.Mesh(buildRibbon(centers.map((c) => ({ x: c.x - 3.7, z: c.z })), 0.28, 0.024), this.wearMat);
         this.wearR = new THREE.Mesh(buildRibbon(centers.map((c) => ({ x: c.x + 3.7, z: c.z })), 0.28, 0.024), this.wearMat);
-        // Three lanes (−4 / 0 / +4): two dashed separators at ±2.
-        this.laneL = new THREE.Mesh(buildDashes(centers.map((c) => ({ x: c.x - 2, z: c.z })), 0.1, 0.048, 2, 1), this.chalkMat);
-        this.laneR = new THREE.Mesh(buildDashes(centers.map((c) => ({ x: c.x + 2, z: c.z })), 0.1, 0.048, 2, 1), this.chalkMat);
+        // Three lanes (−4 / 0 / +4): two dashed separators at ±2 (scroll with s.d).
+        this.laneL = new THREE.Mesh(buildDashes(centers.map((c) => ({ x: c.x - 2, z: c.z })), 0.1, 0.048, s.d), this.chalkMat);
+        this.laneR = new THREE.Mesh(buildDashes(centers.map((c) => ({ x: c.x + 2, z: c.z })), 0.1, 0.048, s.d), this.chalkMat);
         this.chalkMesh = null;
         const beach = env === 'beach' || env === 'coast' || Math.floor(s.d / 1600) % BIOMES.length === 0;
         if (beach) {
@@ -417,11 +422,13 @@ export class RoadWorld {
             this.player.userData.color = opts.color;
         }
         this.player.position.set(px, 0, 0.02);
-        // Arcade chase: cars face down the road (+Z). Only a tiny steer yaw — never ribbon yaw
-        // (that made every car look sideways relative to the lane paint).
-        this.player.rotation.y = THREE.MathUtils.clamp(-s.yaw * 0.35, -0.12, 0.12);
-        this.player.rotation.z = THREE.MathUtils.clamp(-s.vx * 0.008, -0.08, 0.08);
+        // Locked to chase +Z; no yaw (yaw made the body read “de lado”).
+        this.player.rotation.set(0, 0, THREE.MathUtils.clamp(-s.vx * 0.004, -0.04, 0.04));
         setVehicleLights(this.player, opts.lights, opts.brake);
+        // Arcade hit flash while invulnerable (~7 Hz).
+        const blinkOn = s.inv <= 0 || Math.floor(s.inv * 14) % 2 === 0;
+        this.player.visible = blinkOn;
+        this.playerShadow.visible = blinkOn;
         this.playerShadow.position.set(px, 0.03, 0.02);
         this.playerShadow.scale.set(1 + Math.abs(s.vx) * 0.02, 1, 1.1);
         const seen = new Set();
@@ -446,9 +453,7 @@ export class RoadWorld {
             }
             const x = curve(s.d + z) - base + t.x;
             mesh.position.set(x, 0, z);
-            const laneYaw = THREE.MathUtils.clamp((t.targetX - t.x) * 0.03, -0.08, 0.08);
-            mesh.rotation.y = -laneYaw;
-            mesh.rotation.z = 0;
+            mesh.rotation.set(0, 0, 0);
             const sc = 0.35 + 0.65 * presence;
             mesh.scale.setScalar(sc);
             mesh.visible = true;

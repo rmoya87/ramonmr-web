@@ -1,5 +1,5 @@
 /** Centralized tunable constants for RM Touring Lab 2.0 */
-export const VERSION = '3.0.6';
+export const VERSION = '3.0.7';
 export const SCORE_VERSION = 2;
 
 export const FIXED_DT = 1 / 60;
@@ -31,7 +31,7 @@ export const PHYSICS = {
   branchHalfWidth: 1.6,
   shoulderAbsX: 5.65,
   hitSpeedMul: 0.52,
-  invulnerability: 1.85,
+  invulnerability: 2.4,
   startInvulnerability: 3.6,
   workshopInvulnerability: 3.5,
   rainGripMul: 0.85,

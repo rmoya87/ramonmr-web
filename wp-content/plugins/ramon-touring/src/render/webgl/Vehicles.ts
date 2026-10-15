@@ -3,178 +3,102 @@ import * as THREE from 'three';
 export type CarVariant = 'sport' | 'sedan' | 'van' | 'truck' | 'slow';
 
 const glassMat = () =>
-  new THREE.MeshPhysicalMaterial({
-    color: 0x4a7a90,
-    metalness: 0.05,
-    roughness: 0.12,
-    transmission: 0.45,
-    thickness: 0.3,
+  new THREE.MeshStandardMaterial({
+    color: 0x2a5060,
+    metalness: 0.15,
+    roughness: 0.2,
     transparent: true,
-    opacity: 0.78,
+    opacity: 0.55,
+    depthWrite: true,
   });
 
-/** Arcade paint: low metalness so cars stay readable without an env map. */
 function bodyMat(color: string) {
   const c = new THREE.Color(color);
-  c.offsetHSL(0, 0.02, 0.08);
+  c.offsetHSL(0, 0.02, 0.1);
   return new THREE.MeshStandardMaterial({
     color: c,
-    metalness: 0.14,
-    roughness: 0.42,
-    emissive: c.clone().multiplyScalar(0.07),
-    emissiveIntensity: 0.3,
+    metalness: 0.1,
+    roughness: 0.45,
+    emissive: c.clone().multiplyScalar(0.06),
+    emissiveIntensity: 0.25,
   });
 }
 
 function addWheel(group: THREE.Group, x: number, z: number, r: number): void {
   const tire = new THREE.Mesh(
-    new THREE.CylinderGeometry(r, r, 0.32, 18),
-    new THREE.MeshStandardMaterial({ color: 0x22282e, roughness: 0.92 }),
+    new THREE.CylinderGeometry(r, r, 0.34, 16),
+    new THREE.MeshStandardMaterial({ color: 0x1a1e22, roughness: 0.92 }),
   );
   tire.rotation.z = Math.PI / 2;
   tire.position.set(x, r * 0.92, z);
   const rim = new THREE.Mesh(
-    new THREE.CylinderGeometry(r * 0.58, r * 0.58, 0.2, 14),
-    new THREE.MeshStandardMaterial({ color: 0xe0e6ea, metalness: 0.45, roughness: 0.35 }),
+    new THREE.CylinderGeometry(r * 0.55, r * 0.55, 0.22, 12),
+    new THREE.MeshStandardMaterial({ color: 0xd8dee4, metalness: 0.4, roughness: 0.35 }),
   );
   rim.rotation.z = Math.PI / 2;
   rim.position.copy(tire.position);
-  const hub = new THREE.Mesh(
-    new THREE.CylinderGeometry(r * 0.22, r * 0.22, 0.22, 10),
-    new THREE.MeshStandardMaterial({ color: 0x5a646c, metalness: 0.35, roughness: 0.45 }),
-  );
-  hub.rotation.z = Math.PI / 2;
-  hub.position.copy(tire.position);
-  group.add(tire, rim, hub);
+  group.add(tire, rim);
 }
 
 /**
- * Cabin with opaque roof + pillars and glass only in window openings.
- * Chase camera looks at the rear: without a solid roof the car reads as a convertible.
+ * Sealed arcade coupe: solid hull + roof so the chase camera never sees through the cabin.
  */
-function addCabin(
-  g: THREE.Group,
-  paint: THREE.MeshStandardMaterial,
-  bodyW: number,
-  wheelR: number,
-  bodyH: number,
-  cabinH: number,
-  cabinL: number,
-  cabinZ: number,
-): void {
-  const cabinY = wheelR + bodyH * 0.85 + cabinH * 0.45;
-  const glass = glassMat();
-  const pillar = new THREE.MeshStandardMaterial({ color: paint.color.clone().offsetHSL(0, 0, -0.06), roughness: 0.5 });
-
-  // Opaque cabin shell under the roof
-  const shell = new THREE.Mesh(new THREE.BoxGeometry(bodyW * 0.8, cabinH * 0.55, cabinL * 0.92), paint);
-  shell.position.set(0, cabinY - cabinH * 0.12, cabinZ);
-  g.add(shell);
-
-  // Thick opaque roof — readable from the chase camera (not a convertible).
-  const roof = new THREE.Mesh(new THREE.BoxGeometry(bodyW * 0.82, 0.2, cabinL * 0.95), paint);
-  roof.position.set(0, cabinY + cabinH * 0.48, cabinZ - 0.04);
-  roof.castShadow = true;
-  g.add(roof);
-  const roofLip = new THREE.Mesh(new THREE.BoxGeometry(bodyW * 0.78, 0.08, 0.22), pillar);
-  roofLip.position.set(0, cabinY + cabinH * 0.42, cabinZ - cabinL * 0.42);
-  g.add(roofLip);
-
-  for (const side of [-1, 1]) {
-    const rail = new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.07, cabinL * 0.85), pillar);
-    rail.position.set(side * bodyW * 0.36, cabinY + cabinH * 0.58, cabinZ);
-    g.add(rail);
-  }
-
-  // A / C pillars
-  for (const side of [-1, 1]) {
-    const aPillar = new THREE.Mesh(new THREE.BoxGeometry(0.1, cabinH * 0.95, 0.14), pillar);
-    aPillar.position.set(side * bodyW * 0.36, cabinY, cabinZ + cabinL * 0.38);
-    aPillar.rotation.x = -0.2;
-    g.add(aPillar);
-    const cPillar = new THREE.Mesh(new THREE.BoxGeometry(0.1, cabinH * 0.9, 0.16), pillar);
-    cPillar.position.set(side * bodyW * 0.36, cabinY, cabinZ - cabinL * 0.38);
-    g.add(cPillar);
-  }
-
-  // Windshield (front)
-  const wind = new THREE.Mesh(new THREE.BoxGeometry(bodyW * 0.68, cabinH * 0.72, 0.06), glass);
-  wind.position.set(0, cabinY + 0.02, cabinZ + cabinL * 0.42);
-  wind.rotation.x = -0.48;
-  g.add(wind);
-
-  // Rear glass
-  const rear = new THREE.Mesh(new THREE.BoxGeometry(bodyW * 0.66, cabinH * 0.62, 0.06), glass);
-  rear.position.set(0, cabinY + 0.04, cabinZ - cabinL * 0.42);
-  rear.rotation.x = 0.35;
-  g.add(rear);
-
-  // Side windows
-  for (const side of [-1, 1]) {
-    const sideGlass = new THREE.Mesh(new THREE.BoxGeometry(0.05, cabinH * 0.55, cabinL * 0.55), glass);
-    sideGlass.position.set(side * bodyW * 0.4, cabinY + 0.06, cabinZ + 0.02);
-    g.add(sideGlass);
-  }
-}
-
-/** Arcade-soft vehicle group for player and traffic. */
 export function createVehicle(variant: CarVariant, color: string): THREE.Group {
   const g = new THREE.Group();
   g.name = `car-${variant}`;
   const paint = bodyMat(color);
-  const dark = new THREE.MeshStandardMaterial({ color: 0x2a343c, roughness: 0.65 });
-  const chrome = new THREE.MeshStandardMaterial({ color: 0xe8eef2, metalness: 0.55, roughness: 0.3 });
-  const black = new THREE.MeshStandardMaterial({ color: 0x1e262c, roughness: 0.85 });
+  const dark = new THREE.MeshStandardMaterial({ color: 0x1e282e, roughness: 0.7 });
+  const chrome = new THREE.MeshStandardMaterial({ color: 0xe4eaee, metalness: 0.5, roughness: 0.32 });
+  const glass = glassMat();
 
   let bodyL = 4.4;
-  let bodyW = 1.85;
-  let bodyH = 0.55;
-  let cabinH = 0.62;
-  let cabinL = 1.65;
-  let cabinZ = -0.12;
+  let bodyW = 1.9;
+  let bodyH = 0.58;
+  let cabinH = 0.55;
+  let cabinL = 1.7;
+  let cabinZ = -0.1;
   let wheelZ = 1.35;
   let wheelR = 0.42;
 
   switch (variant) {
     case 'van':
-      bodyL = 4.6;
-      bodyH = 0.7;
-      cabinH = 1.05;
-      cabinL = 2.2;
+      bodyL = 4.7;
+      bodyH = 0.72;
+      cabinH = 0.95;
+      cabinL = 2.15;
       cabinZ = 0.05;
       wheelZ = 1.25;
       break;
     case 'truck':
       bodyL = 5.0;
-      bodyW = 2.0;
-      bodyH = 0.65;
-      cabinH = 0.85;
+      bodyW = 2.05;
+      bodyH = 0.68;
+      cabinH = 0.8;
       cabinL = 1.35;
-      cabinZ = 0.85;
+      cabinZ = 0.9;
       wheelZ = 1.4;
       wheelR = 0.48;
       break;
     case 'slow':
-      bodyL = 3.6;
-      bodyW = 1.7;
-      bodyH = 0.5;
-      cabinH = 0.58;
+      bodyL = 3.7;
+      bodyW = 1.75;
+      bodyH = 0.52;
+      cabinH = 0.52;
       cabinL = 1.45;
       wheelZ = 1.1;
       wheelR = 0.38;
       break;
     case 'sedan':
-      bodyL = 4.5;
-      cabinH = 0.64;
-      cabinL = 1.75;
-      cabinZ = -0.05;
+      bodyL = 4.55;
+      cabinH = 0.58;
+      cabinL = 1.8;
       break;
     case 'sport':
-      bodyL = 4.55;
-      bodyH = 0.48;
-      cabinH = 0.58;
-      cabinL = 1.5;
-      cabinZ = -0.18;
+      bodyL = 4.5;
+      bodyH = 0.5;
+      cabinH = 0.5;
+      cabinL = 1.55;
+      cabinZ = -0.15;
       wheelR = 0.44;
       break;
     default: {
@@ -183,54 +107,82 @@ export function createVehicle(variant: CarVariant, color: string): THREE.Group {
     }
   }
 
-  const under = new THREE.Mesh(new THREE.BoxGeometry(bodyW * 0.92, 0.12, bodyL * 0.95), black);
-  under.position.y = wheelR * 0.55;
-  g.add(under);
+  const floorY = wheelR * 0.55;
+  const bodyY = wheelR + bodyH * 0.5;
+  const cabinY = wheelR + bodyH + cabinH * 0.5;
 
-  const body = new THREE.Mesh(new THREE.BoxGeometry(bodyW, bodyH, bodyL), paint);
-  body.position.y = wheelR + bodyH * 0.45;
-  body.castShadow = true;
-  g.add(body);
+  // Closed undertray + floor (blocks seeing the road through the car).
+  const floor = new THREE.Mesh(new THREE.BoxGeometry(bodyW * 0.95, 0.16, bodyL * 0.96), dark);
+  floor.position.y = floorY;
+  g.add(floor);
 
-  // Hood / deck lids (opaque body panels)
-  const hood = new THREE.Mesh(new THREE.BoxGeometry(bodyW * 0.88, 0.08, bodyL * 0.28), paint);
-  hood.position.set(0, wheelR + bodyH * 0.95, bodyL * 0.28);
+  // Main hull — solid volume
+  const hull = new THREE.Mesh(new THREE.BoxGeometry(bodyW, bodyH, bodyL), paint);
+  hull.position.y = bodyY;
+  hull.castShadow = true;
+  g.add(hull);
+
+  // Hood / trunk lids as solid lids on the hull
+  const hood = new THREE.Mesh(new THREE.BoxGeometry(bodyW * 0.9, 0.1, bodyL * 0.26), paint);
+  hood.position.set(0, bodyY + bodyH * 0.42, bodyL * 0.28);
   g.add(hood);
-  const trunk = new THREE.Mesh(new THREE.BoxGeometry(bodyW * 0.86, 0.08, bodyL * 0.22), paint);
-  trunk.position.set(0, wheelR + bodyH * 0.92, -bodyL * 0.32);
-  g.add(trunk);
+  const deck = new THREE.Mesh(new THREE.BoxGeometry(bodyW * 0.9, 0.1, bodyL * 0.22), paint);
+  deck.position.set(0, bodyY + bodyH * 0.4, -bodyL * 0.3);
+  g.add(deck);
 
-  const nose = new THREE.Mesh(new THREE.BoxGeometry(bodyW * 0.92, bodyH * 0.55, 0.35), paint);
-  nose.position.set(0, wheelR + bodyH * 0.35, bodyL * 0.48);
-  g.add(nose);
+  // Cabin volume — fully opaque (roof included)
+  const cabin = new THREE.Mesh(new THREE.BoxGeometry(bodyW * 0.82, cabinH, cabinL), paint);
+  cabin.position.set(0, cabinY, cabinZ);
+  cabin.castShadow = true;
+  g.add(cabin);
 
-  addCabin(g, paint, bodyW, wheelR, bodyH, cabinH, cabinL, cabinZ);
+  // Roof cap thicker so the silhouette reads closed from behind
+  const roof = new THREE.Mesh(new THREE.BoxGeometry(bodyW * 0.84, 0.14, cabinL * 0.98), paint);
+  roof.position.set(0, cabinY + cabinH * 0.42, cabinZ);
+  g.add(roof);
 
-  const grille = new THREE.Mesh(new THREE.BoxGeometry(bodyW * 0.5, 0.24, 0.1), dark);
-  grille.position.set(0, wheelR + 0.35, bodyL * 0.52);
+  // Window recesses: dark glass insets (not hollow openings)
+  const wind = new THREE.Mesh(new THREE.BoxGeometry(bodyW * 0.7, cabinH * 0.62, 0.08), glass);
+  wind.position.set(0, cabinY + 0.04, cabinZ + cabinL * 0.48);
+  wind.rotation.x = -0.35;
+  g.add(wind);
+  const rearGlass = new THREE.Mesh(new THREE.BoxGeometry(bodyW * 0.68, cabinH * 0.55, 0.08), glass);
+  rearGlass.position.set(0, cabinY + 0.06, cabinZ - cabinL * 0.48);
+  rearGlass.rotation.x = 0.28;
+  g.add(rearGlass);
+  for (const side of [-1, 1]) {
+    const sideG = new THREE.Mesh(new THREE.BoxGeometry(0.06, cabinH * 0.5, cabinL * 0.55), glass);
+    sideG.position.set(side * bodyW * 0.42, cabinY + 0.05, cabinZ);
+    g.add(sideG);
+  }
+
+  // Rear bulkhead so the cockpit never opens to the road
+  const bulk = new THREE.Mesh(new THREE.BoxGeometry(bodyW * 0.78, cabinH * 0.85, 0.12), paint);
+  bulk.position.set(0, cabinY, cabinZ - cabinL * 0.35);
+  g.add(bulk);
+
+  const grille = new THREE.Mesh(new THREE.BoxGeometry(bodyW * 0.48, 0.22, 0.1), dark);
+  grille.position.set(0, wheelR + 0.36, bodyL * 0.5);
   g.add(grille);
-  const frontChrome = new THREE.Mesh(new THREE.BoxGeometry(bodyW * 0.7, 0.05, 0.07), chrome);
-  frontChrome.position.set(0, wheelR + 0.2, bodyL * 0.53);
-  g.add(frontChrome);
+  const lip = new THREE.Mesh(new THREE.BoxGeometry(bodyW * 0.7, 0.05, 0.07), chrome);
+  lip.position.set(0, wheelR + 0.2, bodyL * 0.52);
+  g.add(lip);
 
-  const mirrorL = new THREE.Mesh(new THREE.BoxGeometry(0.1, 0.08, 0.2), paint);
-  mirrorL.position.set(-bodyW * 0.48, wheelR + bodyH + cabinH * 0.35, cabinZ + cabinL * 0.25);
-  const mirrorR = mirrorL.clone();
-  mirrorR.position.x *= -1;
-  g.add(mirrorL, mirrorR);
+  for (const side of [-1, 1]) {
+    const mirror = new THREE.Mesh(new THREE.BoxGeometry(0.12, 0.08, 0.18), paint);
+    mirror.position.set(side * bodyW * 0.5, cabinY - 0.05, cabinZ + cabinL * 0.3);
+    g.add(mirror);
+  }
 
   if (variant === 'sport') {
-    const spoiler = new THREE.Mesh(new THREE.BoxGeometry(bodyW * 0.85, 0.07, 0.28), paint);
-    spoiler.position.set(0, wheelR + bodyH + cabinH * 0.55, -bodyL * 0.42);
+    const spoiler = new THREE.Mesh(new THREE.BoxGeometry(bodyW * 0.88, 0.08, 0.26), paint);
+    spoiler.position.set(0, cabinY + cabinH * 0.35, -bodyL * 0.42);
     g.add(spoiler);
-    const skirt = new THREE.Mesh(new THREE.BoxGeometry(bodyW * 1.02, 0.08, bodyL * 0.7), dark);
-    skirt.position.set(0, wheelR * 0.7, 0);
-    g.add(skirt);
   }
 
   if (variant === 'truck') {
-    const bed = new THREE.Mesh(new THREE.BoxGeometry(bodyW * 0.9, 0.4, 1.9), bodyMat(color));
-    bed.position.set(0, wheelR + 0.58, -1.15);
+    const bed = new THREE.Mesh(new THREE.BoxGeometry(bodyW * 0.9, 0.45, 1.85), paint);
+    bed.position.set(0, wheelR + 0.6, -1.15);
     g.add(bed);
   }
 
@@ -241,7 +193,7 @@ export function createVehicle(variant: CarVariant, color: string): THREE.Group {
       new THREE.SphereGeometry(0.11, 10, 10),
       new THREE.MeshStandardMaterial({ color: 0xfff6d0, emissive: 0xaa8844, emissiveIntensity: 0.85 }),
     );
-    lightF.position.set(side * bodyW * 0.34, wheelR + 0.4, bodyL * 0.52);
+    lightF.position.set(side * bodyW * 0.34, wheelR + 0.4, bodyL * 0.5);
     lightF.userData.kind = 'head';
     g.add(lightF);
     const lightR = new THREE.Mesh(

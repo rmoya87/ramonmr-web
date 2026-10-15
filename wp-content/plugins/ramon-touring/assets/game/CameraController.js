@@ -15,7 +15,8 @@ export function cameraPose(s, pathOffset, _cameraMode, aspectPortrait) {
     const px = s.x + pathOffset;
     const shakeX = (Math.random() - 0.5) * s.shake * 0.08;
     const lookZ = 18;
-    const steerLook = s.steer * 1.1;
+    // Keep look nearly centered so the car doesn't read as skewed vs the lanes.
+    const steerLook = s.steer * 0.35;
     return {
         pos: { x: s.camX + shakeX * 0.45, y: s.camY || 3.15, z: s.camZ || -8.4 },
         target: { x: px + steerLook, y: 0.45, z: lookZ },

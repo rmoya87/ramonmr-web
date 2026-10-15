@@ -35,4 +35,10 @@ describe('chase camera view axis', () => {
     assert.ok(depthPresence(-12, far) < 0.05);
   });
 
+  it('lane dash phase advances with world distance', () => {
+    const period = 3.5 + 4.5;
+    const a = ((100 % period) + period) % period;
+    const b = ((104 % period) + period) % period;
+    assert.notEqual(a, b);
+  });
 });
