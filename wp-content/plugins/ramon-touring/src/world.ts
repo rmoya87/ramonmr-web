@@ -1,4 +1,4 @@
-import { v, box, car, quad, renderer, type Face } from './mesh.js';
+import { v, box, car, column, quad, renderer, type Face } from './mesh.js';
 import { BIOMES, effectiveNight } from './game/EnvironmentManager.js';
 import { cameraPose } from './game/CameraController.js';
 import type { QualitySettings } from './game/PerformanceManager.js';
@@ -14,30 +14,48 @@ export function ramp(t: number): number {
   return 4.6 + Math.max(0, t) * 0.12 + Math.sin(Math.max(0, t) / 180) * 2;
 }
 
+/** True while the exit ramp occupies the right verge (posts must stay clear). */
+function inExitClearance(t: number): boolean {
+  return t > -40 && t < 340;
+}
+
 function pine(a: Face[], x: number, z: number, size: number): void {
-  box(a, x, size * 0.36, z, 0.32, size * 0.72, 0.32, '#6e5844');
-  for (let j = 0; j < 4; j++) {
-    const y = size * (0.45 + j * 0.2);
-    const r = size * (0.48 - j * 0.09);
-    a.push({ c: j % 2 ? '#2f5a40' : '#264a36', v: [v(x - r, y, z - r), v(x + r, y, z - r), v(x, y + size * 0.5, z)] });
-    a.push({ c: '#1e3c2c', v: [v(x + r, y, z - r), v(x + r, y, z + r), v(x, y + size * 0.5, z)] });
-    a.push({ c: '#3a6a48', v: [v(x - r, y, z + r), v(x + r, y, z + r), v(x, y + size * 0.5, z)] });
-    a.push({ c: '#2a5440', v: [v(x - r, y, z - r), v(x - r, y, z + r), v(x, y + size * 0.5, z)] });
+  column(a, x, size * 0.38, z, 0.14, size * 0.76, '#6e5844', 6);
+  for (let j = 0; j < 5; j++) {
+    const y = size * (0.42 + j * 0.18);
+    const r = size * (0.52 - j * 0.08);
+    const tip = y + size * 0.42;
+    const greens = ['#2a5040', '#345c48', '#3f6a52', '#2e5642'];
+    for (let k = 0; k < 6; k++) {
+      const a0 = (k * Math.PI) / 3;
+      const a1 = ((k + 1) * Math.PI) / 3;
+      a.push({
+        c: greens[(j + k) % greens.length],
+        v: [
+          v(x + Math.cos(a0) * r, y, z + Math.sin(a0) * r),
+          v(x + Math.cos(a1) * r, y, z + Math.sin(a1) * r),
+          v(x, tip, z),
+        ],
+      });
+    }
   }
 }
 
 function bush(a: Face[], x: number, z: number, size: number): void {
-  box(a, x, size * 0.35, z, size, size * 0.7, size * 0.9, '#3a6048');
-  box(a, x + size * 0.25, size * 0.5, z - size * 0.1, size * 0.7, size * 0.55, size * 0.7, '#4a7058');
+  column(a, x, size * 0.38, z, size * 0.42, size * 0.7, '#3a6048', 8);
+  column(a, x + size * 0.22, size * 0.48, z - size * 0.08, size * 0.32, size * 0.55, '#4a7058', 7);
+  column(a, x - size * 0.18, size * 0.42, z + size * 0.1, size * 0.28, size * 0.48, '#355848', 7);
 }
 
 function building(a: Face[], x: number, z: number, h: number, w: number): void {
   const facade = h > 5 ? '#7a7880' : '#8a8274';
-  box(a, x, h / 2, z, w, h, w * 0.75, facade);
-  box(a, x, h + 0.12, z, w * 0.92, 0.24, w * 0.68, '#5a585e');
-  for (let row = 0; row < Math.min(5, Math.floor(h / 1.1)); row++) {
+  box(a, x, h / 2, z, w, h, w * 0.72, facade);
+  // Soft roof cap
+  box(a, x, h + 0.08, z, w * 0.96, 0.16, w * 0.7, '#5a585e');
+  column(a, x, h + 0.22, z, w * 0.38, 0.18, '#68666c', 6);
+  for (let row = 0; row < Math.min(4, Math.floor(h / 1.2)); row++) {
     for (const sx of [-1, 1]) {
-      box(a, x + sx * w * 0.22, 0.9 + row * 1.15, z + w * 0.38, 0.32, 0.42, 0.04, row % 2 ? '#d8e4ec' : '#f0e8c0');
+      box(a, x + sx * w * 0.2, 1.0 + row * 1.2, z + w * 0.36, 0.28, 0.38, 0.03, row % 2 ? '#d8e4ec' : '#f0e8c0');
     }
   }
 }
@@ -201,35 +219,33 @@ export function drawRoad(c: CanvasRenderingContext2D, s: RunState, w: number, h:
     if (z < 2) continue;
     const x = cx(z);
     const x2 = cx(z2);
-    const asphalt = night ? '#3a4248' : ((Math.floor(world / 6) % 2) ? '#5a6268' : '#545c62');
-    // Keep ground strips narrower near the camera to avoid projective blow-ups.
+    const t = world - s.fork;
+    const exitZone = inExitClearance(t);
+    // Soft asphalt (no harsh checker banding)
+    const asphalt = night ? '#3c444c' : '#565e64';
     const groundW = Math.min(90, 28 + z * 0.55);
     quad(a, x, z, x2, z2, groundW, beach ? '#d4c294' : ground[0], -0.08);
     if (z > 40) {
       quad(a, x - groundW * 0.35, z, x2 - groundW * 0.35, z2, groundW * 0.28, night ? '#2e4e58' : biomeA.water, -0.06);
     }
     quad(a, x, z, x2, z2, 12.6, asphalt);
-    // Soft roadside verge
+    // Soft roadside verge — skip right posts while the exit ramp owns that space
     for (const side of [-1, 1]) {
+      if (side > 0 && exitZone) continue;
       quad(a, x + side * 6.5, z, x2 + side * 6.5, z2, 0.55, beach ? '#c8b888' : '#6a7a58');
       quad(a, x + side * 5.95, z, x2 + side * 5.95, z2, 0.16, '#ebe4cc', 0.016);
-      if (quality.shadows && z < 180) {
-        box(objects, x + side * 6.7, 0.52, z, 0.12, 0.72, 0.12, '#9aaca4');
-        box(objects, x + side * 6.7, 0.9, z, 0.16, 0.1, 0.16, side < 0 ? '#efe8d0' : '#c24a38');
-      }
     }
     // White lane dashes only (no center yellow)
     if (((world % 22) + 22) % 22 < 10) {
       for (const l of [-2, 2]) quad(a, x + l, z, x2 + l, z2, 0.13, '#f4f0dc', 0.022);
     }
-    const t = world - s.fork;
     const t2 = t + 6;
     if (t2 > 0 && t < 310) {
       const rx = x + ramp(t);
       const rx2 = x2 + ramp(t2);
-      quad(a, rx, z, rx2, z2, 4, '#53595a', 0.023);
-      quad(a, rx - 1.8, z, rx2 - 1.8, z2, 0.13, '#eee5ca', 0.028);
-      quad(a, rx + 1.8, z, rx2 + 1.8, z2, 0.13, '#eee5ca', 0.028);
+      quad(a, rx, z, rx2, z2, 4.2, '#53595a', 0.023);
+      quad(a, rx - 1.9, z, rx2 - 1.9, z2, 0.14, '#eee5ca', 0.028);
+      quad(a, rx + 1.9, z, rx2 + 1.9, z2, 0.14, '#eee5ca', 0.028);
     }
 
     // Occasional tunnel / bridge events (deterministic)
@@ -237,10 +253,10 @@ export function drawRoad(c: CanvasRenderingContext2D, s: RunState, w: number, h:
     if (event === 3 && t < -40) {
       box(objects, x, 4, z, 16, 8, 6, night ? '#1a2228' : '#3a454c');
     }
-    if (event === 5) {
+    if (event === 5 && !exitZone) {
       box(objects, x, 3.5, z, 14, 0.4, 8, '#6a7278');
-      box(objects, x - 6, 2, z, 0.5, 4, 0.5, '#5a6268');
-      box(objects, x + 6, 2, z, 0.5, 4, 0.5, '#5a6268');
+      column(objects, x - 6, 2, z, 0.22, 4, '#5a6268', 6);
+      column(objects, x + 6, 2, z, 0.22, 4, '#5a6268', 6);
     }
 
     cam.draw(a, true);
@@ -268,26 +284,36 @@ export function drawRoad(c: CanvasRenderingContext2D, s: RunState, w: number, h:
     const right = Math.max(14 + ((n % 4 + 4) % 4) * 3, t > -20 && t < 330 ? ramp(Math.max(0, t)) + 6 : 0);
     const biomeId = Math.floor(world / 1600) % BIOMES.length;
     if (beach || opts.environment === 'coast') {
-      box(objects, x + right, 0.3, z, 1.4, 0.6, 1.2, '#d2be8e');
+      column(objects, x + right, 0.28, z, 0.55, 0.55, '#d2be8e', 7);
       bush(objects, x + right + 2.2, z, 1.1 + (n % 2) * 0.3);
       if (n % 2 === 0) {
-        box(objects, x - 15, 3.2, z, 0.28, 6.4, 0.28, '#7a623e');
+        column(objects, x - 15, 3.2, z, 0.16, 6.4, '#7a623e', 6);
         for (let j = 0; j < 5; j++) {
-          box(objects, x - 15 + Math.cos((j * Math.PI) / 2.5) * 1.35, 6.1, z + Math.sin((j * Math.PI) / 2.5) * 1.35, 3.2, 0.1, 0.5, '#3a6e4a', (j * Math.PI) / 2.5);
+          const ang = (j * Math.PI) / 2.5;
+          column(
+            objects,
+            x - 15 + Math.cos(ang) * 1.35,
+            6.1,
+            z + Math.sin(ang) * 1.35,
+            0.22,
+            0.12,
+            '#3a6e4a',
+            5,
+          );
         }
       }
     } else if (biomeId === 2) {
       building(objects, x + right, z, 4.5 + (n % 5), 2.6 + (n % 3) * 0.45);
       if (n % 2 === 0) {
-        box(objects, x - 12, 2.4, z, 0.18, 4.8, 0.18, '#7a8890');
-        box(objects, x - 12, 4.7, z, 0.5, 0.12, 0.5, '#c8d0d4');
+        column(objects, x - 12, 2.4, z, 0.1, 4.8, '#7a8890', 6);
+        column(objects, x - 12, 4.75, z, 0.28, 0.16, '#c8d0d4', 6);
       }
     } else if (biomeId === 3) {
-      box(objects, x + right, 0.7, z, 1.6, 1.4, 1.2, '#c4a060');
-      box(objects, x + right + 2.5, 0.35, z, 0.9, 0.7, 0.9, '#b89254');
+      column(objects, x + right, 0.65, z, 0.7, 1.3, '#c4a060', 7);
+      column(objects, x + right + 2.5, 0.35, z, 0.42, 0.7, '#b89254', 6);
     } else if (biomeId === 4) {
       pine(objects, x + right, z, 3.2 + (n % 3));
-      box(objects, x + right + 2.2, 0.18, z, 2.2, 0.3, 2.2, '#eef4f8');
+      column(objects, x + right + 2.2, 0.16, z, 0.95, 0.28, '#eef4f8', 8);
     } else {
       pine(objects, x + right, z, 5.2 + ((n % 3 + 3) % 3));
       if (n % 2 === 0) pine(objects, x - 13.5, z, 4.6);
@@ -295,15 +321,18 @@ export function drawRoad(c: CanvasRenderingContext2D, s: RunState, w: number, h:
     }
   }
 
-  for (let n = Math.floor((s.d - 12) / 12); n * 12 < s.d + quality.drawDistance - 20; n++) {
-    const z = n * 12 - s.d;
+  // Sparse cylindrical verge posts — never on the right during exit clearance
+  for (let n = Math.floor((s.d - 18) / 18); n * 18 < s.d + quality.drawDistance - 20; n++) {
+    const world = n * 18;
+    const z = world - s.d;
+    if (z < 4 || z > 200) continue;
     const x = cx(z);
-    const t = n * 12 - s.fork;
-    for (const side of [-1, 1]) {
-      if (side < 0 || t < -12 || t > 330) {
-        box(objects, x + side * 6.8, 0.45, z, 0.13, 0.9, 0.13, '#e6e0cb');
-        box(objects, x + side * 6.8, 0.68, z, 0.15, 0.16, 0.15, side < 0 ? '#dad6bd' : '#b44937');
-      }
+    const t = world - s.fork;
+    const exitZone = inExitClearance(t);
+    for (const side of [-1, 1] as const) {
+      if (side > 0 && exitZone) continue;
+      column(objects, x + side * 6.85, 0.42, z, 0.07, 0.84, '#d8d2bc', 6);
+      column(objects, x + side * 6.85, 0.82, z, 0.1, 0.14, side < 0 ? '#ebe6d0' : '#c24a38', 6);
     }
   }
 
@@ -320,12 +349,12 @@ export function drawRoad(c: CanvasRenderingContext2D, s: RunState, w: number, h:
     }
   }
 
-  // Anticipation signs at 300m and 100m (wider boards for readable labels)
+  // Anticipation signs at 300m and 100m (rounded posts)
   for (const dist of [300, 100]) {
     const signZ = s.fork - s.d - dist;
     if (signZ > -10 && signZ < quality.drawDistance) {
       const x = cx(signZ) + 7.2;
-      box(objects, x, 2.9, signZ, 0.15, 5.8, 0.15, '#9caaa5');
+      column(objects, x, 2.9, signZ, 0.1, 5.8, '#9caaa5', 6);
       box(objects, x - 3.1, 5.35, signZ, 8.6, dist === 100 ? 2.8 : 2.4, 0.15, '#235548');
     }
   }

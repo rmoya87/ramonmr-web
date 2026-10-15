@@ -45,20 +45,26 @@ export class PerformanceManager {
     }
 }
 /**
- * Size the buffer close to CSS pixels (mild DPR). Avoids both pixel-art upscale
- * and huge buffers that break the software projector.
+ * Size the buffer near native device pixels for a smoother (less blocky) look.
+ * Cap total pixels so the software projector stays interactive.
  */
 export function sizeGameCanvas(canvas, resolutionScale) {
     const r = canvas.getBoundingClientRect();
     if (r.width < 2 || r.height < 2)
         return false;
-    const dpr = Math.min(1.35, window.devicePixelRatio || 1);
+    const dpr = Math.min(2, window.devicePixelRatio || 1);
     let w = Math.max(1, Math.round(r.width * dpr * resolutionScale));
     let h = Math.max(1, Math.round(r.height * dpr * resolutionScale));
-    const maxW = 1400;
+    const maxW = 1920;
+    const maxPixels = 2400000;
     if (w > maxW) {
         const f = maxW / w;
         w = maxW;
+        h = Math.max(1, Math.round(h * f));
+    }
+    if (w * h > maxPixels) {
+        const f = Math.sqrt(maxPixels / (w * h));
+        w = Math.max(1, Math.round(w * f));
         h = Math.max(1, Math.round(h * f));
     }
     if (canvas.width === w && canvas.height === h)
