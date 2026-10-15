@@ -15,8 +15,8 @@ export function stepCamera(s: RunState, pathOffset: number, _cameraMode: number,
   s.fovBoost += (speedNorm * CAMERA.fovSpeedFactor - s.fovBoost) * Math.min(1, dt * 2);
   s.shake = Math.max(0, s.shake - dt * CAMERA.shakeDecay);
   if (reduceMotion) s.shake = 0;
-  s.camY = 3.2 + speedNorm * 0.25 + s.shake * 0.06;
-  s.camZ = -9.4 - speedNorm * 0.6;
+  s.camY = 3.35 + speedNorm * 0.22 + s.shake * 0.06;
+  s.camZ = -9.2 - speedNorm * 0.55;
 }
 
 export function cameraPose(s: RunState, pathOffset: number, _cameraMode: number, aspectPortrait: boolean): CamPose {
@@ -24,8 +24,9 @@ export function cameraPose(s: RunState, pathOffset: number, _cameraMode: number,
   const shakeX = (Math.random() - 0.5) * s.shake * 0.08;
   const lookAhead = Math.sin(s.steer) * 1.5;
   return {
-    pos: { x: s.camX + shakeX * 0.45, y: s.camY || 3.2, z: s.camZ || -9.4 },
-    target: { x: px + lookAhead, y: 1.05, z: 20 },
-    fovMul: (aspectPortrait ? 0.94 : 0.74) * (1 - s.fovBoost * 0.7),
+    pos: { x: s.camX + shakeX * 0.45, y: s.camY || 3.35, z: s.camZ || -9.2 },
+    // Look slightly into the asphalt so the near road reads as continuous.
+    target: { x: px + lookAhead, y: 0.55, z: 14 },
+    fovMul: (aspectPortrait ? 0.92 : 0.72) * (1 - s.fovBoost * 0.7),
   };
 }

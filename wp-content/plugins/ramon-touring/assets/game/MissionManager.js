@@ -1,5 +1,5 @@
-import { SCORE } from './config.js?v=2.0.10';
-import { award } from './ScoreManager.js?v=2.0.10';
+import { SCORE } from './config.js?v=2.0.11';
+import { award } from './ScoreManager.js?v=2.0.11';
 export const MISSIONS = [
     { id: 'pass5', es: 'Adelanta 5 vehículos', en: 'Overtake 5 vehicles', target: 5, kind: 'pass' },
     { id: 'dist2', es: 'Recorre 2 km', en: 'Drive 2 km', target: 2000, kind: 'distance' },

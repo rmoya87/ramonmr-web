@@ -1,4 +1,4 @@
-import { COLORS, SAVE_KEY, SAVE_TTL_MS } from './config.js?v=2.0.10';
+import { COLORS, SAVE_KEY, SAVE_TTL_MS } from './config.js?v=2.0.11';
 const PROGRESS_DEFAULT = {
     v: 2,
     bestScore: 0,

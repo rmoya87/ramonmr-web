@@ -1,6 +1,6 @@
-import { v, box, car, column, quad, renderer } from './mesh.js?v=2.0.10';
-import { BIOMES, effectiveNight } from './game/EnvironmentManager.js?v=2.0.10';
-import { cameraPose } from './game/CameraController.js?v=2.0.10';
+import { v, box, car, column, quad, renderer, shade } from './mesh.js?v=2.0.11';
+import { BIOMES, effectiveNight } from './game/EnvironmentManager.js?v=2.0.11';
+import { cameraPose } from './game/CameraController.js?v=2.0.11';
 export let sectionLabels = ['Servicios', 'Curriculum', 'Portfolio', 'Blog', 'Contacto'];
 export function setSectionLabels(labels) {
     sectionLabels = labels;
@@ -14,15 +14,15 @@ function inExitClearance(t) {
     return t > -40 && t < 340;
 }
 function pine(a, x, z, size) {
-    column(a, x, size * 0.38, z, 0.14, size * 0.76, '#6e5844', 6);
+    column(a, x, size * 0.3, z, Math.max(0.2, size * 0.055), size * 0.6, '#6e5844', 7);
     for (let j = 0; j < 5; j++) {
-        const y = size * (0.42 + j * 0.18);
-        const r = size * (0.52 - j * 0.08);
-        const tip = y + size * 0.42;
+        const y = size * (0.36 + j * 0.15);
+        const r = size * (0.58 - j * 0.085);
+        const tip = y + size * 0.38;
         const greens = ['#2a5040', '#345c48', '#3f6a52', '#2e5642'];
-        for (let k = 0; k < 6; k++) {
-            const a0 = (k * Math.PI) / 3;
-            const a1 = ((k + 1) * Math.PI) / 3;
+        for (let k = 0; k < 8; k++) {
+            const a0 = (k * Math.PI) / 4;
+            const a1 = ((k + 1) * Math.PI) / 4;
             a.push({
                 c: greens[(j + k) % greens.length],
                 v: [
@@ -115,58 +115,40 @@ export function drawRoad(c, s, w, h, opts) {
             c.fill();
         }
     }
-    // Layered hills with slight atmospheric fade
+    // Hills stay behind the horizon — smoother silhouette, no full-screen green slab.
+    const horizonY = h * 0.5;
     for (let k = 0; k < 3; k++) {
         c.beginPath();
-        c.moveTo(0, h * 0.5);
-        for (let i = 0; i <= 36; i++) {
-            c.lineTo((i * w) / 36, h * (0.3 + k * 0.04) -
-                Math.sin(i * 0.55 + k * 2.1 + s.d * 0.002) * h * 0.032 -
-                Math.sin(i * 0.19 + k) * h * 0.045);
+        const foot = horizonY + h * (0.04 + k * 0.02);
+        c.moveTo(0, foot);
+        for (let i = 0; i <= 56; i++) {
+            const nx = i / 56;
+            c.lineTo(nx * w, h * (0.33 + k * 0.032) -
+                Math.sin(nx * 5.4 + k * 2.1 + s.d * 0.002) * h * 0.028 -
+                Math.sin(nx * 2.15 + k) * h * 0.038 -
+                Math.sin(nx * 12.5 + k * 0.6) * h * 0.01);
         }
-        c.lineTo(w, h);
-        c.lineTo(0, h);
+        c.lineTo(w, foot);
+        c.lineTo(0, foot);
+        c.closePath();
         c.fillStyle = ground[k] || ground[0];
         c.fill();
     }
-    // Horizon haze band
+    // Soft ground wash under the horizon (matches roadside; not a fake 2D road).
+    const g0 = beach ? '#d4c294' : ground[0];
+    const groundWash = c.createLinearGradient(0, horizonY - h * 0.02, 0, h);
+    groundWash.addColorStop(0, g0);
+    groundWash.addColorStop(0.55, shade(g0, night ? 0.72 : 0.88));
+    groundWash.addColorStop(1, night ? '#2a3238' : shade(g0, 0.78));
+    c.fillStyle = groundWash;
+    c.fillRect(0, horizonY - h * 0.02, w, h - horizonY + h * 0.02);
+    // Horizon haze
     const haze = c.createLinearGradient(0, h * 0.28, 0, h * 0.52);
     haze.addColorStop(0, '#ffffff00');
-    haze.addColorStop(0.5, biomeA.haze || '#d0dce088');
+    haze.addColorStop(0.55, biomeA.haze || '#d0dce088');
     haze.addColorStop(1, '#ffffff00');
     c.fillStyle = haze;
     c.fillRect(0, h * 0.28, w, h * 0.24);
-    // Stable 2D road bed so the lower frame never becomes a void if a 3D quad clips badly.
-    const asphalt2d = night ? '#3a4248' : '#545c62';
-    const verge2d = beach ? '#c8b888' : '#6a7a58';
-    const roadTop = h * 0.5;
-    const cxScreen = w * 0.5 + Math.sin(s.d / 210) * w * 0.02;
-    c.fillStyle = beach ? '#d4c294' : ground[0];
-    c.fillRect(0, roadTop, w, h - roadTop);
-    c.fillStyle = verge2d;
-    c.beginPath();
-    c.moveTo(cxScreen - w * 0.06, roadTop);
-    c.lineTo(cxScreen + w * 0.06, roadTop);
-    c.lineTo(cxScreen + w * 0.62, h);
-    c.lineTo(cxScreen - w * 0.62, h);
-    c.closePath();
-    c.fill();
-    c.fillStyle = asphalt2d;
-    c.beginPath();
-    c.moveTo(cxScreen - w * 0.045, roadTop);
-    c.lineTo(cxScreen + w * 0.045, roadTop);
-    c.lineTo(cxScreen + w * 0.48, h);
-    c.lineTo(cxScreen - w * 0.48, h);
-    c.closePath();
-    c.fill();
-    c.strokeStyle = '#ebe4cc88';
-    c.lineWidth = Math.max(2, w * 0.004);
-    for (const side of [-1, 1]) {
-        c.beginPath();
-        c.moveTo(cxScreen + side * w * 0.042, roadTop);
-        c.lineTo(cxScreen + side * w * 0.45, h);
-        c.stroke();
-    }
     const base = curve(s.d);
     const path = s.branch ? ramp(s.d - s.fork) : 0;
     const px = s.x + path;
@@ -179,55 +161,56 @@ export function drawRoad(c, s, w, h, opts) {
     const a = [];
     const objects = [];
     const cx = (z) => curve(s.d + z) - base;
-    const far = Math.floor((s.d + quality.drawDistance) / 6) * 6;
-    // Only strips clearly in front of the camera. Near-plane / behind-camera quads
-    // project as full-screen asphalt and wipe the sky.
-    for (let world = far; world > s.d + 2; world -= 6) {
+    // Shorter strips = smoother curves; extend under the car (cam ~ -9.4) without going behind it.
+    const strip = 3;
+    const far = Math.floor((s.d + quality.drawDistance) / strip) * strip;
+    const asphalt = night ? '#3c444c' : '#575f65';
+    const verge = beach ? '#c8b888' : '#6a7a58';
+    for (let world = far; world >= s.d - 6; world -= strip) {
         const z = world - s.d;
-        const z2 = z + 6;
-        if (z < 2)
+        const z2 = z + strip;
+        // Stay clearly ahead of the camera near-plane.
+        if (z2 < -7.2)
             continue;
-        const x = cx(z);
+        const zNear = Math.max(z, -7.0);
+        const x = cx(zNear);
         const x2 = cx(z2);
         const t = world - s.fork;
         const exitZone = inExitClearance(t);
-        // Soft asphalt (no harsh checker banding)
-        const asphalt = night ? '#3c444c' : '#565e64';
-        const groundW = Math.min(90, 28 + z * 0.55);
-        quad(a, x, z, x2, z2, groundW, beach ? '#d4c294' : ground[0], -0.08);
-        if (z > 40) {
-            quad(a, x - groundW * 0.35, z, x2 - groundW * 0.35, z2, groundW * 0.28, night ? '#2e4e58' : biomeA.water, -0.06);
+        const mid = (zNear + z2) * 0.5;
+        const groundW = Math.min(72, 16 + Math.max(4, mid + 9) * 0.42);
+        quad(a, x, zNear, x2, z2, groundW, g0, -0.08);
+        if (mid > 50) {
+            quad(a, x - groundW * 0.34, zNear, x2 - groundW * 0.34, z2, groundW * 0.26, night ? '#2e4e58' : biomeA.water, -0.06);
         }
-        quad(a, x, z, x2, z2, 12.6, asphalt);
-        // Soft roadside verge — skip right posts while the exit ramp owns that space
+        quad(a, x, zNear, x2, z2, 12.8, asphalt);
         for (const side of [-1, 1]) {
             if (side > 0 && exitZone)
                 continue;
-            quad(a, x + side * 6.5, z, x2 + side * 6.5, z2, 0.55, beach ? '#c8b888' : '#6a7a58');
-            quad(a, x + side * 5.95, z, x2 + side * 5.95, z2, 0.16, '#ebe4cc', 0.016);
+            quad(a, x + side * 6.55, zNear, x2 + side * 6.55, z2, 0.7, verge);
+            quad(a, x + side * 5.95, zNear, x2 + side * 5.95, z2, 0.18, '#ebe4cc', 0.018);
         }
-        // White lane dashes only (no center yellow)
-        if (((world % 22) + 22) % 22 < 10) {
+        // Lane dashes — denser near, skip when almost under the camera
+        if (mid > -2 && ((world % 18) + 18) % 18 < 9) {
             for (const l of [-2, 2])
-                quad(a, x + l, z, x2 + l, z2, 0.13, '#f4f0dc', 0.022);
+                quad(a, x + l, zNear, x2 + l, z2, 0.14, '#f4f0dc', 0.024);
         }
-        const t2 = t + 6;
+        const t2 = t + strip;
         if (t2 > 0 && t < 310) {
-            const rx = x + ramp(t);
-            const rx2 = x2 + ramp(t2);
-            quad(a, rx, z, rx2, z2, 4.2, '#53595a', 0.023);
-            quad(a, rx - 1.9, z, rx2 - 1.9, z2, 0.14, '#eee5ca', 0.028);
-            quad(a, rx + 1.9, z, rx2 + 1.9, z2, 0.14, '#eee5ca', 0.028);
+            const rx = x + ramp(Math.max(0, t));
+            const rx2 = x2 + ramp(Math.max(0, t2));
+            quad(a, rx, zNear, rx2, z2, 4.2, '#53595a', 0.023);
+            quad(a, rx - 1.9, zNear, rx2 - 1.9, z2, 0.14, '#eee5ca', 0.028);
+            quad(a, rx + 1.9, zNear, rx2 + 1.9, z2, 0.14, '#eee5ca', 0.028);
         }
-        // Occasional tunnel / bridge events (deterministic)
         const event = Math.floor(world / 900) % 7;
-        if (event === 3 && t < -40) {
-            box(objects, x, 4, z, 16, 8, 6, night ? '#1a2228' : '#3a454c');
+        if (event === 3 && t < -40 && mid > 8) {
+            box(objects, x, 4, zNear, 16, 8, 6, night ? '#1a2228' : '#3a454c');
         }
-        if (event === 5 && !exitZone) {
-            box(objects, x, 3.5, z, 14, 0.4, 8, '#6a7278');
-            column(objects, x - 6, 2, z, 0.22, 4, '#5a6268', 6);
-            column(objects, x + 6, 2, z, 0.22, 4, '#5a6268', 6);
+        if (event === 5 && !exitZone && mid > 8) {
+            box(objects, x, 3.5, zNear, 14, 0.4, 8, '#6a7278');
+            column(objects, x - 6, 2, zNear, 0.22, 4, '#5a6268', 6);
+            column(objects, x + 6, 2, zNear, 0.22, 4, '#5a6268', 6);
         }
         cam.draw(a, true);
         a.length = 0;
@@ -265,9 +248,10 @@ export function drawRoad(c, s, w, h, opts) {
         }
         else if (biomeId === 2) {
             building(objects, x + right, z, 4.5 + (n % 5), 2.6 + (n % 3) * 0.45);
-            if (n % 2 === 0) {
-                column(objects, x - 12, 2.4, z, 0.1, 4.8, '#7a8890', 6);
-                column(objects, x - 12, 4.75, z, 0.28, 0.16, '#c8d0d4', 6);
+            // Sparse street lamps — avoid a forest of thin sticks
+            if (n % 4 === 0 && z > 12) {
+                column(objects, x - 12, 2.2, z, 0.12, 4.4, '#7a8890', 6);
+                column(objects, x - 12, 4.45, z, 0.32, 0.18, '#c8d0d4', 6);
             }
         }
         else if (biomeId === 3) {
@@ -280,17 +264,17 @@ export function drawRoad(c, s, w, h, opts) {
         }
         else {
             pine(objects, x + right, z, 5.2 + ((n % 3 + 3) % 3));
-            if (n % 2 === 0)
-                pine(objects, x - 13.5, z, 4.6);
+            if (n % 3 === 0)
+                pine(objects, x - 14, z, 4.8);
             if (n % 3 === 0)
                 bush(objects, x + right - 3, z + 2, 1.2);
         }
     }
-    // Sparse cylindrical verge posts — never on the right during exit clearance
-    for (let n = Math.floor((s.d - 18) / 18); n * 18 < s.d + quality.drawDistance - 20; n++) {
-        const world = n * 18;
+    // Wider-spaced verge markers — never on the right during exit clearance
+    for (let n = Math.floor((s.d - 28) / 28); n * 28 < s.d + quality.drawDistance - 20; n++) {
+        const world = n * 28;
         const z = world - s.d;
-        if (z < 4 || z > 200)
+        if (z < 10 || z > 180)
             continue;
         const x = cx(z);
         const t = world - s.fork;
@@ -298,8 +282,8 @@ export function drawRoad(c, s, w, h, opts) {
         for (const side of [-1, 1]) {
             if (side > 0 && exitZone)
                 continue;
-            column(objects, x + side * 6.85, 0.42, z, 0.07, 0.84, '#d8d2bc', 6);
-            column(objects, x + side * 6.85, 0.82, z, 0.1, 0.14, side < 0 ? '#ebe6d0' : '#c24a38', 6);
+            column(objects, x + side * 6.9, 0.38, z, 0.09, 0.72, '#d8d2bc', 6);
+            column(objects, x + side * 6.9, 0.74, z, 0.12, 0.16, side < 0 ? '#ebe6d0' : '#c24a38', 6);
         }
     }
     let drawn = 0;
