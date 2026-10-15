@@ -82,6 +82,24 @@ export function cylinder(a: Face[], x: number, y: number, z: number, r: number, 
   }
 }
 
+/** Vertical column (Y-axis) for posts, trunks and rounded props. */
+export function column(a: Face[], x: number, y: number, z: number, r: number, h: number, c: string, segments = 8): void {
+  const y0 = y - h / 2;
+  const y1 = y + h / 2;
+  for (let i = 0; i < segments; i++) {
+    const t = (i * 2 * Math.PI) / segments;
+    const u = ((i + 1) * 2 * Math.PI) / segments;
+    const x0 = x + Math.cos(t) * r;
+    const z0 = z + Math.sin(t) * r;
+    const x1 = x + Math.cos(u) * r;
+    const z1 = z + Math.sin(u) * r;
+    a.push({
+      v: [v(x0, y0, z0), v(x1, y0, z1), v(x1, y1, z1), v(x0, y1, z0)],
+      c: shade(c, 0.72 + 0.22 * Math.cos(t)),
+    });
+  }
+}
+
 function prism(a: Face[], side: number[][], width: number, c: string): void {
   const l = side.map(([y, z]) => v(-width / 2, y, z));
   const r = side.map(([y, z]) => v(width / 2, y, z));
@@ -101,30 +119,33 @@ export function car(
   color: string,
   opts: { angle?: number; roll?: number; spin?: number; hood?: number | boolean; lights?: boolean; brake?: boolean; steer?: number } = {},
 ): void {
-  const key = 'r4:' + color + ':' + !!opts.hood + ':' + !!opts.lights + ':' + !!opts.brake;
+  const key = 'r5:' + color + ':' + !!opts.hood + ':' + !!opts.lights + ':' + !!opts.brake;
   let b = carCache.get(key);
   if (!b) {
     b = [];
-    // Rounded side silhouette (prism) instead of stacked cubes
+    // Smooth coupe silhouette with denser side profile
     prism(
       b,
       [
-        [0.22, 2.05],
-        [0.48, 2.18],
-        [0.72, 2.05],
-        [0.9, 1.55],
-        [0.98, 0.85],
-        [1.42, 0.35],
-        [1.48, -0.15],
-        [1.42, -0.75],
-        [1.05, -1.45],
-        [0.88, -1.95],
-        [0.55, -2.18],
-        [0.28, -2.1],
-        [0.18, -1.6],
-        [0.16, 1.5],
+        [0.2, 2.12],
+        [0.42, 2.22],
+        [0.68, 2.12],
+        [0.86, 1.7],
+        [0.94, 1.15],
+        [1.0, 0.7],
+        [1.38, 0.42],
+        [1.5, 0.1],
+        [1.5, -0.35],
+        [1.42, -0.85],
+        [1.18, -1.35],
+        [0.98, -1.75],
+        [0.78, -2.05],
+        [0.48, -2.22],
+        [0.26, -2.14],
+        [0.18, -1.7],
+        [0.15, 1.55],
       ],
-      1.92,
+      1.88,
       color,
     );
     // Soft underbody + rocker
@@ -281,6 +302,11 @@ export function renderer(c: CanvasRenderingContext2D, w: number, h: number, cam:
           c.closePath();
           c.fillStyle = face.c;
           c.fill();
+          // Hairline stroke softens polygon edges (software AA)
+          c.strokeStyle = face.c;
+          c.lineWidth = 0.9;
+          c.lineJoin = 'round';
+          c.stroke();
         }
       }
       if (image) c.putImageData(image, 0, 0);

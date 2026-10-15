@@ -70,8 +70,8 @@ body.rm-touring-shell #rm-touring .reader-expanded .workshop .hanging-panel{heig
 @media(max-width:899px){body.rm-touring-shell #rm-touring .workshop .hanging-panel{height:54%!important;width:52%}}
 #rm-touring .instructions-card{max-height:calc(100dvh - 28px);overflow-y:auto;overscroll-behavior:contain}#rm-touring .hud-icons button:focus-visible,#rm-touring .hud-help:focus-visible{outline:3px solid #f0cc83;outline-offset:2px}
 
-/* Sharp canvas + rounded UI language */
-#rm-touring canvas{image-rendering:auto;image-rendering:smooth;-ms-interpolation-mode:bicubic}
+/* Smooth canvas upscale (avoid crisp-edges / pixel look) */
+#rm-touring canvas{image-rendering:auto;image-rendering:high-quality;-ms-interpolation-mode:bicubic}
 #rm-touring .race-screen canvas,#rm-touring .orbit-stage canvas{width:100%;height:100%;display:block}
 #rm-touring .racer button{border-radius:999px}
 
