@@ -64,14 +64,14 @@ function resolveAtmosphere(
   };
 }
 
-/** Soft pine — chunky cones, shared foliage palette */
+/** Soft pine — short trunk + full cones (reads as tree mass, not a stick) */
 function softPine(a: Face[], x: number, z: number, size: number, haze: string, mid: number): void {
   const bark = fogToward(LOOK.bark, haze, mid);
-  column(a, x, size * 0.28, z, Math.max(0.28, size * 0.07), size * 0.55, bark, 7);
+  column(a, x, size * 0.22, z, Math.max(0.32, size * 0.09), size * 0.4, bark, 7);
   for (let j = 0; j < 4; j++) {
-    const y = size * (0.4 + j * 0.16);
-    const r = size * (0.52 - j * 0.09);
-    const tip = y + size * 0.32;
+    const y = size * (0.32 + j * 0.17);
+    const r = size * (0.58 - j * 0.1);
+    const tip = y + size * 0.34;
     const green = fogToward(LOOK.foliage[j % LOOK.foliage.length], haze, mid);
     for (let k = 0; k < 6; k++) {
       const a0 = (k * Math.PI) / 3;
@@ -95,13 +95,16 @@ function softBush(a: Face[], x: number, z: number, size: number, haze: string, m
   column(a, x - size * 0.16, size * 0.42, z + size * 0.08, size * 0.3, size * 0.5, fogToward(LOOK.foliage[2], haze, mid), 7);
 }
 
-/** Soft palm — thick trunk + canopy balls (reads as tree, not utility pole) */
+/** Soft palm — short thick trunk + dense canopy cluster (never a T-pole) */
 function softPalm(a: Face[], x: number, z: number, haze: string, mid: number): void {
-  column(a, x, 2.6, z, 0.32, 5.2, fogToward(LOOK.wood, haze, mid), 8);
-  const canopy = fogToward(LOOK.foliage[1], haze, mid);
-  column(a, x, 5.4, z, 1.15, 1.1, canopy, 8);
-  column(a, x + 0.55, 5.15, z + 0.2, 0.7, 0.75, fogToward(LOOK.foliage[0], haze, mid), 7);
-  column(a, x - 0.5, 5.2, z - 0.15, 0.65, 0.7, fogToward(LOOK.foliage[2], haze, mid), 7);
+  column(a, x, 1.55, z, 0.38, 3.0, fogToward(LOOK.wood, haze, mid), 8);
+  const c0 = fogToward(LOOK.foliage[1], haze, mid);
+  const c1 = fogToward(LOOK.foliage[0], haze, mid);
+  const c2 = fogToward(LOOK.foliage[2], haze, mid);
+  column(a, x, 3.55, z, 1.35, 1.55, c0, 8);
+  column(a, x + 0.7, 3.35, z + 0.25, 0.85, 1.05, c1, 7);
+  column(a, x - 0.65, 3.4, z - 0.2, 0.8, 1.0, c2, 7);
+  column(a, x + 0.15, 3.95, z - 0.55, 0.7, 0.85, c1, 7);
 }
 
 function softRock(a: Face[], x: number, z: number, haze: string, mid: number): void {

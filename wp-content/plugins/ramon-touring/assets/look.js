@@ -2,7 +2,7 @@
  * Arcade-soft look bible (Out Run–inspired).
  * One short palette, shared materials, soft fog — every draw path should use these.
  */
-import { shade } from './mesh.js?v=2.1.0';
+import { shade } from './mesh.js?v=2.1.1';
 export const LOOK = {
     /** Shared road materials — same in every biome */
     asphalt: { day: '#5c646c', night: '#3a424a', wear: '#6a727a', ramp: '#545c64' },
@@ -44,10 +44,11 @@ export function fogToward(color, haze, midZ, start = 50, end = 260) {
 }
 export function paintAtmosphere(c, w, h, atm, scroll, opts) {
     const horizonY = h * 0.52;
-    // Sky → warm horizon (same language every biome)
+    // Sky → warm horizon band (readable Out Run glow)
     const sky = c.createLinearGradient(0, 0, 0, horizonY + h * 0.04);
     sky.addColorStop(0, atm.sky[0]);
-    sky.addColorStop(0.55, atm.sky[1]);
+    sky.addColorStop(0.42, atm.sky[1]);
+    sky.addColorStop(0.78, mixHex(atm.sky[1], atm.sky[2], 0.55));
     sky.addColorStop(1, atm.sky[2]);
     c.fillStyle = sky;
     c.fillRect(0, 0, w, horizonY + h * 0.04);

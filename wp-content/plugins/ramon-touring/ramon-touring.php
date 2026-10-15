@@ -2,14 +2,14 @@
 /**
  * Plugin Name: Ramon Touring
  * Description: RM Touring Lab 2.0 — modo de conducción opcional con lectura del contenido publicado de WordPress.
- * Version: 2.1.0
+ * Version: 2.1.1
  * Requires at least: 6.5
  * Requires PHP: 8.1
  * Author: Ramón de Moya
  * License: GPL-2.0-or-later
  */
 if (!defined('ABSPATH')) { exit; }
-const RM_TOURING_VERSION = '2.1.0';
+const RM_TOURING_VERSION = '2.1.1';
 require_once __DIR__.'/src/scores.php';
 require_once __DIR__.'/src/admin.php';
 register_activation_hook(__FILE__,'rm_touring_scores_install');
