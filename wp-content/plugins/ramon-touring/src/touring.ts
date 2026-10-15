@@ -337,6 +337,8 @@ function closeMenu(restore = true): void {
 }
 function show(next: 'start' | 'road' | 'garage'): void {
   root.dataset.mode = next;
+  const racerEl = root.querySelector('.racer') as HTMLElement | null;
+  if (racerEl) racerEl.dataset.mode = next;
   if (expanded) expandReader(false);
   resized = true;
   mode = next;
