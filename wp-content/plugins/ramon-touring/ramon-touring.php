@@ -9,7 +9,7 @@
  * License: GPL-2.0-or-later
  */
 if (!defined('ABSPATH')) { exit; }
-const RM_TOURING_VERSION = '2.0.4';
+const RM_TOURING_VERSION = '2.0.5';
 require_once __DIR__.'/src/scores.php';
 require_once __DIR__.'/src/admin.php';
 register_activation_hook(__FILE__,'rm_touring_scores_install');

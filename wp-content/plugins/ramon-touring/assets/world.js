@@ -10,22 +10,28 @@ export function ramp(t) {
     return 4.6 + Math.max(0, t) * 0.12 + Math.sin(Math.max(0, t) / 180) * 2;
 }
 function pine(a, x, z, size) {
-    box(a, x, size * 0.38, z, 0.28, size * 0.76, 0.28, '#7a6550');
+    box(a, x, size * 0.36, z, 0.32, size * 0.72, 0.32, '#6e5844');
     for (let j = 0; j < 4; j++) {
-        const y = size * (0.48 + j * 0.22);
-        const r = size * (0.42 - j * 0.08);
-        a.push({ c: j % 2 ? '#3f6a4f' : '#2f5842', v: [v(x - r, y, z - r), v(x + r, y, z - r), v(x, y + size * 0.48, z)] });
-        a.push({ c: '#244836', v: [v(x + r, y, z - r), v(x + r, y, z + r), v(x, y + size * 0.48, z)] });
-        a.push({ c: '#4f7a58', v: [v(x - r, y, z + r), v(x + r, y, z + r), v(x, y + size * 0.48, z)] });
-        a.push({ c: '#356048', v: [v(x - r, y, z - r), v(x - r, y, z + r), v(x, y + size * 0.48, z)] });
+        const y = size * (0.45 + j * 0.2);
+        const r = size * (0.48 - j * 0.09);
+        a.push({ c: j % 2 ? '#2f5a40' : '#264a36', v: [v(x - r, y, z - r), v(x + r, y, z - r), v(x, y + size * 0.5, z)] });
+        a.push({ c: '#1e3c2c', v: [v(x + r, y, z - r), v(x + r, y, z + r), v(x, y + size * 0.5, z)] });
+        a.push({ c: '#3a6a48', v: [v(x - r, y, z + r), v(x + r, y, z + r), v(x, y + size * 0.5, z)] });
+        a.push({ c: '#2a5440', v: [v(x - r, y, z - r), v(x - r, y, z + r), v(x, y + size * 0.5, z)] });
     }
 }
+function bush(a, x, z, size) {
+    box(a, x, size * 0.35, z, size, size * 0.7, size * 0.9, '#3a6048');
+    box(a, x + size * 0.25, size * 0.5, z - size * 0.1, size * 0.7, size * 0.55, size * 0.7, '#4a7058');
+}
 function building(a, x, z, h, w) {
-    box(a, x, h / 2, z, w, h, w * 0.8, '#8d8575');
-    box(a, x, h + 0.15, z, w * 0.9, 0.3, w * 0.7, '#6a6560');
-    for (let i = 0; i < 3; i++) {
-        box(a, x - w * 0.25, 1 + i * 1.2, z + w * 0.42, 0.35, 0.45, 0.05, '#c9d8e0');
-        box(a, x + w * 0.25, 1 + i * 1.2, z + w * 0.42, 0.35, 0.45, 0.05, '#c9d8e0');
+    const facade = h > 5 ? '#7a7880' : '#8a8274';
+    box(a, x, h / 2, z, w, h, w * 0.75, facade);
+    box(a, x, h + 0.12, z, w * 0.92, 0.24, w * 0.68, '#5a585e');
+    for (let row = 0; row < Math.min(5, Math.floor(h / 1.1)); row++) {
+        for (const sx of [-1, 1]) {
+            box(a, x + sx * w * 0.22, 0.9 + row * 1.15, z + w * 0.38, 0.32, 0.42, 0.04, row % 2 ? '#d8e4ec' : '#f0e8c0');
+        }
     }
 }
 export function drawRoad(c, s, w, h, opts) {
@@ -54,46 +60,65 @@ export function drawRoad(c, s, w, h, opts) {
                 : beach
                     ? ['#61b6d4', '#bfe9ed', '#e9d8b6']
                     : biomeA.sky;
-    const sky = c.createLinearGradient(0, 0, 0, h * 0.7);
+    const sky = c.createLinearGradient(0, 0, 0, h * 0.62);
     sky.addColorStop(0, skyColors[0]);
-    sky.addColorStop(0.7, skyColors[1]);
+    sky.addColorStop(0.55, skyColors[1]);
     sky.addColorStop(1, skyColors[2]);
     c.fillStyle = sky;
     c.fillRect(0, 0, w, h);
-    if (!night && weather !== 'rain' && weather !== 'fog') {
-        c.fillStyle = weather === 'sunset' ? '#ffd0a0' : '#fff4c8';
+    // Soft sun glow
+    if (!night) {
+        const sunX = w * 0.76;
+        const sunY = h * 0.16;
+        const glow = c.createRadialGradient(sunX, sunY, 2, sunX, sunY, h * 0.14);
+        glow.addColorStop(0, weather === 'sunset' ? '#ffc080aa' : '#fff2c0aa');
+        glow.addColorStop(1, '#fff2c000');
+        c.fillStyle = glow;
+        c.fillRect(sunX - h * 0.16, sunY - h * 0.16, h * 0.32, h * 0.32);
+        c.fillStyle = weather === 'sunset' ? '#ffc090' : biomeA.sun;
         c.beginPath();
-        c.arc(w * 0.78, h * 0.18, h * 0.04, 0, Math.PI * 2);
+        c.arc(sunX, sunY, h * 0.028, 0, Math.PI * 2);
         c.fill();
-        if (!opts.reduceEffects) {
-            c.fillStyle = weather === 'cloudy' ? '#d8e0e688' : '#ffffff55';
-            for (let i = 0; i < 5; i++) {
-                const cloudX = ((i * 137 + s.d * 0.08) % (w + 120)) - 60;
-                const cloudY = h * (0.12 + (i % 3) * 0.05);
-                c.beginPath();
-                c.ellipse(cloudX, cloudY, w * 0.08, h * 0.018, 0, 0, Math.PI * 2);
-                c.ellipse(cloudX + w * 0.04, cloudY - h * 0.008, w * 0.05, h * 0.014, 0, 0, Math.PI * 2);
-                c.fill();
-            }
-        }
     }
     else {
-        c.fillStyle = '#e1e8f4';
+        c.fillStyle = '#e8eef8';
         c.beginPath();
-        c.arc(w * 0.76, h * 0.21, h * 0.03, 0, Math.PI * 2);
+        c.arc(w * 0.74, h * 0.18, h * 0.022, 0, Math.PI * 2);
         c.fill();
     }
+    if (!night && !opts.reduceEffects && weather !== 'rain') {
+        c.fillStyle = weather === 'cloudy' ? '#d0d8e099' : '#ffffff44';
+        for (let i = 0; i < 6; i++) {
+            const cloudX = ((i * 151 + s.d * 0.06) % (w + 160)) - 80;
+            const cloudY = h * (0.1 + (i % 3) * 0.045);
+            c.beginPath();
+            c.ellipse(cloudX, cloudY, w * 0.09, h * 0.016, 0, 0, Math.PI * 2);
+            c.ellipse(cloudX + w * 0.045, cloudY - h * 0.006, w * 0.055, h * 0.013, 0, 0, Math.PI * 2);
+            c.ellipse(cloudX - w * 0.03, cloudY + h * 0.004, w * 0.04, h * 0.01, 0, 0, Math.PI * 2);
+            c.fill();
+        }
+    }
+    // Layered hills with slight atmospheric fade
     for (let k = 0; k < 3; k++) {
         c.beginPath();
-        c.moveTo(0, h * 0.48);
-        for (let i = 0; i <= 30; i++) {
-            c.lineTo(i * w / 30, h * (0.31 + k * 0.035) - Math.sin(i * 0.6 + k * 2) * h * 0.036 - Math.sin(i * 0.17 + k) * h * 0.05);
+        c.moveTo(0, h * 0.5);
+        for (let i = 0; i <= 36; i++) {
+            c.lineTo((i * w) / 36, h * (0.3 + k * 0.04) -
+                Math.sin(i * 0.55 + k * 2.1 + s.d * 0.002) * h * 0.032 -
+                Math.sin(i * 0.19 + k) * h * 0.045);
         }
         c.lineTo(w, h);
         c.lineTo(0, h);
         c.fillStyle = ground[k] || ground[0];
         c.fill();
     }
+    // Horizon haze band
+    const haze = c.createLinearGradient(0, h * 0.28, 0, h * 0.52);
+    haze.addColorStop(0, '#ffffff00');
+    haze.addColorStop(0.5, biomeA.haze || '#d0dce088');
+    haze.addColorStop(1, '#ffffff00');
+    c.fillStyle = haze;
+    c.fillRect(0, h * 0.28, w, h * 0.24);
     const base = curve(s.d);
     const path = s.branch ? ramp(s.d - s.fork) : 0;
     const px = s.x + path;
@@ -113,26 +138,23 @@ export function drawRoad(c, s, w, h, opts) {
         const z2 = z + 6;
         const x = cx(z);
         const x2 = cx(z2);
-        const asphalt = night ? '#2a3034' : '#50565a';
-        quad(a, x, z, x2, z2, 140, beach ? '#d8c79d' : ground[0], -0.08);
-        quad(a, x - 43, z, x2 - 43, z2, 36, night ? '#3a5a62' : biomeA.water, -0.06);
-        quad(a, x, z, x2, z2, 12.4, asphalt);
-        // Shoulder / curb
+        const asphalt = night ? '#2c3236' : ((Math.floor(world / 6) % 2) ? '#4a5054' : '#464c50');
+        quad(a, x, z, x2, z2, 150, beach ? '#d4c294' : ground[0], -0.08);
+        quad(a, x - 46, z, x2 - 46, z2, 40, night ? '#2e4e58' : biomeA.water, -0.06);
+        quad(a, x, z, x2, z2, 12.6, asphalt);
+        // Soft roadside verge
         for (const side of [-1, 1]) {
-            quad(a, x + side * 6.35, z, x2 + side * 6.35, z2, 0.45, '#b0aa90');
-            quad(a, x + side * 5.85, z, x2 + side * 5.85, z2, 0.14, '#f0ead2', 0.015);
+            quad(a, x + side * 6.5, z, x2 + side * 6.5, z2, 0.55, beach ? '#c8b888' : '#6a7a58');
+            quad(a, x + side * 5.95, z, x2 + side * 5.95, z2, 0.16, '#ebe4cc', 0.016);
             if (quality.shadows) {
-                box(objects, x + side * 6.55, 0.55, z, 0.14, 0.75, 0.14, '#a8b4ac');
-                box(objects, x + side * 6.55, 0.95, z, 0.18, 0.12, 0.18, side < 0 ? '#e8e2c8' : '#c44937');
+                box(objects, x + side * 6.7, 0.52, z, 0.12, 0.72, 0.12, '#9aaca4');
+                box(objects, x + side * 6.7, 0.9, z, 0.16, 0.1, 0.16, side < 0 ? '#efe8d0' : '#c24a38');
             }
         }
-        // Lane dashes + yellow center
-        if (((world % 22) + 22) % 22 < 11) {
+        // White lane dashes only (no center yellow)
+        if (((world % 22) + 22) % 22 < 10) {
             for (const l of [-2, 2])
-                quad(a, x + l, z, x2 + l, z2, 0.14, '#f2eed8', 0.022);
-        }
-        if (((world % 28) + 28) % 28 < 10) {
-            quad(a, x, z, x2, z2, 0.1, '#e6c86a', 0.024);
+                quad(a, x + l, z, x2 + l, z2, 0.13, '#f4f0dc', 0.022);
         }
         const t = world - s.fork;
         const t2 = t + 6;
@@ -175,30 +197,36 @@ export function drawRoad(c, s, w, h, opts) {
         const right = Math.max(14 + ((n % 4 + 4) % 4) * 3, t > -20 && t < 330 ? ramp(Math.max(0, t)) + 6 : 0);
         const biomeId = Math.floor(world / 1600) % BIOMES.length;
         if (beach || opts.environment === 'coast') {
-            box(objects, x + right, 0.35, z, 1.2, 0.7, 1.1, '#d6c396');
+            box(objects, x + right, 0.3, z, 1.4, 0.6, 1.2, '#d2be8e');
+            bush(objects, x + right + 2.2, z, 1.1 + (n % 2) * 0.3);
             if (n % 2 === 0) {
-                box(objects, x - 14, 3, z, 0.25, 6, 0.25, '#866b44');
-                for (let j = 0; j < 4; j++) {
-                    box(objects, x - 14 + Math.cos((j * Math.PI) / 2) * 1.2, 5.8, z + Math.sin((j * Math.PI) / 2) * 1.2, 3.5, 0.12, 0.55, '#477e53', (j * Math.PI) / 2);
+                box(objects, x - 15, 3.2, z, 0.28, 6.4, 0.28, '#7a623e');
+                for (let j = 0; j < 5; j++) {
+                    box(objects, x - 15 + Math.cos((j * Math.PI) / 2.5) * 1.35, 6.1, z + Math.sin((j * Math.PI) / 2.5) * 1.35, 3.2, 0.1, 0.5, '#3a6e4a', (j * Math.PI) / 2.5);
                 }
             }
         }
         else if (biomeId === 2) {
-            building(objects, x + right, z, 4 + (n % 4), 2.5 + (n % 3) * 0.4);
-            if (n % 2 === 0)
-                box(objects, x - 12, 2.2, z, 0.15, 4.4, 0.15, '#889098');
+            building(objects, x + right, z, 4.5 + (n % 5), 2.6 + (n % 3) * 0.45);
+            if (n % 2 === 0) {
+                box(objects, x - 12, 2.4, z, 0.18, 4.8, 0.18, '#7a8890');
+                box(objects, x - 12, 4.7, z, 0.5, 0.12, 0.5, '#c8d0d4');
+            }
         }
         else if (biomeId === 3) {
-            box(objects, x + right, 0.6, z, 1.4, 1.2, 1.1, '#b8955c');
+            box(objects, x + right, 0.7, z, 1.6, 1.4, 1.2, '#c4a060');
+            box(objects, x + right + 2.5, 0.35, z, 0.9, 0.7, 0.9, '#b89254');
         }
         else if (biomeId === 4) {
-            pine(objects, x + right, z, 3.5 + (n % 3));
-            box(objects, x + right + 2, 0.2, z, 2, 0.35, 2, '#e8eef2');
+            pine(objects, x + right, z, 3.2 + (n % 3));
+            box(objects, x + right + 2.2, 0.18, z, 2.2, 0.3, 2.2, '#eef4f8');
         }
         else {
-            pine(objects, x + right, z, 5 + ((n % 3 + 3) % 3));
+            pine(objects, x + right, z, 5.2 + ((n % 3 + 3) % 3));
             if (n % 2 === 0)
-                pine(objects, x - 13, z, 4.5);
+                pine(objects, x - 13.5, z, 4.6);
+            if (n % 3 === 0)
+                bush(objects, x + right - 3, z + 2, 1.2);
         }
     }
     for (let n = Math.floor((s.d - 12) / 12); n * 12 < s.d + quality.drawDistance - 20; n++) {
@@ -348,16 +376,25 @@ export function drawRoad(c, s, w, h, opts) {
             c.fill();
         }
     }
-    // Light vignette — keep the lower third (car) bright.
-    const edge = c.createRadialGradient(w / 2, h * 0.42, w * 0.18, w / 2, h * 0.48, w * 0.72);
-    edge.addColorStop(0, '#10202a00');
-    edge.addColorStop(0.75, '#14263300');
-    edge.addColorStop(1, '#14263340');
+    // Atmospheric depth fade toward horizon
+    const depth = c.createLinearGradient(0, h * 0.25, 0, h * 0.55);
+    depth.addColorStop(0, night ? '#0a152055' : '#c8d4dc33');
+    depth.addColorStop(1, '#ffffff00');
+    c.fillStyle = depth;
+    c.fillRect(0, h * 0.22, w, h * 0.35);
+    // Soft edge vignette
+    const edge = c.createRadialGradient(w / 2, h * 0.45, w * 0.22, w / 2, h * 0.5, w * 0.78);
+    edge.addColorStop(0, '#0c182200');
+    edge.addColorStop(0.8, '#0c182200');
+    edge.addColorStop(1, night ? '#06101855' : '#14202833');
     c.fillStyle = edge;
     c.fillRect(0, 0, w, h);
 }
 export function drawGarage(c, w, h, angle, zoom, color, hood, lights, _focus) {
-    c.fillStyle = '#18222b';
+    const bg = c.createLinearGradient(0, 0, 0, h);
+    bg.addColorStop(0, '#1c2a34');
+    bg.addColorStop(1, '#121a22');
+    c.fillStyle = bg;
     c.fillRect(0, 0, w, h);
     const a = [];
     const objects = [];
