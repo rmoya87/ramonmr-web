@@ -33,7 +33,14 @@ describe('VehicleController', () => {
     assert.ok(s.x > 0);
     assert.ok(Math.abs(s.steer) > 0);
   });
+
+  it('reaches a punchy arcade top speed quickly', () => {
+    const s = createRun('arcade');
+    for (let i = 0; i < 180; i++) stepVehicle(s, 0, false, FIXED_DT);
+    assert.ok(s.speed >= 170, `expected >= 170 km/h, got ${s.speed}`);
+  });
 });
+
 
 describe('Collisions', () => {
   it('registers a hit and grants invulnerability', () => {

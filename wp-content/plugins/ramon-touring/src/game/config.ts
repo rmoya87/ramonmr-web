@@ -1,5 +1,5 @@
 /** Centralized tunable constants for RM Touring Lab 2.0 */
-export const VERSION = '3.0.1';
+export const VERSION = '3.0.3';
 export const SCORE_VERSION = 2;
 
 export const FIXED_DT = 1 / 60;
@@ -7,23 +7,23 @@ export const MAX_FRAME_DT = 0.1;
 export const MAX_PHYSICS_STEPS = 5;
 
 export const PHYSICS = {
-  baseSpeed: 72,
+  baseSpeed: 105,
   maxSpeed: 280,
-  arcadeTopBase: 148,
-  arcadeTopRamp: 0.48,
-  exploreTop: 130,
-  accelGain: 0.72,
-  accelCap: 28,
-  brakeDecel: 46,
-  shoulderPenalty: 26,
-  steerSpeedFactor: 160,
-  steerLerp: 16,
-  yawLerp: 10,
-  vxLerp: 12,
-  driftVxLerp: 3.5,
+  arcadeTopBase: 195,
+  arcadeTopRamp: 0.85,
+  exploreTop: 160,
+  accelGain: 1.15,
+  accelCap: 48,
+  brakeDecel: 55,
+  shoulderPenalty: 30,
+  steerSpeedFactor: 200,
+  steerLerp: 20,
+  yawLerp: 12,
+  vxLerp: 14,
+  driftVxLerp: 4,
   slipLerp: 5,
   driftSteerMin: 0.2,
-  driftSpeedMin: 95,
+  driftSpeedMin: 100,
   roadHalfWidth: 6.9,
   branchHalfWidth: 1.6,
   shoulderAbsX: 5.65,
@@ -82,8 +82,8 @@ export const EXIT = {
 
 export const CAMERA = {
   modes: 1,
-  damp: 4.2,
-  fovSpeedFactor: 0.05,
+  damp: 5.5,
+  fovSpeedFactor: 0.14,
   shakeDecay: 5,
 } as const;
 

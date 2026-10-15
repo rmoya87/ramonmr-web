@@ -2,7 +2,7 @@
 Contributors: rmoya87
 Requires at least: 6.5
 Requires PHP: 8.1
-Stable tag: 3.0.1
+Stable tag: 3.0.3
 License: GPLv2 or later
 
 Optional RM Touring Lab driving mode for ramonmr.com. The normal WordPress site remains the default.
@@ -21,6 +21,15 @@ TypeScript in src/ typechecks with tsc; the browser entry is an esbuild ESM bund
 
 == Rollback ==
 Deactivate the plugin, purge cache, restore previous plugin files from deployment backup; preserve the score table. Existing content and other plugins remain unchanged.
+
+== 3.0.3 ==
+* Fix left/right for real: mirror chase projection (previous world-X flip canceled itself).
+* Higher visual quality: ACES tone map, soft shadows, asphalt grain, guardrails, denser roadside.
+
+== 3.0.2 ==
+* Fix chase-camera X mirror so left/right steering matches the screen.
+* Faster arcade top speed and stronger speed sensation (FOV / camera pullback).
+* Richer road (lane dashes, wear), denser props, sky dome and improved car meshes.
 
 == 3.0.1 ==
 * Fix road ribbon face winding so asphalt/verge render under the chase camera.

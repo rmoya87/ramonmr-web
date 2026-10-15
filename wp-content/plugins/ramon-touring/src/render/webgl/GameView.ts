@@ -21,10 +21,14 @@ export class GameView {
       canvas,
       antialias: true,
       alpha: false,
-      powerPreference: 'default',
+      powerPreference: 'high-performance',
     });
     this.renderer.setClearColor(0x1a2834, 1);
     this.renderer.outputColorSpace = THREE.SRGBColorSpace;
+    this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    this.renderer.toneMappingExposure = 1.12;
+    this.renderer.shadowMap.enabled = true;
+    this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
   }
 
   setMode(mode: 'road' | 'garage'): void {
@@ -42,6 +46,7 @@ export class GameView {
     const w = this.canvas.clientWidth || 1;
     const h = this.canvas.clientHeight || 1;
     const st = performance.now();
+    this.renderer.shadowMap.enabled = opts.quality.shadows;
     this.road.update(
       s,
       {

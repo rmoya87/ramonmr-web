@@ -38,8 +38,8 @@ export function createRun(mode: GameMode, environment: EnvironmentId = 'auto'): 
     exitHold: 0,
     exit: 0,
     camX: 0,
-    camY: 3.35,
-    camZ: -9.2,
+    camY: 3.15,
+    camZ: -8.4,
     fovBoost: 0,
     shake: 0,
     ended: false,
@@ -170,6 +170,6 @@ export function resumeFromWorkshop(s: RunState, sectionCount: number): void {
   s.exitHold = 0;
   s.x = 0;
   s.vx = 0;
-  s.speed = 70;
+  s.speed = 95;
   s.inv = PHYSICS.workshopInvulnerability;
 }

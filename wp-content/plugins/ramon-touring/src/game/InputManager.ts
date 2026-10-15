@@ -60,6 +60,7 @@ export class InputManager {
     const left = !!(this.keys.left || this.keys.arrowleft || this.keys.a || gp.left);
     const right = !!(this.keys.right || this.keys.arrowright || this.keys.d || gp.right);
     const brake = !!(this.keys.brake || this.keys.arrowdown || this.keys.s || gp.brake);
+    // +1 = gameplay right lane (screen-right after chase projection mirror).
     let steerAxis = (right ? 1 : 0) - (left ? 1 : 0);
     if (Math.abs(this.dragSteer) > 0.05) steerAxis = this.dragSteer;
     if (Math.abs(gp.axis) > 0.15) steerAxis = gp.axis;

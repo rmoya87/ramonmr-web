@@ -2,7 +2,7 @@ import * as THREE from 'three';
 import { BIOMES, effectiveNight } from '../../game/EnvironmentManager.js';
 import { cameraPose } from '../../game/CameraController.js';
 import { LOOK } from '../../look.js';
-import { curve, inExitClearance, ramp } from './path.js';
+import { curve, inExitClearance, mirrorChaseProjection, ramp } from './path.js';
 import { PropField } from './Props.js';
 import { createVehicle, setVehicleLights } from './Vehicles.js';
 function hex(c) {
@@ -22,7 +22,6 @@ function buildRibbon(centers, halfW, y) {
         const nz = (dx / len) * halfW;
         positions.push(c.x + nx, y, c.z + nz, c.x - nx, y, c.z - nz);
     }
-    // CCW when viewed from +Y so FrontSide faces the chase camera.
     for (let i = 0; i < centers.length - 1; i++) {
         const a = i * 2;
         indices.push(a, a + 2, a + 1, a + 1, a + 2, a + 3);
@@ -33,10 +32,55 @@ function buildRibbon(centers, halfW, y) {
     geo.computeVertexNormals();
     return geo;
 }
+function buildDashes(centers, halfW, y, on = 2, off = 1) {
+    const positions = [];
+    const indices = [];
+    let seg = 0;
+    let vertBase = 0;
+    for (let i = 0; i < centers.length - 1; i++) {
+        const phase = seg % (on + off);
+        seg++;
+        if (phase >= on)
+            continue;
+        const c = centers[i];
+        const next = centers[i + 1];
+        const dx = next.x - c.x;
+        const dz = next.z - c.z || 1;
+        const len = Math.hypot(dx, dz) || 1;
+        const nx = (-dz / len) * halfW;
+        const nz = (dx / len) * halfW;
+        positions.push(c.x + nx, y, c.z + nz, c.x - nx, y, c.z - nz, next.x + nx, y, next.z + nz, next.x - nx, y, next.z - nz);
+        indices.push(vertBase, vertBase + 2, vertBase + 1, vertBase + 1, vertBase + 2, vertBase + 3);
+        vertBase += 4;
+    }
+    const geo = new THREE.BufferGeometry();
+    geo.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
+    geo.setIndex(indices);
+    geo.computeVertexNormals();
+    return geo;
+}
+function makeAsphaltTexture() {
+    const c = document.createElement('canvas');
+    c.width = 128;
+    c.height = 128;
+    const g = c.getContext('2d');
+    g.fillStyle = '#5c646c';
+    g.fillRect(0, 0, 128, 128);
+    for (let i = 0; i < 900; i++) {
+        const n = 70 + ((i * 37) % 40);
+        g.fillStyle = `rgb(${n},${n + 2},${n + 4})`;
+        g.fillRect((i * 13) % 128, (i * 29) % 128, 1 + (i % 2), 1);
+    }
+    const tex = new THREE.CanvasTexture(c);
+    tex.wrapS = tex.wrapT = THREE.RepeatWrapping;
+    tex.repeat.set(2, 40);
+    tex.colorSpace = THREE.SRGBColorSpace;
+    return tex;
+}
 export class RoadWorld {
     constructor() {
         this.scene = new THREE.Scene();
-        this.camera = new THREE.PerspectiveCamera(50, 1, 0.2, 500);
+        this.camera = new THREE.PerspectiveCamera(50, 1, 0.2, 560);
         this.roadGroup = new THREE.Group();
         this.props = new PropField();
         this.traffic = new Map();
@@ -47,69 +91,171 @@ export class RoadWorld {
         this.water = null;
         this.rampMesh = null;
         this.chalkMesh = null;
+        this.laneL = null;
+        this.laneR = null;
         this.edgeL = null;
         this.edgeR = null;
+        this.wearMesh = null;
         this.sign = null;
         this.lastRoadKey = '';
-        this.scene.fog = new THREE.FogExp2(0xd8e4e8, 0.012);
-        this.hemi = new THREE.HemisphereLight(0xc8e0f0, 0x6a7a58, 0.85);
-        this.sun = new THREE.DirectionalLight(0xffe2a8, 1.1);
-        this.sun.position.set(40, 60, 20);
-        this.scene.add(this.hemi, this.sun);
+        this.scene.fog = new THREE.FogExp2(0xd8e4e8, 0.009);
+        this.hemi = new THREE.HemisphereLight(0xc8e0f0, 0x6a7a58, 0.95);
+        this.sun = new THREE.DirectionalLight(0xffe2a8, 1.35);
+        this.sun.position.set(45, 70, 25);
+        this.sun.castShadow = true;
+        this.sun.shadow.mapSize.set(1024, 1024);
+        this.sun.shadow.camera.near = 1;
+        this.sun.shadow.camera.far = 180;
+        this.sun.shadow.camera.left = -40;
+        this.sun.shadow.camera.right = 40;
+        this.sun.shadow.camera.top = 40;
+        this.sun.shadow.camera.bottom = -20;
+        this.sun.shadow.bias = -0.0008;
+        this.fill = new THREE.DirectionalLight(0xa8c8e0, 0.4);
+        this.fill.position.set(-30, 20, -10);
+        this.scene.add(this.hemi, this.sun, this.fill);
         this.scene.add(this.roadGroup);
         this.scene.add(this.props.root);
+        const skyGeo = new THREE.SphereGeometry(420, 32, 20);
+        const skyMat = new THREE.ShaderMaterial({
+            side: THREE.BackSide,
+            depthWrite: false,
+            uniforms: {
+                topColor: { value: new THREE.Color(0x4a8ab8) },
+                midColor: { value: new THREE.Color(0xa8d0e0) },
+                botColor: { value: new THREE.Color(0xf0d8b0) },
+            },
+            vertexShader: `
+        varying vec3 vPos;
+        void main() {
+          vPos = normalize(position);
+          gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+        }
+      `,
+            fragmentShader: `
+        uniform vec3 topColor;
+        uniform vec3 midColor;
+        uniform vec3 botColor;
+        varying vec3 vPos;
+        void main() {
+          float h = clamp(vPos.y * 0.5 + 0.5, 0.0, 1.0);
+          vec3 col = mix(botColor, midColor, smoothstep(0.0, 0.45, h));
+          col = mix(col, topColor, smoothstep(0.4, 1.0, h));
+          gl_FragColor = vec4(col, 1.0);
+        }
+      `,
+        });
+        this.skyDome = new THREE.Mesh(skyGeo, skyMat);
+        this.scene.add(this.skyDome);
+        this.sunDisc = new THREE.Mesh(new THREE.SphereGeometry(7, 20, 20), new THREE.MeshBasicMaterial({ color: 0xffe2a8, fog: false }));
+        this.scene.add(this.sunDisc);
+        this.hills = new THREE.Group();
+        for (let band = 0; band < 4; band++) {
+            const shape = new THREE.Shape();
+            shape.moveTo(-220, 0);
+            for (let i = 0; i <= 48; i++) {
+                const x = -220 + (i / 48) * 440;
+                const y = 7 + band * 3.5 + Math.sin(i * 0.5 + band * 1.3) * (6 - band) + Math.sin(i * 1.4) * 2.2;
+                shape.lineTo(x, y);
+            }
+            shape.lineTo(220, 0);
+            shape.closePath();
+            const mesh = new THREE.Mesh(new THREE.ShapeGeometry(shape), new THREE.MeshStandardMaterial({ color: 0x5a7a54, flatShading: true, side: THREE.DoubleSide }));
+            mesh.position.set(0, -2 + band * 0.35, 80 + band * 50);
+            mesh.scale.set(1.15 + band * 0.12, 1, 1);
+            this.hills.add(mesh);
+        }
+        this.scene.add(this.hills);
+        const asphaltMap = typeof document !== 'undefined' ? makeAsphaltTexture() : null;
         this.asphaltMat = new THREE.MeshStandardMaterial({
             color: hex(LOOK.asphalt.day),
-            roughness: 0.92,
+            map: asphaltMap,
+            roughness: 0.86,
             side: THREE.DoubleSide,
         });
         this.chalkMat = new THREE.MeshStandardMaterial({
             color: hex(LOOK.chalk),
-            roughness: 0.7,
+            roughness: 0.55,
+            emissive: hex(LOOK.chalk),
+            emissiveIntensity: 0.12,
             side: THREE.DoubleSide,
         });
-        this.groundMat = new THREE.MeshStandardMaterial({ color: 0x6a8a5e, roughness: 1, side: THREE.DoubleSide });
+        this.groundMat = new THREE.MeshStandardMaterial({ color: 0x6a8a5e, roughness: 0.95, side: THREE.DoubleSide });
         this.waterMat = new THREE.MeshStandardMaterial({
             color: 0x3a8a9a,
-            roughness: 0.35,
-            metalness: 0.2,
+            roughness: 0.22,
+            metalness: 0.28,
+            side: THREE.DoubleSide,
+        });
+        this.wearMat = new THREE.MeshStandardMaterial({
+            color: hex(LOOK.asphalt.wear),
+            roughness: 0.95,
             side: THREE.DoubleSide,
         });
         this.player = createVehicle('sport', '#c23a2b');
         this.scene.add(this.player);
+        this.playerShadow = new THREE.Mesh(new THREE.CircleGeometry(1.35, 20), new THREE.MeshBasicMaterial({ color: 0x000000, transparent: true, opacity: 0.28 }));
+        this.playerShadow.rotation.x = -Math.PI / 2;
+        this.playerShadow.position.y = 0.03;
+        this.scene.add(this.playerShadow);
     }
     atmosphere(s, env, weather) {
         const night = effectiveNight(env) || env === 'night';
         const biome = BIOMES[Math.floor(s.d / 1600) % BIOMES.length];
         let skyTop = biome.sky[0];
+        let skyMid = biome.sky[1];
+        let skyBot = biome.sky[2];
         let ground = biome.ground[0];
         if (night) {
             skyTop = '#0a1828';
+            skyMid = '#152838';
+            skyBot = '#2a3238';
             ground = '#2a3238';
         }
-        else if (weather === 'sunset')
-            skyTop = '#c07050';
-        else if (weather === 'cloudy' || weather === 'rain')
+        else if (weather === 'sunset') {
+            skyTop = '#3a5070';
+            skyMid = '#c07050';
+            skyBot = '#e8a878';
+        }
+        else if (weather === 'cloudy' || weather === 'rain') {
             skyTop = '#6a8494';
+            skyMid = '#8aa0a8';
+            skyBot = '#b0b8b0';
+        }
         else if (env === 'beach') {
             skyTop = '#4aa8c8';
+            skyMid = '#8ecce0';
+            skyBot = '#f0e0c0';
             ground = LOOK.sand;
         }
-        this.scene.background = new THREE.Color(skyTop);
+        this.scene.background = new THREE.Color(skyMid);
         const fogCol = new THREE.Color(biome.haze.slice(0, 7) || '#e8dcc8');
         this.scene.fog.color.copy(fogCol);
-        this.scene.fog.density = night ? 0.02 : 0.011;
+        this.scene.fog.density = night ? 0.017 : weather === 'fog' ? 0.015 : 0.0088;
         this.hemi.color.set(skyTop);
         this.hemi.groundColor.set(ground);
-        this.hemi.intensity = night ? 0.35 : 0.9;
-        this.sun.intensity = night ? 0.25 : 1.15;
+        this.hemi.intensity = night ? 0.35 : 1.0;
+        this.sun.intensity = night ? 0.2 : weather === 'cloudy' || weather === 'rain' ? 0.75 : 1.4;
         this.sun.color.set(biome.sun || LOOK.sun);
+        this.fill.intensity = night ? 0.15 : 0.45;
         this.groundMat.color.set(ground);
         this.asphaltMat.color.set(night ? LOOK.asphalt.night : LOOK.asphalt.day);
         this.waterMat.color.set(biome.water);
+        const skyMat = this.skyDome.material;
+        skyMat.uniforms.topColor.value.set(skyTop);
+        skyMat.uniforms.midColor.value.set(skyMid);
+        skyMat.uniforms.botColor.value.set(skyBot);
+        this.sunDisc.visible = !night;
+        this.sunDisc.material.color.set(weather === 'sunset' ? 0xff9040 : hex(biome.sun || LOOK.sun));
+        this.sunDisc.position.set(90, 52, 170);
+        this.hills.children.forEach((child, i) => {
+            const m = child;
+            m.material.color.set(biome.ground[Math.min(2, i)] || ground);
+            m.position.x = Math.sin(s.d * 0.002 + i) * 10;
+        });
     }
     rebuildRoad(s, drawDistance, env) {
-        const key = `${Math.floor(s.d / 3)}:${Math.floor(s.fork)}:${env}:${s.branch ? 1 : 0}`;
+        const key = `${Math.floor(s.d / 2)}:${Math.floor(s.fork)}:${env}:${s.branch ? 1 : 0}`;
         if (key === this.lastRoadKey)
             return;
         this.lastRoadKey = key;
@@ -121,8 +267,11 @@ export class RoadWorld {
             this.water,
             this.rampMesh,
             this.chalkMesh,
+            this.laneL,
+            this.laneR,
             this.edgeL,
             this.edgeR,
+            this.wearMesh,
         ]) {
             if (m) {
                 this.roadGroup.remove(m);
@@ -131,24 +280,28 @@ export class RoadWorld {
         }
         const base = curve(s.d);
         const centers = [];
-        const step = 3;
-        for (let z = -6; z <= drawDistance; z += step) {
+        const step = 2.2;
+        for (let z = -8; z <= drawDistance; z += step) {
             centers.push({ x: curve(s.d + z) - base, z });
         }
         this.roadMesh = new THREE.Mesh(buildRibbon(centers, 6.2, 0.02), this.asphaltMat);
         this.roadMesh.receiveShadow = true;
-        this.vergeL = new THREE.Mesh(buildRibbon(centers.map((c) => ({ x: c.x - 6.5, z: c.z })), 0.55, 0.03), this.groundMat);
-        this.vergeR = new THREE.Mesh(buildRibbon(centers.map((c) => ({ x: c.x + 6.5, z: c.z })), 0.55, 0.03), this.groundMat);
-        this.skirt = new THREE.Mesh(buildRibbon(centers, 55, -0.08), this.groundMat);
-        this.edgeL = new THREE.Mesh(buildRibbon(centers.map((c) => ({ x: c.x - 5.85, z: c.z })), 0.1, 0.045), this.chalkMat);
-        this.edgeR = new THREE.Mesh(buildRibbon(centers.map((c) => ({ x: c.x + 5.85, z: c.z })), 0.1, 0.045), this.chalkMat);
+        this.vergeL = new THREE.Mesh(buildRibbon(centers.map((c) => ({ x: c.x - 6.55, z: c.z })), 0.75, 0.035), this.groundMat);
+        this.vergeR = new THREE.Mesh(buildRibbon(centers.map((c) => ({ x: c.x + 6.55, z: c.z })), 0.75, 0.035), this.groundMat);
+        this.skirt = new THREE.Mesh(buildRibbon(centers, 75, -0.1), this.groundMat);
+        this.skirt.receiveShadow = true;
+        this.edgeL = new THREE.Mesh(buildRibbon(centers.map((c) => ({ x: c.x - 5.9, z: c.z })), 0.13, 0.05), this.chalkMat);
+        this.edgeR = new THREE.Mesh(buildRibbon(centers.map((c) => ({ x: c.x + 5.9, z: c.z })), 0.13, 0.05), this.chalkMat);
+        this.wearMesh = new THREE.Mesh(buildRibbon(centers.map((c) => ({ x: c.x - 2.1, z: c.z })), 0.6, 0.025), this.wearMat);
+        this.laneL = new THREE.Mesh(buildDashes(centers.map((c) => ({ x: c.x - 2.05, z: c.z })), 0.075, 0.045), this.chalkMat);
+        this.laneR = new THREE.Mesh(buildDashes(centers.map((c) => ({ x: c.x + 2.05, z: c.z })), 0.075, 0.045), this.chalkMat);
+        this.chalkMesh = new THREE.Mesh(buildDashes(centers, 0.1, 0.05, 2, 1), this.chalkMat);
         const beach = env === 'beach' || env === 'coast' || Math.floor(s.d / 1600) % BIOMES.length === 0;
         if (beach) {
-            this.water = new THREE.Mesh(buildRibbon(centers.filter((c) => c.z > 40).map((c) => ({ x: c.x - 38, z: c.z })), 10, -0.04), this.waterMat);
+            this.water = new THREE.Mesh(buildRibbon(centers.filter((c) => c.z > 30).map((c) => ({ x: c.x - 40, z: c.z })), 14, -0.05), this.waterMat);
         }
         else
             this.water = null;
-        // Exit ramp ribbon
         const rampCenters = [];
         for (let z = -6; z <= drawDistance; z += step) {
             const world = s.d + z;
@@ -157,20 +310,12 @@ export class RoadWorld {
                 rampCenters.push({ x: curve(world) - base + ramp(t), z });
             }
         }
-        if (rampCenters.length > 2) {
-            this.rampMesh = new THREE.Mesh(buildRibbon(rampCenters, 2.1, 0.035), this.asphaltMat);
-        }
-        else
-            this.rampMesh = null;
-        // Lane dashes as thin chalk ribbons near center
-        const dashCenters = centers.filter((_, i) => i % 3 < 2);
-        this.chalkMesh = new THREE.Mesh(buildRibbon(dashCenters, 0.08, 0.04), this.chalkMat);
-        this.roadGroup.add(this.skirt, this.roadMesh, this.vergeL, this.vergeR, this.edgeL, this.edgeR, this.chalkMesh);
+        this.rampMesh = rampCenters.length > 2 ? new THREE.Mesh(buildRibbon(rampCenters, 2.2, 0.038), this.asphaltMat) : null;
+        this.roadGroup.add(this.skirt, this.roadMesh, this.wearMesh, this.vergeL, this.vergeR, this.edgeL, this.edgeR, this.laneL, this.laneR, this.chalkMesh);
         if (this.water)
             this.roadGroup.add(this.water);
         if (this.rampMesh)
             this.roadGroup.add(this.rampMesh);
-        // Clear right verge markers visually when in exit — handled in props
         void inExitClearance;
     }
     syncSign(s, labels) {
@@ -210,22 +355,28 @@ export class RoadWorld {
         tc.fillText(`↗  ${Math.max(0, Math.round(s.fork - s.d))} m`, 256, 110);
         tex.needsUpdate = true;
         const base = curve(s.d);
-        const x = curve(s.d + signZ) - base + 4.2;
-        this.sign.position.set(x, 5.2, signZ);
+        this.sign.position.set(curve(s.d + signZ) - base + 4.2, 5.2, signZ);
         this.sign.lookAt(this.camera.position.x, 5.2, this.camera.position.z);
     }
     update(s, opts, aspect) {
         this.atmosphere(s, opts.environment, opts.weather);
         this.rebuildRoad(s, opts.quality.drawDistance, opts.environment);
+        this.sun.castShadow = opts.quality.shadows;
         const path = s.branch ? ramp(s.d - s.fork) : 0;
         const px = s.x + path;
         const pose = cameraPose(s, path, opts.camera, aspect < 1);
+        const lookZ = pose.target.z;
+        const roadAhead = curve(s.d + lookZ) - curve(s.d);
         this.camera.aspect = aspect;
-        this.camera.fov = 48 / Math.max(0.55, pose.fovMul / 0.72);
+        this.camera.fov = 50 / Math.max(0.5, pose.fovMul / 0.68);
+        this.camera.near = 0.2;
+        this.camera.far = Math.max(420, opts.quality.drawDistance + 80);
         this.camera.position.set(pose.pos.x, pose.pos.y, pose.pos.z);
-        this.camera.lookAt(pose.target.x, pose.target.y, pose.target.z);
+        this.camera.lookAt(pose.target.x + roadAhead * 0.55, pose.target.y, pose.target.z);
         this.camera.updateProjectionMatrix();
-        // Player
+        // Critical: chase-from-behind mirrors X; flip projection so ←/→ match the screen.
+        mirrorChaseProjection(this.camera);
+        this.skyDome.position.copy(this.camera.position);
         if (this.player.userData.color !== opts.color) {
             this.scene.remove(this.player);
             this.player = createVehicle('sport', opts.color);
@@ -234,9 +385,10 @@ export class RoadWorld {
         }
         this.player.position.set(px, 0, 0.02);
         this.player.rotation.y = -s.yaw;
-        this.player.rotation.z = THREE.MathUtils.clamp(-s.vx * 0.015, -0.12, 0.12);
+        this.player.rotation.z = THREE.MathUtils.clamp(-s.vx * 0.012, -0.14, 0.14);
         setVehicleLights(this.player, opts.lights, opts.brake);
-        // Traffic
+        this.playerShadow.position.set(px, 0.03, 0.02);
+        this.playerShadow.scale.set(1 + Math.abs(s.vx) * 0.02, 1, 1.1);
         const seen = new Set();
         const base = curve(s.d);
         let drawn = 0;

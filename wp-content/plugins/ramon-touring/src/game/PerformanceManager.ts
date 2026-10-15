@@ -10,9 +10,9 @@ export type QualitySettings = {
 };
 
 const PRESETS: Record<'low' | 'medium' | 'high', QualitySettings> = {
-  low: { drawDistance: 240, propStep: 34, shadows: true, particles: false, resolutionScale: 0.95, maxTrafficDraw: 10 },
-  medium: { drawDistance: 320, propStep: 26, shadows: true, particles: true, resolutionScale: 1, maxTrafficDraw: 14 },
-  high: { drawDistance: 380, propStep: 20, shadows: true, particles: true, resolutionScale: 1, maxTrafficDraw: 18 },
+  low: { drawDistance: 260, propStep: 28, shadows: true, particles: false, resolutionScale: 0.95, maxTrafficDraw: 10 },
+  medium: { drawDistance: 340, propStep: 20, shadows: true, particles: true, resolutionScale: 1, maxTrafficDraw: 14 },
+  high: { drawDistance: 420, propStep: 14, shadows: true, particles: true, resolutionScale: 1, maxTrafficDraw: 18 },
 };
 
 export class PerformanceManager {
