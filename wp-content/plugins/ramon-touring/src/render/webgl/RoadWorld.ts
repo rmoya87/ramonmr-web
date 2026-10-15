@@ -5,7 +5,7 @@ import { LOOK } from '../../look.js';
 import type { QualitySettings } from '../../game/PerformanceManager.js';
 import type { RunState } from '../../game/types.js';
 import type { EnvironmentId, WeatherId } from '../../game/config.js';
-import { curve, inExitClearance, mirrorChaseProjection, ramp } from './path.js';
+import { curve, depthPresence, inExitClearance, mirrorChaseProjection, ramp, roadYaw } from './path.js';
 import { PropField } from './Props.js';
 import { createVehicle, setVehicleLights, type CarVariant } from './Vehicles.js';
 
@@ -292,10 +292,10 @@ export class RoadWorld {
     (this.scene.fog as THREE.FogExp2).density = night ? 0.017 : weather === 'fog' ? 0.015 : 0.0088;
     this.hemi.color.set(skyTop);
     this.hemi.groundColor.set(ground);
-    this.hemi.intensity = night ? 0.35 : 1.0;
-    this.sun.intensity = night ? 0.2 : weather === 'cloudy' || weather === 'rain' ? 0.75 : 1.4;
+    this.hemi.intensity = night ? 0.45 : 1.25;
+    this.sun.intensity = night ? 0.3 : weather === 'cloudy' || weather === 'rain' ? 0.95 : 1.65;
     this.sun.color.set(biome.sun || LOOK.sun);
-    this.fill.intensity = night ? 0.15 : 0.45;
+    this.fill.intensity = night ? 0.25 : 0.65;
     this.groundMat.color.set(ground);
     this.asphaltMat.color.set(night ? LOOK.asphalt.night : LOOK.asphalt.day);
     this.waterMat.color.set(biome.water);
@@ -491,18 +491,21 @@ export class RoadWorld {
       this.player.userData.color = opts.color;
     }
     this.player.position.set(px, 0, 0.02);
-    this.player.rotation.y = -s.yaw;
-    this.player.rotation.z = THREE.MathUtils.clamp(-s.vx * 0.012, -0.14, 0.14);
+    const roadBank = roadYaw(s.d, 0) * 0.35;
+    this.player.rotation.y = -(s.yaw + roadBank);
+    this.player.rotation.z = THREE.MathUtils.clamp(-s.vx * 0.01, -0.1, 0.1);
     setVehicleLights(this.player, opts.lights, opts.brake);
     this.playerShadow.position.set(px, 0.03, 0.02);
     this.playerShadow.scale.set(1 + Math.abs(s.vx) * 0.02, 1, 1.1);
 
     const seen = new Set<number>();
     const base = curve(s.d);
+    const trafficFar = opts.quality.drawDistance * 0.72;
     let drawn = 0;
     for (const t of s.traffic) {
       const z = t.d - s.d;
-      if (z < -8 || z > opts.quality.drawDistance * 0.55 || drawn >= opts.quality.maxTrafficDraw) continue;
+      const presence = depthPresence(z, trafficFar, -14, 60, 16);
+      if (presence < 0.03 || drawn >= opts.quality.maxTrafficDraw) continue;
       seen.add(t.id);
       let mesh = this.traffic.get(t.id);
       if (!mesh || mesh.userData.color !== t.color || mesh.userData.type !== t.type) {
@@ -515,7 +518,11 @@ export class RoadWorld {
       }
       const x = curve(s.d + z) - base + t.x;
       mesh.position.set(x, 0, z);
-      mesh.rotation.y = -Math.atan2(curve(s.d + z + 3) - curve(s.d + z - 3), 6);
+      // Follow the ribbon; lateral lane-change adds only a small yaw.
+      const laneYaw = THREE.MathUtils.clamp((t.targetX - t.x) * 0.04, -0.12, 0.12);
+      mesh.rotation.y = -(roadYaw(s.d, z) + laneYaw);
+      const sc = 0.35 + 0.65 * presence;
+      mesh.scale.set(sc, sc * (0.6 + 0.4 * presence), sc);
       mesh.visible = true;
       drawn++;
     }

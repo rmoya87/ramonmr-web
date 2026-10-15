@@ -33,7 +33,10 @@ export function stepVehicle(s: RunState, steerAxis: number, brake: boolean, dt: 
   // Keep lateral authority at speed so lane changes stay playable.
   const lateral = s.steer * (13.5 + s.speed * 0.018) * (shoulder ? 0.5 : 1) * grip;
   s.vx += (lateral - s.vx) * Math.min(1, dt * vxLerp);
-  s.yaw += (Math.atan2(s.vx, Math.max(1, s.speed / 3.6)) * (0.85 + s.slip * 0.75) - s.yaw) * Math.min(1, dt * PHYSICS.yawLerp);
+  // Forward speed floor keeps yaw from flipping cars sideways when braking.
+  const yawTarget = Math.atan2(s.vx, Math.max(18, s.speed / 3.6)) * (0.7 + s.slip * 0.45);
+  const yawClamped = Math.max(-0.28, Math.min(0.28, yawTarget));
+  s.yaw += (yawClamped - s.yaw) * Math.min(1, dt * PHYSICS.yawLerp);
 
   const minX = s.branch ? -PHYSICS.branchHalfWidth : -PHYSICS.roadHalfWidth;
   const maxX = s.branch ? PHYSICS.branchHalfWidth : 8;

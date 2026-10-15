@@ -4,39 +4,44 @@ export type CarVariant = 'sport' | 'sedan' | 'van' | 'truck' | 'slow';
 
 const glassMat = () =>
   new THREE.MeshPhysicalMaterial({
-    color: 0x1e3a4c,
-    metalness: 0.15,
-    roughness: 0.12,
-    transmission: 0.55,
-    thickness: 0.4,
+    color: 0x6a9ab0,
+    metalness: 0.05,
+    roughness: 0.18,
+    transmission: 0.35,
+    thickness: 0.35,
     transparent: true,
-    opacity: 0.88,
+    opacity: 0.72,
   });
 
+/** Arcade paint: low metalness so cars stay readable without an env map. */
 function bodyMat(color: string) {
+  const c = new THREE.Color(color);
+  c.offsetHSL(0, 0.02, 0.08);
   return new THREE.MeshStandardMaterial({
-    color: new THREE.Color(color),
-    metalness: 0.42,
-    roughness: 0.32,
+    color: c,
+    metalness: 0.12,
+    roughness: 0.48,
+    emissive: c.clone().multiplyScalar(0.08),
+    emissiveIntensity: 0.35,
   });
 }
 
 function addWheel(group: THREE.Group, x: number, z: number, r: number): void {
   const tire = new THREE.Mesh(
     new THREE.CylinderGeometry(r, r, 0.32, 18),
-    new THREE.MeshStandardMaterial({ color: 0x1a1e22, roughness: 0.92 }),
+    new THREE.MeshStandardMaterial({ color: 0x22282e, roughness: 0.92 }),
   );
   tire.rotation.z = Math.PI / 2;
   tire.position.set(x, r * 0.92, z);
   const rim = new THREE.Mesh(
     new THREE.CylinderGeometry(r * 0.58, r * 0.58, 0.2, 14),
-    new THREE.MeshStandardMaterial({ color: 0xc8d0d4, metalness: 0.75, roughness: 0.32 }),
+    new THREE.MeshStandardMaterial({ color: 0xe0e6ea, metalness: 0.45, roughness: 0.35 }),
   );
   rim.rotation.z = Math.PI / 2;
   rim.position.copy(tire.position);
   const hub = new THREE.Mesh(
     new THREE.CylinderGeometry(r * 0.22, r * 0.22, 0.22, 10),
-    new THREE.MeshStandardMaterial({ color: 0x3a4248, metalness: 0.5, roughness: 0.4 }),
+    new THREE.MeshStandardMaterial({ color: 0x5a646c, metalness: 0.35, roughness: 0.45 }),
   );
   hub.rotation.z = Math.PI / 2;
   hub.position.copy(tire.position);
@@ -48,9 +53,9 @@ export function createVehicle(variant: CarVariant, color: string): THREE.Group {
   const g = new THREE.Group();
   g.name = `car-${variant}`;
   const paint = bodyMat(color);
-  const dark = new THREE.MeshStandardMaterial({ color: 0x1a2228, roughness: 0.7 });
-  const chrome = new THREE.MeshStandardMaterial({ color: 0xd8dee2, metalness: 0.85, roughness: 0.25 });
-  const black = new THREE.MeshStandardMaterial({ color: 0x111518, roughness: 0.85 });
+  const dark = new THREE.MeshStandardMaterial({ color: 0x2a343c, roughness: 0.65 });
+  const chrome = new THREE.MeshStandardMaterial({ color: 0xe8eef2, metalness: 0.55, roughness: 0.3 });
+  const black = new THREE.MeshStandardMaterial({ color: 0x1e262c, roughness: 0.85 });
 
   let bodyL = 4.4;
   let bodyW = 1.85;
@@ -117,7 +122,6 @@ export function createVehicle(variant: CarVariant, color: string): THREE.Group {
   body.castShadow = true;
   g.add(body);
 
-  // Nose taper / bumper lip
   const nose = new THREE.Mesh(new THREE.BoxGeometry(bodyW * 0.92, bodyH * 0.55, 0.35), paint);
   nose.position.set(0, wheelR + bodyH * 0.35, bodyL * 0.48);
   g.add(nose);
@@ -131,11 +135,7 @@ export function createVehicle(variant: CarVariant, color: string): THREE.Group {
   glass.position.y += 0.02;
   g.add(glass);
 
-  // Windshield slant cue
-  const wind = new THREE.Mesh(
-    new THREE.BoxGeometry(bodyW * 0.7, cabinH * 0.55, 0.08),
-    glassMat(),
-  );
+  const wind = new THREE.Mesh(new THREE.BoxGeometry(bodyW * 0.7, cabinH * 0.55, 0.08), glassMat());
   wind.position.set(0, cabin.position.y + 0.05, cabinZ + cabinL * 0.42);
   wind.rotation.x = -0.45;
   g.add(wind);
@@ -173,14 +173,14 @@ export function createVehicle(variant: CarVariant, color: string): THREE.Group {
     addWheel(g, side * (bodyW * 0.48), -wheelZ, wheelR);
     const lightF = new THREE.Mesh(
       new THREE.SphereGeometry(0.11, 10, 10),
-      new THREE.MeshStandardMaterial({ color: 0xfff2c0, emissive: 0x886622, emissiveIntensity: 0.6 }),
+      new THREE.MeshStandardMaterial({ color: 0xfff6d0, emissive: 0xaa8844, emissiveIntensity: 0.85 }),
     );
     lightF.position.set(side * bodyW * 0.34, wheelR + 0.4, bodyL * 0.52);
     lightF.userData.kind = 'head';
     g.add(lightF);
     const lightR = new THREE.Mesh(
       new THREE.SphereGeometry(0.1, 10, 10),
-      new THREE.MeshStandardMaterial({ color: 0xe04030, emissive: 0x441010, emissiveIntensity: 0.4 }),
+      new THREE.MeshStandardMaterial({ color: 0xff5a48, emissive: 0x661818, emissiveIntensity: 0.55 }),
     );
     lightR.position.set(side * bodyW * 0.34, wheelR + 0.4, -bodyL * 0.48);
     lightR.userData.kind = 'tail';
@@ -195,13 +195,13 @@ export function setVehicleLights(group: THREE.Group, on: boolean, brake: boolean
     if (!(obj instanceof THREE.Mesh)) return;
     const m = obj.material as THREE.MeshStandardMaterial;
     if (!m || !m.emissive) return;
-    if (obj.userData.kind === 'head' || m.color.getHex() === 0xfff2c0) {
-      m.emissive.setHex(on ? 0xaa8844 : 0x222211);
-      m.emissiveIntensity = on ? 1.35 : 0.25;
+    if (obj.userData.kind === 'head') {
+      m.emissive.setHex(on ? 0xccaa55 : 0x443311);
+      m.emissiveIntensity = on ? 1.5 : 0.45;
     }
-    if (obj.userData.kind === 'tail' || m.color.getHex() === 0xe04030) {
-      m.emissive.setHex(brake ? 0xff2200 : 0x441010);
-      m.emissiveIntensity = brake ? 1.8 : 0.45;
+    if (obj.userData.kind === 'tail') {
+      m.emissive.setHex(brake ? 0xff2200 : 0x661818);
+      m.emissiveIntensity = brake ? 2 : 0.55;
     }
   });
 }

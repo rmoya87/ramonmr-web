@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import { BIOMES } from '../../game/EnvironmentManager.js';
 import { LOOK } from '../../look.js';
-import { curve, inExitClearance, ramp } from './path.js';
+import { curve, depthPresence, inExitClearance, ramp } from './path.js';
 import type { RunState } from '../../game/types.js';
 import type { EnvironmentId } from '../../game/config.js';
 
@@ -205,15 +205,29 @@ export class PropField {
     return g;
   }
 
+  private place(kind: PropKind, x: number, z: number, baseScale: number, farZ: number, rotY = 0): void {
+    const presence = depthPresence(z, farZ, -12, 70, 18);
+    if (presence < 0.02) return;
+    const g = this.take(kind);
+    g.position.set(x, 0, z);
+    g.rotation.y = rotY;
+    // Grow up from the ground while fading in/out so pop-in never reads as a hard cut.
+    const s = baseScale * presence;
+    g.scale.set(s, s * (0.55 + 0.45 * presence), s);
+    g.visible = true;
+  }
+
   sync(s: RunState, env: EnvironmentId, drawDistance: number, propStep: number): void {
     this.active = 0;
     const base = curve(s.d);
     const beach = env === 'beach' || env === 'coast';
+    const farZ = drawDistance + 20;
     const step = Math.max(14, propStep * 0.7);
-    for (let n = Math.floor((s.d - 4) / step); n * step < s.d + drawDistance - 10; n++) {
+    // Start behind the camera and run past the fog so objects enter from the horizon.
+    for (let n = Math.floor((s.d - 40) / step); n * step < s.d + farZ; n++) {
       const world = n * step;
       const z = world - s.d;
-      if (z < 4 || z > drawDistance - 6) continue;
+      if (z < -14 || z > farZ) continue;
       const x = curve(s.d + z) - base;
       const t = world - s.fork;
       const rightOff = Math.max(12.5 + ((n % 5 + 5) % 5) * 2.2, t > -20 && t < 330 ? ramp(Math.max(0, t)) + 5.5 : 0);
@@ -222,94 +236,51 @@ export class PropField {
       const jitter = ((n * 17) % 7) * 0.35;
 
       if (beach) {
-        const rock = this.take('rock');
-        rock.position.set(x + rightOff, 0, z);
-        rock.scale.setScalar(0.9 + (n % 3) * 0.15);
-        if (n % 2 === 0) {
-          const bush = this.take('bush');
-          bush.position.set(x + rightOff + 2.4, 0, z + jitter);
-        }
-        if (n % 2 === 0) {
-          const palm = this.take('palm');
-          palm.position.set(x - leftOff - 0.5, 0, z);
-          palm.scale.setScalar(0.95 + (n % 4) * 0.08);
-        }
-        if (n % 4 === 0) {
-          const palm2 = this.take('palm');
-          palm2.position.set(x + rightOff + 4, 0, z + 3);
-          palm2.scale.setScalar(0.8);
-        }
+        this.place('rock', x + rightOff, z, 0.9 + (n % 3) * 0.15, farZ);
+        if (n % 2 === 0) this.place('bush', x + rightOff + 2.4, z + jitter, 1, farZ);
+        if (n % 2 === 0) this.place('palm', x - leftOff - 0.5, z, 0.95 + (n % 4) * 0.08, farZ);
+        if (n % 4 === 0) this.place('palm', x + rightOff + 4, z + 3, 0.8, farZ);
       } else if (biomeId === 2) {
-        const b = this.take('building');
-        b.position.set(x + rightOff + 1, 0, z);
-        b.scale.setScalar(0.9 + (n % 3) * 0.12);
-        if (n % 2 === 0) {
-          const b2 = this.take('building');
-          b2.position.set(x - leftOff - 2, 0, z + 2);
-          b2.scale.setScalar(0.75);
-        }
+        this.place('building', x + rightOff + 1, z, 0.9 + (n % 3) * 0.12, farZ);
+        if (n % 2 === 0) this.place('building', x - leftOff - 2, z + 2, 0.75, farZ);
       } else if (biomeId === 3) {
-        const rock = this.take('rock');
-        rock.position.set(x + rightOff, 0, z);
-        if (n % 2 === 0) {
-          const rock2 = this.take('rock');
-          rock2.position.set(x - leftOff, 0, z + 1);
-          rock2.scale.setScalar(0.7);
-        }
-        if (n % 3 === 0) {
-          const bush = this.take('bush');
-          bush.position.set(x + rightOff - 2, 0, z);
-        }
+        this.place('rock', x + rightOff, z, 1, farZ);
+        if (n % 2 === 0) this.place('rock', x - leftOff, z + 1, 0.7, farZ);
+        if (n % 3 === 0) this.place('bush', x + rightOff - 2, z, 1, farZ);
       } else {
-        const pine = this.take('pine');
-        pine.position.set(x + rightOff, 0, z);
-        pine.scale.setScalar(1 + (n % 4) * 0.14);
-        const pineL = this.take('pine');
-        pineL.position.set(x - leftOff, 0, z + jitter);
-        pineL.scale.setScalar(0.85 + (n % 3) * 0.1);
-        if (n % 2 === 0) {
-          const pine2 = this.take('pine');
-          pine2.position.set(x + rightOff + 3.5, 0, z + 2);
-          pine2.scale.setScalar(0.7);
-        }
-        if (n % 3 === 0) {
-          const bush = this.take('bush');
-          bush.position.set(x + rightOff - 2.5, 0, z + 1.5);
-        }
-        if (n % 4 === 0) {
-          const fence = this.take('fence');
-          fence.position.set(x + 8.2, 0, z);
-          fence.rotation.y = 0.1;
-        }
+        this.place('pine', x + rightOff, z, 1 + (n % 4) * 0.14, farZ);
+        this.place('pine', x - leftOff, z + jitter, 0.85 + (n % 3) * 0.1, farZ);
+        if (n % 2 === 0) this.place('pine', x + rightOff + 3.5, z + 2, 0.7, farZ);
+        if (n % 3 === 0) this.place('bush', x + rightOff - 2.5, z + 1.5, 1, farZ);
+        if (n % 4 === 0) this.place('fence', x + 8.2, z, 1, farZ, 0.1);
       }
     }
 
-    for (let n = Math.floor((s.d - 20) / 22); n * 22 < s.d + Math.min(200, drawDistance - 16); n++) {
+    const railFar = Math.min(220, farZ);
+    for (let n = Math.floor((s.d - 36) / 22); n * 22 < s.d + railFar; n++) {
       const world = n * 22;
       const z = world - s.d;
-      if (z < 8 || z > 190) continue;
+      if (z < -14 || z > railFar) continue;
       const x = curve(s.d + z) - base;
       const t = world - s.fork;
       const exitZone = inExitClearance(t);
       for (const side of [-1, 1] as const) {
         if (side > 0 && exitZone) continue;
-        const guard = this.take('guard');
-        guard.position.set(x + side * 6.55, 0, z);
-        guard.rotation.y = side > 0 ? 0.02 : -0.02;
+        this.place('guard', x + side * 6.55, z, 1, railFar, side > 0 ? 0.02 : -0.02);
       }
     }
 
-    for (let n = Math.floor((s.d - 28) / 28); n * 28 < s.d + Math.min(180, drawDistance - 20); n++) {
+    const postFar = Math.min(200, farZ);
+    for (let n = Math.floor((s.d - 40) / 28); n * 28 < s.d + postFar; n++) {
       const world = n * 28;
       const z = world - s.d;
-      if (z < 10 || z > 170) continue;
+      if (z < -14 || z > postFar) continue;
       const x = curve(s.d + z) - base;
       const t = world - s.fork;
       const exitZone = inExitClearance(t);
       for (const side of [-1, 1] as const) {
         if (side > 0 && exitZone) continue;
-        const post = this.take('bollard');
-        post.position.set(x + side * 6.85, 0, z);
+        this.place('bollard', x + side * 6.85, z, 1, postFar);
       }
     }
 

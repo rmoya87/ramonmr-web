@@ -1,7 +1,7 @@
 import { SCORE, TRAFFIC, VEHICLE_TYPES, type VehicleTypeId } from './config.js';
 import type { RunState, TrafficCar } from './types.js';
 
-const COLORS = ['#d8d2c2', '#3d7388', '#b8aa72', '#465565', '#8a5a44', '#5a6d7a'];
+const COLORS = ['#f0e8d8', '#5a9ab0', '#d4c07a', '#6a7a8c', '#c07858', '#7a9aac', '#e8a0a8', '#88b878'];
 const TYPE_WEIGHTS: VehicleTypeId[] = ['sedan', 'sedan', 'sport', 'van', 'truck', 'slow', 'sedan', 'sport'];
 
 function pickType(level: number): VehicleTypeId {

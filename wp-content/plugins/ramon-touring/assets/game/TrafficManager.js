@@ -1,5 +1,5 @@
 import { SCORE, TRAFFIC, VEHICLE_TYPES } from './config.js';
-const COLORS = ['#d8d2c2', '#3d7388', '#b8aa72', '#465565', '#8a5a44', '#5a6d7a'];
+const COLORS = ['#f0e8d8', '#5a9ab0', '#d4c07a', '#6a7a8c', '#c07858', '#7a9aac', '#e8a0a8', '#88b878'];
 const TYPE_WEIGHTS = ['sedan', 'sedan', 'sport', 'van', 'truck', 'slow', 'sedan', 'sport'];
 function pickType(level) {
     const idx = Math.min(TYPE_WEIGHTS.length - 1, Math.floor(Math.random() * (3 + Math.min(4, level))));
