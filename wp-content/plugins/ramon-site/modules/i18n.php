@@ -9,7 +9,7 @@ function ri_lang() {
 function ri_dict_exact() {
 	return array(
 		'Servicios' => 'Services', 'Marketing digital' => 'Digital marketing', 'Marketing Digital' => 'Digital marketing',
-		'Diseño de producto' => 'Product design', 'Necesidades de negocio' => 'Business needs', 'Curriculum' => 'CV',
+		'Diseño de producto' => 'Product design', 'Necesidades de negocio' => 'Business needs', 'Soluciones digitales' => 'Digital solutions', 'Curriculum' => 'CV',
 		'Marketing online' => 'Online marketing', 'Negocio online' => 'Online business',
 		'Contáctame' => 'Contact me', 'Contáctame →' => 'Contact me →',
 		'SOBRE MI' => 'ABOUT ME', 'SERVICIOS' => 'SERVICES', 'Suscribete' => 'Subscribe', 'Síguenos' => 'Follow us',
