@@ -1,7 +1,7 @@
-import { v, box, car, column, quad, renderer, shade } from './mesh.js?v=2.1.1';
-import { BIOMES, effectiveNight } from './game/EnvironmentManager.js?v=2.1.1';
-import { cameraPose } from './game/CameraController.js?v=2.1.1';
-import { LOOK, depthMist, fogToward, mixHex, paintAtmosphere, warmGrade, } from './look.js?v=2.1.1';
+import { v, box, car, column, quad, renderer, shade } from './mesh.js?v=2.1.2';
+import { BIOMES, effectiveNight } from './game/EnvironmentManager.js?v=2.1.2';
+import { cameraPose } from './game/CameraController.js?v=2.1.2';
+import { LOOK, depthMist, fogToward, mixHex, paintAtmosphere, warmGrade, } from './look.js?v=2.1.2';
 export let sectionLabels = ['Servicios', 'Curriculum', 'Portfolio', 'Blog', 'Contacto'];
 export function setSectionLabels(labels) {
     sectionLabels = labels;
@@ -271,6 +271,7 @@ export function drawRoad(c, s, w, h, opts) {
                 angle: Math.atan2(cx(z + 3) - cx(z - 3), 6),
                 lights: atm.night,
                 spin: (s.time * 85) / 3.6 / 0.44,
+                variant: tr.type || 'sedan',
             });
             drawn++;
         }
@@ -291,6 +292,7 @@ export function drawRoad(c, s, w, h, opts) {
         brake: opts.brake,
         lights: opts.lights || atm.night,
         steer: s.steer * 0.35,
+        variant: 'sport',
     });
     cam.draw(a);
     cam.draw(objects);

@@ -2,7 +2,7 @@
  * Arcade-soft look bible (Out Run–inspired).
  * One short palette, shared materials, soft fog — every draw path should use these.
  */
-import { shade } from './mesh.js?v=2.1.1';
+import { shade } from './mesh.js?v=2.1.2';
 export const LOOK = {
     /** Shared road materials — same in every biome */
     asphalt: { day: '#5c646c', night: '#3a424a', wear: '#6a727a', ramp: '#545c64' },
