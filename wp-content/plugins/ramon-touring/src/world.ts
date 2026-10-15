@@ -382,6 +382,31 @@ export function drawRoad(c: CanvasRenderingContext2D, s: RunState, w: number, h:
   cam.draw(a);
   cam.draw(objects);
 
+  // Screen-space rear glass glint so chase cam always reads a reflective window
+  {
+    const gA = cam.project(v(px - 0.58, 1.38, -0.55));
+    const gB = cam.project(v(px + 0.58, 1.38, -0.55));
+    const gC = cam.project(v(px + 0.66, 1.02, -1.28));
+    const gD = cam.project(v(px - 0.66, 1.02, -1.28));
+    if (gA.z > 0.35 && gB.z > 0.35 && gC.z > 0.35 && gD.z > 0.35) {
+      c.save();
+      c.beginPath();
+      c.moveTo(gA.x, gA.y);
+      c.lineTo(gB.x, gB.y);
+      c.lineTo(gC.x, gC.y);
+      c.lineTo(gD.x, gD.y);
+      c.closePath();
+      const glassGrad = c.createLinearGradient(gA.x, gA.y, gD.x, gC.y);
+      glassGrad.addColorStop(0, night ? '#2a486688' : '#7ec4e4aa');
+      glassGrad.addColorStop(0.35, night ? '#88a8c0aa' : '#e8f6ffcc');
+      glassGrad.addColorStop(0.55, night ? '#3a587888' : '#6aa8c899');
+      glassGrad.addColorStop(1, night ? '#1a304888' : '#2a4866aa');
+      c.fillStyle = glassGrad;
+      c.fill();
+      c.restore();
+    }
+  }
+
   // Soft lateral seals — light vignette, not muddy curtains
   const edgeW = w * 0.1;
   c.save();

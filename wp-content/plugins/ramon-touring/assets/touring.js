@@ -1,11 +1,11 @@
-import { drawRoad, drawGarage, setSectionLabels } from './world.js?v=2.0.14';
-import { VERSION } from './game/config.js?v=2.0.14';
-import { GameLoop } from './game/GameLoop.js?v=2.0.14';
-import { InputManager } from './game/InputManager.js?v=2.0.14';
-import { AudioManager } from './game/AudioManager.js?v=2.0.14';
-import { PerformanceManager, prepareDrawContext, sizeGameCanvas } from './game/PerformanceManager.js?v=2.0.14';
-import { createRun, hudSnapshot, resumeFromWorkshop, simulateStep } from './game/GameManager.js?v=2.0.14';
-import { clearRunSnapshot, loadProgress, loadRunSnapshot, saveProgress, saveRunSnapshot, updateProgressFromRun, } from './game/SaveManager.js?v=2.0.14';
+import { drawRoad, drawGarage, setSectionLabels } from './world.js?v=2.0.15';
+import { VERSION } from './game/config.js?v=2.0.15';
+import { GameLoop } from './game/GameLoop.js?v=2.0.15';
+import { InputManager } from './game/InputManager.js?v=2.0.15';
+import { AudioManager } from './game/AudioManager.js?v=2.0.15';
+import { PerformanceManager, prepareDrawContext, sizeGameCanvas } from './game/PerformanceManager.js?v=2.0.15';
+import { createRun, hudSnapshot, resumeFromWorkshop, simulateStep } from './game/GameManager.js?v=2.0.15';
+import { clearRunSnapshot, loadProgress, loadRunSnapshot, saveProgress, saveRunSnapshot, updateProgressFromRun, } from './game/SaveManager.js?v=2.0.15';
 const cfg = JSON.parse(document.getElementById('rm-touring-config').textContent);
 const en = cfg.lang === 'en';
 const sections = cfg.sections;
@@ -319,6 +319,9 @@ function closeMenu(restore = true) {
 }
 function show(next) {
     root.dataset.mode = next;
+    const racerEl = root.querySelector('.racer');
+    if (racerEl)
+        racerEl.dataset.mode = next;
     if (expanded)
         expandReader(false);
     resized = true;

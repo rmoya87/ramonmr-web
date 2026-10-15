@@ -76,7 +76,17 @@ body.rm-touring-shell #rm-touring .reader-expanded .workshop .hanging-panel{heig
 #rm-touring .racer button{border-radius:999px}
 
 /* Start: translucent card over a live road preview (not a dead void) */
-#rm-touring .racer[data-mode=start] .road{display:block!important}
+#rm-touring-app[data-mode=start] .road,#rm-touring .racer[data-mode=start] .road{display:block!important}
+#rm-touring-app[data-mode=start] .top-hud,
+#rm-touring-app[data-mode=start] .arcade-hud,
+#rm-touring-app[data-mode=start] .speed,
+#rm-touring-app[data-mode=start] .route-cue,
+#rm-touring-app[data-mode=start] .driving-controls,
+#rm-touring-app[data-mode=start] .drive-options,
+#rm-touring-app[data-mode=start] .hud-icons,
+#rm-touring-app[data-mode=start] .mission-bar,
+#rm-touring-app[data-mode=start] .exit-bar,
+#rm-touring-app[data-mode=start] .race-notice,
 #rm-touring .racer[data-mode=start] .top-hud,
 #rm-touring .racer[data-mode=start] .arcade-hud,
 #rm-touring .racer[data-mode=start] .speed,

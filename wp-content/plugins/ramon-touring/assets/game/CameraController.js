@@ -1,4 +1,4 @@
-import { CAMERA } from './config.js?v=2.0.14';
+import { CAMERA } from './config.js?v=2.0.15';
 /** Stable third-person chase: car in the lower frame, horizon and road readable. */
 export function stepCamera(s, pathOffset, _cameraMode, dt, reduceMotion) {
     const px = s.x + pathOffset;
