@@ -1,35 +1,35 @@
 /** Centralized tunable constants for RM Touring Lab 2.0 */
-export const VERSION = '2.0.3';
+export const VERSION = '2.0.4';
 export const SCORE_VERSION = 2;
 export const FIXED_DT = 1 / 60;
 export const MAX_FRAME_DT = 0.1;
 export const MAX_PHYSICS_STEPS = 5;
 export const PHYSICS = {
-    baseSpeed: 65,
-    maxSpeed: 305,
-    arcadeTopBase: 195,
-    arcadeTopRamp: 0.85,
-    exploreTop: 140,
-    accelGain: 0.65,
-    accelCap: 24,
-    brakeDecel: 38,
-    shoulderPenalty: 22,
-    steerSpeedFactor: 190,
-    steerLerp: 10,
-    yawLerp: 7,
-    vxLerp: 8,
-    driftVxLerp: 3,
-    slipLerp: 4,
-    driftSteerMin: 0.22,
-    driftSpeedMin: 100,
+    baseSpeed: 72,
+    maxSpeed: 280,
+    arcadeTopBase: 148,
+    arcadeTopRamp: 0.48,
+    exploreTop: 130,
+    accelGain: 0.72,
+    accelCap: 28,
+    brakeDecel: 46,
+    shoulderPenalty: 26,
+    steerSpeedFactor: 160,
+    steerLerp: 14,
+    yawLerp: 9,
+    vxLerp: 10,
+    driftVxLerp: 3.5,
+    slipLerp: 5,
+    driftSteerMin: 0.2,
+    driftSpeedMin: 95,
     roadHalfWidth: 6.9,
     branchHalfWidth: 1.6,
     shoulderAbsX: 5.65,
-    hitSpeedMul: 0.6,
-    invulnerability: 2.5,
-    startInvulnerability: 3,
+    hitSpeedMul: 0.55,
+    invulnerability: 2.2,
+    startInvulnerability: 3.5,
     workshopInvulnerability: 4,
-    rainGripMul: 0.88,
+    rainGripMul: 0.85,
 };
 export const COLLISION = {
     length: 4,
@@ -37,15 +37,15 @@ export const COLLISION = {
 };
 export const TRAFFIC = {
     lanes: [-4, 0, 4],
-    poolArcade: 12,
+    poolArcade: 14,
     poolExplore: 6,
-    spawnAheadMin: 80,
-    spawnAheadMax: 220,
+    spawnAheadMin: 70,
+    spawnAheadMax: 200,
     recycleBehind: 28,
-    minGap: 40,
-    safeGap: 18,
-    laneChangeCooldown: 2.5,
-    overtakeCloseDist: 2.2,
+    minGap: 36,
+    safeGap: 16,
+    laneChangeCooldown: 2.2,
+    overtakeCloseDist: 2.0,
 };
 export const SCORE = {
     pass: 100,
@@ -75,9 +75,9 @@ export const EXIT = {
 };
 export const CAMERA = {
     modes: 1,
-    damp: 3,
-    fovSpeedFactor: 0.08,
-    shakeDecay: 4,
+    damp: 4.2,
+    fovSpeedFactor: 0.05,
+    shakeDecay: 5,
 };
 export const SAVE_KEY = 'rm_touring_v2';
 export const SAVE_TTL_MS = 1000 * 60 * 60 * 6;

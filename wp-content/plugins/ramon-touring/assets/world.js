@@ -10,14 +10,14 @@ export function ramp(t) {
     return 4.6 + Math.max(0, t) * 0.12 + Math.sin(Math.max(0, t) / 180) * 2;
 }
 function pine(a, x, z, size) {
-    box(a, x, size * 0.4, z, 0.25, size * 0.8, 0.25, '#6b5945');
-    for (let j = 0; j < 3; j++) {
-        const y = size * (0.55 + j * 0.25);
-        const r = size * (0.35 - j * 0.08);
-        a.push({ c: j % 2 ? '#44634e' : '#385d49', v: [v(x - r, y, z - r), v(x + r, y, z - r), v(x, y + size * 0.55, z)] });
-        a.push({ c: '#294c3c', v: [v(x + r, y, z - r), v(x + r, y, z + r), v(x, y + size * 0.55, z)] });
-        a.push({ c: '#4c7056', v: [v(x - r, y, z + r), v(x + r, y, z + r), v(x, y + size * 0.55, z)] });
-        a.push({ c: '#365b45', v: [v(x - r, y, z - r), v(x - r, y, z + r), v(x, y + size * 0.55, z)] });
+    box(a, x, size * 0.38, z, 0.28, size * 0.76, 0.28, '#7a6550');
+    for (let j = 0; j < 4; j++) {
+        const y = size * (0.48 + j * 0.22);
+        const r = size * (0.42 - j * 0.08);
+        a.push({ c: j % 2 ? '#3f6a4f' : '#2f5842', v: [v(x - r, y, z - r), v(x + r, y, z - r), v(x, y + size * 0.48, z)] });
+        a.push({ c: '#244836', v: [v(x + r, y, z - r), v(x + r, y, z + r), v(x, y + size * 0.48, z)] });
+        a.push({ c: '#4f7a58', v: [v(x - r, y, z + r), v(x + r, y, z + r), v(x, y + size * 0.48, z)] });
+        a.push({ c: '#356048', v: [v(x - r, y, z - r), v(x - r, y, z + r), v(x, y + size * 0.48, z)] });
     }
 }
 function building(a, x, z, h, w) {
@@ -60,10 +60,29 @@ export function drawRoad(c, s, w, h, opts) {
     sky.addColorStop(1, skyColors[2]);
     c.fillStyle = sky;
     c.fillRect(0, 0, w, h);
-    c.fillStyle = night ? '#e1e8f4' : '#fff1cc';
-    c.beginPath();
-    c.arc(w * 0.76, h * 0.21, h * 0.035, 0, Math.PI * 2);
-    c.fill();
+    if (!night && weather !== 'rain' && weather !== 'fog') {
+        c.fillStyle = weather === 'sunset' ? '#ffd0a0' : '#fff4c8';
+        c.beginPath();
+        c.arc(w * 0.78, h * 0.18, h * 0.04, 0, Math.PI * 2);
+        c.fill();
+        if (!opts.reduceEffects) {
+            c.fillStyle = weather === 'cloudy' ? '#d8e0e688' : '#ffffff55';
+            for (let i = 0; i < 5; i++) {
+                const cloudX = ((i * 137 + s.d * 0.08) % (w + 120)) - 60;
+                const cloudY = h * (0.12 + (i % 3) * 0.05);
+                c.beginPath();
+                c.ellipse(cloudX, cloudY, w * 0.08, h * 0.018, 0, 0, Math.PI * 2);
+                c.ellipse(cloudX + w * 0.04, cloudY - h * 0.008, w * 0.05, h * 0.014, 0, 0, Math.PI * 2);
+                c.fill();
+            }
+        }
+    }
+    else {
+        c.fillStyle = '#e1e8f4';
+        c.beginPath();
+        c.arc(w * 0.76, h * 0.21, h * 0.03, 0, Math.PI * 2);
+        c.fill();
+    }
     for (let k = 0; k < 3; k++) {
         c.beginPath();
         c.moveTo(0, h * 0.48);
@@ -94,19 +113,26 @@ export function drawRoad(c, s, w, h, opts) {
         const z2 = z + 6;
         const x = cx(z);
         const x2 = cx(z2);
-        const asphalt = night ? '#2a3034' : '#4d5254';
+        const asphalt = night ? '#2a3034' : '#50565a';
         quad(a, x, z, x2, z2, 140, beach ? '#d8c79d' : ground[0], -0.08);
         quad(a, x - 43, z, x2 - 43, z2, 36, night ? '#3a5a62' : biomeA.water, -0.06);
-        quad(a, x, z, x2, z2, 12, asphalt);
+        quad(a, x, z, x2, z2, 12.4, asphalt);
+        // Shoulder / curb
         for (const side of [-1, 1]) {
-            quad(a, x + side * 6.15, z, x2 + side * 6.15, z2, 0.3, '#a6a18c');
-            quad(a, x + side * 5.65, z, x2 + side * 5.65, z2, 0.11, '#dddcc9', 0.015);
-            if (quality.shadows)
-                box(objects, x + side * 6.4, 0.55, z, 0.12, 0.7, 0.12, '#9aa8a0');
+            quad(a, x + side * 6.35, z, x2 + side * 6.35, z2, 0.45, '#b0aa90');
+            quad(a, x + side * 5.85, z, x2 + side * 5.85, z2, 0.14, '#f0ead2', 0.015);
+            if (quality.shadows) {
+                box(objects, x + side * 6.55, 0.55, z, 0.14, 0.75, 0.14, '#a8b4ac');
+                box(objects, x + side * 6.55, 0.95, z, 0.18, 0.12, 0.18, side < 0 ? '#e8e2c8' : '#c44937');
+            }
         }
-        if (((world % 24) + 24) % 24 < 12) {
+        // Lane dashes + yellow center
+        if (((world % 22) + 22) % 22 < 11) {
             for (const l of [-2, 2])
-                quad(a, x + l, z, x2 + l, z2, 0.12, '#dddcc9', 0.02);
+                quad(a, x + l, z, x2 + l, z2, 0.14, '#f2eed8', 0.022);
+        }
+        if (((world % 28) + 28) % 28 < 10) {
+            quad(a, x, z, x2, z2, 0.1, '#e6c86a', 0.024);
         }
         const t = world - s.fork;
         const t2 = t + 6;
@@ -207,6 +233,10 @@ export function drawRoad(c, s, w, h, opts) {
             box(objects, x - 3.1, 5.35, signZ, 8.6, dist === 100 ? 2.8 : 2.4, 0.15, '#235548');
         }
     }
+    // Ground shadow under the player car for depth.
+    if (quality.shadows) {
+        box(objects, px, 0.04, -0.2, 2.2, 0.05, 4.4, '#1a2228');
+    }
     // Player car last so it stays visible over road props.
     car(objects, px, 0.02, opts.color, {
         angle: s.yaw || 0,
@@ -218,6 +248,14 @@ export function drawRoad(c, s, w, h, opts) {
     });
     cam.draw(a);
     cam.draw(objects);
+    // Soft contact shadow projected in screen space under the car.
+    const shadow = cam.project(v(px, 0.05, 0));
+    if (shadow.z > 0.4) {
+        c.fillStyle = '#0a121888';
+        c.beginPath();
+        c.ellipse(shadow.x, shadow.y + h * 0.01, w * 0.09, h * 0.018, 0, 0, Math.PI * 2);
+        c.fill();
+    }
     const signZ = s.fork - s.d - 100;
     if (signZ > 5 && signZ < 280) {
         const x = cx(signZ) + 4.1;
@@ -310,9 +348,11 @@ export function drawRoad(c, s, w, h, opts) {
             c.fill();
         }
     }
-    const edge = c.createRadialGradient(w / 2, h * 0.45, w * 0.1, w / 2, h * 0.5, w * 0.65);
+    // Light vignette — keep the lower third (car) bright.
+    const edge = c.createRadialGradient(w / 2, h * 0.42, w * 0.18, w / 2, h * 0.48, w * 0.72);
     edge.addColorStop(0, '#10202a00');
-    edge.addColorStop(1, '#14263350');
+    edge.addColorStop(0.75, '#14263300');
+    edge.addColorStop(1, '#14263340');
     c.fillStyle = edge;
     c.fillRect(0, 0, w, h);
 }

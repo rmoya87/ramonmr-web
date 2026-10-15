@@ -30,9 +30,10 @@ export function stepVehicle(s: RunState, steerAxis: number, brake: boolean, dt: 
   s.slip += (Number(drift) - s.slip) * Math.min(1, dt * PHYSICS.slipLerp);
 
   const vxLerp = drift ? PHYSICS.driftVxLerp : PHYSICS.vxLerp;
-  const lateral = s.steer * (8 + s.speed * 0.015) * (shoulder ? 0.52 : 1) * grip;
+  // Keep lateral authority at speed so lane changes stay playable.
+  const lateral = s.steer * (9.5 + s.speed * 0.012) * (shoulder ? 0.48 : 1) * grip;
   s.vx += (lateral - s.vx) * Math.min(1, dt * vxLerp);
-  s.yaw += (Math.atan2(s.vx, Math.max(1, s.speed / 3.6)) * (0.9 + s.slip * 0.7) - s.yaw) * Math.min(1, dt * PHYSICS.yawLerp);
+  s.yaw += (Math.atan2(s.vx, Math.max(1, s.speed / 3.6)) * (0.85 + s.slip * 0.75) - s.yaw) * Math.min(1, dt * PHYSICS.yawLerp);
 
   const minX = s.branch ? -PHYSICS.branchHalfWidth : -PHYSICS.roadHalfWidth;
   const maxX = s.branch ? PHYSICS.branchHalfWidth : 8;
@@ -44,8 +45,10 @@ export function stepVehicle(s: RunState, steerAxis: number, brake: boolean, dt: 
     s.score += (s.speed / 3.6) * dt * (1 + level * SCORE.distanceMulPerLevel);
   }
 
+  // Gentle self-centering when not steering; snappier when releasing after a turn.
   if (!brake && Math.abs(steerAxis) < 0.05) {
-    s.vx *= 1 - Math.min(1, dt * 2.5);
+    s.vx *= 1 - Math.min(1, dt * 3.2);
+    s.steer *= 1 - Math.min(1, dt * 2.4);
   }
 
   if (s.hits === 0 && !s.branch) s.cleanTimer += dt;
