@@ -220,60 +220,61 @@ export function drawRoad(c: CanvasRenderingContext2D, s: RunState, w: number, h:
     }
   }
 
-  // Anticipation signs at 300m and 100m
+  // Anticipation signs at 300m and 100m (wider boards for readable labels)
   for (const dist of [300, 100]) {
     const signZ = s.fork - s.d - dist;
     if (signZ > -10 && signZ < quality.drawDistance) {
-      const x = cx(signZ) + 7;
-      box(objects, x, 2.7, signZ, 0.15, 5.4, 0.15, '#9caaa5');
-      box(objects, x - 2.5, 5.1, signZ, 7.5, dist === 100 ? 2.4 : 2.1, 0.15, '#235548');
+      const x = cx(signZ) + 7.2;
+      box(objects, x, 2.9, signZ, 0.15, 5.8, 0.15, '#9caaa5');
+      box(objects, x - 3.1, 5.35, signZ, 8.6, dist === 100 ? 2.8 : 2.4, 0.15, '#235548');
     }
   }
 
-  if (opts.camera !== 2) {
-    car(objects, px, 0, opts.color, {
-      angle: s.yaw || 0,
-      roll: -s.vx * 0.007 + (curve(s.d + 12) - 2 * curve(s.d) + curve(s.d - 12)) * 0.008,
-      spin: s.d / 0.44,
-      brake: opts.brake,
-      lights: opts.lights || night,
-      steer: s.steer * 0.35,
-    });
-  }
+  // Always draw the driven car (chase camera).
+  car(objects, px, 0, opts.color, {
+    angle: s.yaw || 0,
+    roll: -s.vx * 0.007 + (curve(s.d + 12) - 2 * curve(s.d) + curve(s.d - 12)) * 0.008,
+    spin: s.d / 0.44,
+    brake: opts.brake,
+    lights: opts.lights || night,
+    steer: s.steer * 0.35,
+  });
 
   cam.draw(a);
   cam.draw(objects);
 
   const signZ = s.fork - s.d - 100;
   if (signZ > 5 && signZ < 280) {
-    const x = cx(signZ) + 4.5;
-    const half = 3.58;
-    const y = 5.1;
-    const corners = [v(x - half, y + 0.91, signZ - 0.09), v(x + half, y + 0.91, signZ - 0.09), v(x + half, y - 0.91, signZ - 0.09), v(x - half, y - 0.91, signZ - 0.09)].map(cam.project);
+    const x = cx(signZ) + 4.1;
+    const half = 4.1;
+    const y = 5.35;
+    const corners = [v(x - half, y + 1.15, signZ - 0.09), v(x + half, y + 1.15, signZ - 0.09), v(x + half, y - 1.15, signZ - 0.09), v(x - half, y - 1.15, signZ - 0.09)].map(cam.project);
     if (corners.every((p) => p.z > 0.2)) {
       const tex = document.createElement('canvas');
-      tex.width = 512;
-      tex.height = 128;
+      tex.width = 640;
+      tex.height = 180;
       const tc = tex.getContext('2d')!;
       tc.fillStyle = '#235548';
-      tc.fillRect(0, 0, 512, 128);
+      tc.fillRect(0, 0, 640, 180);
       tc.strokeStyle = '#fff9df';
-      tc.lineWidth = 5;
-      tc.strokeRect(7, 7, 498, 114);
+      tc.lineWidth = 6;
+      tc.strokeRect(10, 10, 620, 160);
       tc.fillStyle = '#fff9df';
       tc.textAlign = 'center';
       tc.textBaseline = 'middle';
       const meters = Math.max(0, Math.round(s.fork - s.d));
-      let label = `${sectionLabels[s.exit] || ''} ↗ · ${meters} m`;
-      let font = 36;
-      tc.font = `600 ${font}px sans-serif`;
-      while (tc.measureText(label).width > 475 && font > 18) {
-        font--;
-        tc.font = `600 ${font}px sans-serif`;
+      const name = (sectionLabels[s.exit] || '').trim();
+      let nameFont = 48;
+      tc.font = `700 ${nameFont}px sans-serif`;
+      while (tc.measureText(name).width > 560 && nameFont > 22) {
+        nameFont--;
+        tc.font = `700 ${nameFont}px sans-serif`;
       }
-      tc.fillText(label, 256, 64);
+      tc.fillText(name, 320, 68);
+      tc.font = '600 36px sans-serif';
+      tc.fillText(`↗  ${meters} m`, 320, 128);
       const tris = [[0, 1, 2], [0, 2, 3]];
-      const uv = [[0, 0], [512, 0], [512, 128], [0, 128]];
+      const uv = [[0, 0], [640, 0], [640, 180], [0, 180]];
       for (const tri of tris) {
         const [A, B, C] = tri.map((i) => corners[i]);
         const [u0, vv, q] = tri.map((i) => uv[i]);
@@ -328,7 +329,7 @@ export function drawRoad(c: CanvasRenderingContext2D, s: RunState, w: number, h:
     c.fillRect(0, 0, w, h);
   }
 
-  if (s.slip > 0.2 && opts.camera === 0 && quality.particles) {
+  if (s.slip > 0.2 && quality.particles) {
     const p = cam.project(v(px, 0.25, -1.7));
     c.fillStyle = '#ccd5d04a';
     for (let i = 0; i < 4; i++) {
@@ -336,28 +337,6 @@ export function drawRoad(c: CanvasRenderingContext2D, s: RunState, w: number, h:
       c.ellipse(p.x + (i - 1.5) * w * 0.015, p.y + i * h * 0.007, w * 0.014, h * 0.01, 0, 0, Math.PI * 2);
       c.fill();
     }
-  }
-
-  if (opts.camera === 1) {
-    c.fillStyle = '#18252c';
-    c.beginPath();
-    c.moveTo(0, h);
-    c.lineTo(0, h * 0.88);
-    c.quadraticCurveTo(w * 0.5, h * 0.79, w, h * 0.88);
-    c.lineTo(w, h);
-    c.fill();
-    c.strokeStyle = '#33434c';
-    c.lineWidth = h * 0.017;
-    c.beginPath();
-    c.arc(w * 0.5, h * 1.04, h * 0.17, Math.PI, Math.PI * 2);
-    c.stroke();
-  }
-  if (opts.camera === 2) {
-    c.fillStyle = '#1a2830cc';
-    c.fillRect(0, h * 0.72, w, h * 0.28);
-    c.strokeStyle = '#44555e';
-    c.lineWidth = 3;
-    c.strokeRect(w * 0.1, h * 0.08, w * 0.8, h * 0.55);
   }
 
   const edge = c.createRadialGradient(w / 2, h * 0.45, w * 0.1, w / 2, h * 0.5, w * 0.65);
