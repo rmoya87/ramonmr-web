@@ -1,5 +1,5 @@
 /** Centralized tunable constants for RM Touring Lab 2.0 */
-export const VERSION = '2.0.13';
+export const VERSION = '2.0.14';
 export const SCORE_VERSION = 2;
 
 export const FIXED_DT = 1 / 60;
@@ -17,9 +17,9 @@ export const PHYSICS = {
   brakeDecel: 46,
   shoulderPenalty: 26,
   steerSpeedFactor: 160,
-  steerLerp: 14,
-  yawLerp: 9,
-  vxLerp: 10,
+  steerLerp: 16,
+  yawLerp: 10,
+  vxLerp: 12,
   driftVxLerp: 3.5,
   slipLerp: 5,
   driftSteerMin: 0.2,
@@ -29,7 +29,7 @@ export const PHYSICS = {
   shoulderAbsX: 5.65,
   hitSpeedMul: 0.55,
   invulnerability: 2.2,
-  startInvulnerability: 3.5,
+  startInvulnerability: 4.2,
   workshopInvulnerability: 4,
   rainGripMul: 0.85,
 } as const;
@@ -41,14 +41,14 @@ export const COLLISION = {
 
 export const TRAFFIC = {
   lanes: [-4, 0, 4] as const,
-  poolArcade: 14,
+  poolArcade: 12,
   poolExplore: 6,
-  spawnAheadMin: 70,
-  spawnAheadMax: 200,
+  spawnAheadMin: 85,
+  spawnAheadMax: 220,
   recycleBehind: 28,
-  minGap: 36,
-  safeGap: 16,
-  laneChangeCooldown: 2.2,
+  minGap: 44,
+  safeGap: 20,
+  laneChangeCooldown: 2.4,
   overtakeCloseDist: 2.0,
 } as const;
 

@@ -1,4 +1,4 @@
-import { PHYSICS, SCORE } from './config.js?v=2.0.13';
+import { PHYSICS, SCORE } from './config.js?v=2.0.14';
 export function targetTopSpeed(s) {
     if (s.branch)
         return 65;
@@ -28,7 +28,7 @@ export function stepVehicle(s, steerAxis, brake, dt, rain = false) {
     s.slip += (Number(drift) - s.slip) * Math.min(1, dt * PHYSICS.slipLerp);
     const vxLerp = drift ? PHYSICS.driftVxLerp : PHYSICS.vxLerp;
     // Keep lateral authority at speed so lane changes stay playable.
-    const lateral = s.steer * (9.5 + s.speed * 0.012) * (shoulder ? 0.48 : 1) * grip;
+    const lateral = s.steer * (10.8 + s.speed * 0.014) * (shoulder ? 0.5 : 1) * grip;
     s.vx += (lateral - s.vx) * Math.min(1, dt * vxLerp);
     s.yaw += (Math.atan2(s.vx, Math.max(1, s.speed / 3.6)) * (0.85 + s.slip * 0.75) - s.yaw) * Math.min(1, dt * PHYSICS.yawLerp);
     const minX = s.branch ? -PHYSICS.branchHalfWidth : -PHYSICS.roadHalfWidth;

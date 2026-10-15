@@ -340,7 +340,8 @@ function show(next: 'start' | 'road' | 'garage'): void {
   if (expanded) expandReader(false);
   resized = true;
   mode = next;
-  road.hidden = next !== 'road';
+  // Keep the road canvas as a live backdrop behind the start card
+  road.hidden = next === 'garage';
   workshop.hidden = next !== 'garage';
   start.hidden = next !== 'start';
   drawKey = '';
@@ -694,10 +695,10 @@ const loop = new GameLoop({
 
     audio.updateEngine(s.speed, !polled.brake);
   },
-  render: (_alpha, _frameDt) => {
+  render: (_alpha, frameDt) => {
     const now = performance.now();
-    if (mode !== 'start') {
-      const canvas = mode === 'road' ? rc : gc;
+    if (mode === 'start' || mode === 'road' || mode === 'garage') {
+      const canvas = mode === 'garage' ? gc : rc;
       const q = perf.settings();
       if (resized || !canvas.width) {
         sizeGameCanvas(canvas, q.resolutionScale);
@@ -706,29 +707,36 @@ const loop = new GameLoop({
       } else if (sizeGameCanvas(canvas, q.resolutionScale)) {
         drawKey = '';
       }
-      const key = [mode, angle, zoom, color, hood, lights, environment, weather, camera, canvas.width, canvas.height].join(':');
-      if ((mode === 'road' && !paused && !s.ended) || key !== drawKey) {
+      const key = [mode, angle, zoom, color, hood, lights, environment, weather, camera, canvas.width, canvas.height, Math.floor(s.d)].join(':');
+      const liveRoad = mode === 'road' && !paused && !s.ended;
+      const livePreview = mode === 'start';
+      if (liveRoad || livePreview || key !== drawKey) {
         const st = performance.now();
         const ctx = canvas.getContext('2d')!;
         prepareDrawContext(ctx);
-        if (mode === 'road') {
-          const polled = input.poll();
+        if (mode === 'garage') {
+          drawGarage(ctx, canvas.width, canvas.height, angle, zoom, color, hood ? 1 : 0, lights, view);
+        } else {
+          if (livePreview) {
+            s.d += Math.min(0.45, Math.max(0, frameDt)) * 18;
+            s.speed = 88;
+            s.x *= 0.96;
+          }
+          const polled = liveRoad ? input.poll() : { brake: false, steerAxis: 0, pause: false };
           drawRoad(ctx, s, canvas.width, canvas.height, {
             color,
-            camera,
-            brake: polled.brake,
+            camera: livePreview ? 0 : camera,
+            brake: !!polled.brake,
             lights: lights || environment === 'night',
             environment: s.environment,
             weather,
             quality: q,
-            reduceEffects: progress.reduceMotion,
+            reduceEffects: progress.reduceMotion || livePreview,
           });
-        } else {
-          drawGarage(ctx, canvas.width, canvas.height, angle, zoom, color, hood ? 1 : 0, lights, view);
         }
         const drawMs = performance.now() - st;
         canvas.dataset.drawMs = drawMs.toFixed(2);
-        perf.sampleFrame(drawMs, now);
+        if (liveRoad) perf.sampleFrame(drawMs, now);
         drawKey = key;
       }
     }

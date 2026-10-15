@@ -142,45 +142,52 @@ export function drawRoad(c: CanvasRenderingContext2D, s: RunState, w: number, h:
   // Full-bleed ground first so laterals never open to void / unfinished edges.
   const g0 = beach ? '#d4c294' : ground[0];
   const gDeep = night ? '#2a3238' : shade(g0, 0.78);
-  const horizonY = h * 0.48;
-  const groundWash = c.createLinearGradient(0, horizonY - h * 0.04, 0, h);
-  groundWash.addColorStop(0, shade(g0, night ? 0.85 : 1));
-  groundWash.addColorStop(0.45, shade(g0, night ? 0.75 : 0.9));
+  const horizonY = h * 0.5;
+  const groundWash = c.createLinearGradient(0, horizonY - h * 0.08, 0, h);
+  groundWash.addColorStop(0, shade(g0, night ? 0.88 : 1.05));
+  groundWash.addColorStop(0.35, shade(g0, night ? 0.8 : 0.95));
+  groundWash.addColorStop(0.75, shade(g0, night ? 0.72 : 0.86));
   groundWash.addColorStop(1, gDeep);
   c.fillStyle = groundWash;
-  c.fillRect(0, horizonY - h * 0.04, w, h - horizonY + h * 0.04);
+  c.fillRect(0, horizonY - h * 0.08, w, h - horizonY + h * 0.08);
 
-  // Hills as a continuous backdrop that spills past both screen edges.
-  for (let k = 0; k < 3; k++) {
+  // Continuous hillside ribbons that spill past both edges (no hard lateral cut).
+  const hillCols = [
+    shade(ground[2] || ground[0], night ? 0.75 : 0.92),
+    shade(ground[1] || ground[0], night ? 0.82 : 0.98),
+    shade(ground[0], night ? 0.9 : 1.04),
+    shade(g0, night ? 0.85 : 0.96),
+  ];
+  for (let k = 0; k < 4; k++) {
     c.beginPath();
-    const pad = w * 0.08;
-    const foot = h * (0.52 + k * 0.03);
+    const pad = w * 0.18;
+    const foot = h * (0.54 + k * 0.028);
     c.moveTo(-pad, foot);
-    for (let i = 0; i <= 64; i++) {
-      const nx = i / 64;
+    for (let i = 0; i <= 80; i++) {
+      const nx = i / 80;
       const x = -pad + nx * (w + pad * 2);
-      c.lineTo(
-        x,
-        h * (0.32 + k * 0.03) -
-          Math.sin(nx * 5.4 + k * 2.1 + s.d * 0.002) * h * 0.03 -
-          Math.sin(nx * 2.15 + k) * h * 0.04 -
-          Math.sin(nx * 12.5 + k * 0.6) * h * 0.012,
-      );
+      const roll =
+        Math.sin(nx * 4.2 + k * 1.7 + s.d * 0.0018) * h * 0.036 +
+        Math.sin(nx * 1.7 + k * 0.9) * h * 0.05 +
+        Math.sin(nx * 9.5 + k * 0.4 + s.d * 0.0007) * h * 0.014;
+      c.lineTo(x, h * (0.34 + k * 0.028) - roll);
     }
     c.lineTo(w + pad, foot);
     c.lineTo(-pad, foot);
     c.closePath();
-    c.fillStyle = ground[k] || ground[0];
+    c.fillStyle = hillCols[k];
+    c.globalAlpha = 0.88 + k * 0.03;
     c.fill();
   }
+  c.globalAlpha = 1;
 
-  // Horizon haze
-  const haze = c.createLinearGradient(0, h * 0.26, 0, h * 0.5);
+  // Horizon haze softens the hill/sky seam into one continuous landscape
+  const haze = c.createLinearGradient(0, h * 0.28, 0, h * 0.54);
   haze.addColorStop(0, '#ffffff00');
-  haze.addColorStop(0.55, biomeA.haze || '#d0dce088');
-  haze.addColorStop(1, '#ffffff00');
+  haze.addColorStop(0.45, biomeA.haze || '#d0dce099');
+  haze.addColorStop(1, shade(g0, night ? 0.9 : 1) + '00');
   c.fillStyle = haze;
-  c.fillRect(0, h * 0.26, w, h * 0.24);
+  c.fillRect(0, h * 0.28, w, h * 0.26);
 
   const base = curve(s.d);
   const path = s.branch ? ramp(s.d - s.fork) : 0;
@@ -212,21 +219,26 @@ export function drawRoad(c: CanvasRenderingContext2D, s: RunState, w: number, h:
     const exitZone = inExitClearance(t);
     const mid = (zNear + z2) * 0.5;
     // Wide terrain skirts so left/right never look cut off; keep near strips safer.
-    const skirt = mid < 8 ? Math.min(55, 28 + (mid + 8) * 2.2) : Math.min(130, 48 + mid * 0.35);
+    const skirt = mid < 8 ? Math.min(60, 32 + (mid + 8) * 2.4) : Math.min(140, 56 + mid * 0.4);
     quad(a, x, zNear, x2, z2, skirt, g0, -0.1);
     // Outer fade bands (slightly darker) to seal screen edges
     if (mid > 6) {
-      quad(a, x - skirt * 0.42, zNear, x2 - skirt * 0.42, z2, skirt * 0.35, shade(g0, night ? 0.7 : 0.86), -0.11);
-      quad(a, x + skirt * 0.42, zNear, x2 + skirt * 0.42, z2, skirt * 0.35, shade(g0, night ? 0.7 : 0.86), -0.11);
+      quad(a, x - skirt * 0.48, zNear, x2 - skirt * 0.48, z2, skirt * 0.38, shade(g0, night ? 0.68 : 0.84), -0.11);
+      quad(a, x + skirt * 0.48, zNear, x2 + skirt * 0.48, z2, skirt * 0.38, shade(g0, night ? 0.68 : 0.84), -0.11);
     }
-    if (mid > 40) {
-      quad(a, x - skirt * 0.28, zNear, x2 - skirt * 0.28, z2, skirt * 0.22, night ? '#2e4e58' : biomeA.water, -0.07);
+    // Water far left only — never under roadside props (palms / lamps)
+    if (mid > 55 && (beach || opts.environment === 'coast' || biomeA.water)) {
+      const waterC = night ? '#2a4852' : biomeA.water || '#4a8aa0';
+      quad(a, x - skirt * 0.72, zNear, x2 - skirt * 0.72, z2, skirt * 0.16, waterC, -0.06);
+      quad(a, x - skirt * 0.62, zNear, x2 - skirt * 0.62, z2, skirt * 0.08, shade(waterC, 1.12), -0.055);
     }
     quad(a, x, zNear, x2, z2, 12.8, asphalt);
+    // Soft centre lane wear so asphalt feels continuous, not a flat slab
+    if (mid > -1) quad(a, x, zNear, x2, z2, 3.2, shade(asphalt, night ? 0.92 : 1.06), 0.012);
     for (const side of [-1, 1]) {
       if (side > 0 && exitZone) continue;
-      quad(a, x + side * 6.55, zNear, x2 + side * 6.55, z2, 0.7, verge);
-      quad(a, x + side * 5.95, zNear, x2 + side * 5.95, z2, 0.18, '#ebe4cc', 0.018);
+      quad(a, x + side * 6.55, zNear, x2 + side * 6.55, z2, 0.85, verge);
+      quad(a, x + side * 5.95, zNear, x2 + side * 5.95, z2, 0.2, '#ebe4cc', 0.018);
     }
     // Lane dashes — denser near, skip when almost under the camera
     if (mid > -2 && ((world % 18) + 18) % 18 < 9) {
@@ -278,28 +290,29 @@ export function drawRoad(c: CanvasRenderingContext2D, s: RunState, w: number, h:
     if (beach || opts.environment === 'coast') {
       column(objects, x + right, 0.28, z, 0.55, 0.55, '#d2be8e', 7);
       bush(objects, x + right + 2.2, z, 1.1 + (n % 2) * 0.3);
-      if (n % 2 === 0) {
-        column(objects, x - 15, 3.2, z, 0.16, 6.4, '#7a623e', 6);
-        for (let j = 0; j < 5; j++) {
-          const ang = (j * Math.PI) / 2.5;
+      // Palms on the left verge — inland of the far-left water band
+      if (n % 2 === 0 && z > 14) {
+        const pxPalm = x - 11.5;
+        column(objects, pxPalm, 3.0, z, 0.18, 6.0, '#6e5638', 7);
+        for (let j = 0; j < 6; j++) {
+          const ang = (j * Math.PI) / 3;
           column(
             objects,
-            x - 15 + Math.cos(ang) * 1.35,
-            6.1,
-            z + Math.sin(ang) * 1.35,
-            0.22,
-            0.12,
-            '#3a6e4a',
+            pxPalm + Math.cos(ang) * 1.45,
+            5.9,
+            z + Math.sin(ang) * 1.45,
+            0.26,
+            0.14,
+            '#3f7450',
             5,
           );
         }
       }
     } else if (biomeId === 2) {
       building(objects, x + right, z, 4.5 + (n % 5), 2.6 + (n % 3) * 0.45);
-      // Sparse street lamps — avoid a forest of thin sticks
-      if (n % 4 === 0 && z > 12) {
-        column(objects, x - 12, 2.2, z, 0.12, 4.4, '#7a8890', 6);
-        column(objects, x - 12, 4.45, z, 0.32, 0.18, '#c8d0d4', 6);
+      if (n % 5 === 0 && z > 18) {
+        column(objects, x - 10.5, 2.2, z, 0.14, 4.4, '#7a8890', 6);
+        column(objects, x - 10.5, 4.45, z, 0.34, 0.2, '#c8d0d4', 6);
       }
     } else if (biomeId === 3) {
       column(objects, x + right, 0.65, z, 0.7, 1.3, '#c4a060', 7);
@@ -309,7 +322,7 @@ export function drawRoad(c: CanvasRenderingContext2D, s: RunState, w: number, h:
       column(objects, x + right + 2.2, 0.16, z, 0.95, 0.28, '#eef4f8', 8);
     } else {
       pine(objects, x + right, z, 5.2 + ((n % 3 + 3) % 3));
-      if (n % 3 === 0) pine(objects, x - 14, z, 4.8);
+      if (n % 3 === 0) pine(objects, x - 12.5, z, 4.6);
       if (n % 3 === 0) bush(objects, x + right - 3, z + 2, 1.2);
     }
   }
@@ -369,15 +382,15 @@ export function drawRoad(c: CanvasRenderingContext2D, s: RunState, w: number, h:
   cam.draw(a);
   cam.draw(objects);
 
-  // Soft lateral seals so the landscape never looks cut off at the screen edges.
-  const edgeW = w * 0.16;
+  // Soft lateral seals — light vignette, not muddy curtains
+  const edgeW = w * 0.1;
   c.save();
   for (const side of [0, 1] as const) {
     const grad = c.createLinearGradient(side ? w : 0, 0, side ? w - edgeW : edgeW, 0);
-    grad.addColorStop(0, shade(g0, night ? 0.7 : 0.86));
+    grad.addColorStop(0, shade(g0, night ? 0.75 : 0.9));
     grad.addColorStop(1, 'rgba(0,0,0,0)');
     c.fillStyle = grad;
-    c.globalAlpha = 0.5;
+    c.globalAlpha = 0.28;
     c.fillRect(side ? w - edgeW : 0, horizonY, edgeW, h - horizonY);
   }
   c.restore();
