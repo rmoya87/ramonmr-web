@@ -1,12 +1,12 @@
-import { EXIT, PHYSICS, SCORE } from './config.js?v=2.0.12';
-import { livesRemaining, resolveCollisions, isShoulder } from './CollisionManager.js?v=2.0.12';
-import { stepCamera } from './CameraController.js?v=2.0.12';
-import { stepEnvironment, biomeLabel, regionAt } from './EnvironmentManager.js?v=2.0.12';
-import { assignMission, checkMissionComplete, missionLabel, noteCombo, notePass, } from './MissionManager.js?v=2.0.12';
-import { applyPassEvents, levelOf, resetPassTracking } from './ScoreManager.js?v=2.0.12';
-import { createInitialTraffic, stepTraffic } from './TrafficManager.js?v=2.0.12';
-import { stepVehicle } from './VehicleController.js?v=2.0.12';
-import { approachMeters, ramp, stepRoute } from './RouteManager.js?v=2.0.12';
+import { EXIT, PHYSICS, SCORE } from './config.js?v=2.0.13';
+import { livesRemaining, resolveCollisions, isShoulder } from './CollisionManager.js?v=2.0.13';
+import { stepCamera } from './CameraController.js?v=2.0.13';
+import { stepEnvironment, biomeLabel, regionAt } from './EnvironmentManager.js?v=2.0.13';
+import { assignMission, checkMissionComplete, missionLabel, noteCombo, notePass, } from './MissionManager.js?v=2.0.13';
+import { applyPassEvents, levelOf, resetPassTracking } from './ScoreManager.js?v=2.0.13';
+import { createInitialTraffic, stepTraffic } from './TrafficManager.js?v=2.0.13';
+import { stepVehicle } from './VehicleController.js?v=2.0.13';
+import { approachMeters, ramp, stepRoute } from './RouteManager.js?v=2.0.13';
 export function createRun(mode, environment = 'auto') {
     const { traffic, nextId } = createInitialTraffic(mode);
     resetPassTracking();
