@@ -101,41 +101,45 @@ export function car(
   color: string,
   opts: { angle?: number; roll?: number; spin?: number; hood?: number | boolean; lights?: boolean; brake?: boolean; steer?: number } = {},
 ): void {
-  const key = color + ':' + !!opts.hood + ':' + !!opts.lights + ':' + !!opts.brake;
+  const key = 'r3:' + color + ':' + !!opts.hood + ':' + !!opts.lights + ':' + !!opts.brake;
   let b = carCache.get(key);
   if (!b) {
     b = [];
-    // Lower body / rocker
-    box(b, 0, 0.4, 0, 2.1, 0.52, 4.4, shade(color, 0.78));
-    // Hood with slight taper feel
-    box(b, 0, 0.78, 1.4, 1.95, 0.26, 1.5, shade(color, 1.05));
-    box(b, 0, 0.9, 1.55, 1.7, 0.08, 1.1, shade(color, 1.1));
-    // Cabin
-    box(b, 0, 0.98, -0.12, 1.98, 0.4, 1.9, color);
-    // Roof
-    box(b, 0, 1.52, -0.18, 1.48, 0.1, 1.28, shade(color, 0.9));
-    // Trunk
-    box(b, 0, 0.9, -1.78, 1.92, 0.3, 1.05, shade(color, 0.95));
-    // Bumpers
-    box(b, 0, 0.36, 2.3, 2.0, 0.2, 0.2, '#151c22');
-    box(b, 0, 0.38, -2.3, 1.96, 0.18, 0.18, '#151c22');
-    box(b, 0, 0.52, -2.34, 1.65, 0.07, 0.05, '#d2ccbe');
+    // Soft underbody + rounded rocker via stepped boxes
+    box(b, 0, 0.34, 0, 2.05, 0.38, 4.2, shade(color, 0.72));
+    box(b, 0, 0.48, 0, 1.95, 0.28, 4.0, shade(color, 0.85));
+    // Hood / nose (tapered steps)
+    box(b, 0, 0.72, 1.55, 1.85, 0.22, 1.25, shade(color, 1.06));
+    box(b, 0, 0.82, 1.7, 1.55, 0.1, 0.85, shade(color, 1.12));
+    // Cabin bubble
+    box(b, 0, 0.95, -0.05, 1.88, 0.36, 1.7, color);
+    box(b, 0, 1.28, -0.12, 1.55, 0.28, 1.35, shade(color, 0.96));
+    box(b, 0, 1.48, -0.2, 1.28, 0.12, 1.05, shade(color, 0.9));
+    // Trunk curve
+    box(b, 0, 0.85, -1.7, 1.82, 0.26, 0.95, shade(color, 0.94));
+    box(b, 0, 0.98, -1.95, 1.55, 0.12, 0.55, shade(color, 0.88));
+    // Rounded bumper tips with cylinders
+    cylinder(b, 0, 0.38, 2.15, 0.22, 1.9, '#1a2228', 0);
+    cylinder(b, 0, 0.4, -2.15, 0.2, 1.85, '#1a2228', 0);
+    box(b, 0, 0.52, -2.28, 1.45, 0.06, 0.05, '#d8d2c4');
     if (opts.hood) {
       box(b, 0, 0.87, 1.36, 1.55, 0.06, 1.25, '#192228');
       box(b, 0, 1.03, 1.4, 0.75, 0.2, 0.65, '#8e989d');
     }
-    prism(b, [[0.99, -1.15], [1.48, -0.7], [1.5, 0.32], [1, 0.98]], 1.52, '#3a4e58');
-    // Glass panes (brighter so cabin reads clearly)
-    b.push({ c: '#a8d0e0', v: [v(-0.72, 1.48, 0.34), v(0.72, 1.48, 0.34), v(0.79, 1.01, 0.99), v(-0.79, 1.01, 0.99)] });
-    b.push({ c: '#5a7a88', v: [v(-0.72, 1.48, -0.71), v(0.72, 1.48, -0.71), v(0.79, 1.01, -1.17), v(-0.79, 1.01, -1.17)] });
+    prism(b, [[0.95, -1.05], [1.35, -0.65], [1.38, 0.28], [0.95, 0.9]], 1.4, '#3a4e58');
+    // Curved-looking glass
+    b.push({ c: '#b4d8e8', v: [v(-0.68, 1.42, 0.28), v(0.68, 1.42, 0.28), v(0.74, 1.0, 0.92), v(-0.74, 1.0, 0.92)] });
+    b.push({ c: '#5a7a88', v: [v(-0.68, 1.42, -0.65), v(0.68, 1.42, -0.65), v(0.74, 1.0, -1.08), v(-0.74, 1.0, -1.08)] });
     for (const side of [-1, 1]) {
-      box(b, side * 0.8, 1.22, -0.2, 0.05, 0.42, 0.08, shade(color, 1.05));
-      box(b, side * 0.86, 0.95, -0.1, 0.05, 0.08, 2.35, shade(color, 0.9));
-      box(b, side * 1.0, 0.55, 0, 0.06, 0.1, 2.1, '#4a555c');
-      box(b, side * 0.9, 0.95, 0.55, 0.14, 0.07, 0.3, shade(color, 1.08));
-      box(b, side * 1.02, 1.1, 0.6, 0.18, 0.12, 0.28, shade(color, 1.12));
-      box(b, side * 0.92, 1.22, -0.15, 0.03, 0.3, 1.15, '#7aa4b4');
-      for (const f of [-1, 1]) cylinder(b, side * 1.08, 0.42, f * 1.38, 0.46, 0.32, '#1c2024', 0);
+      box(b, side * 0.78, 1.18, -0.15, 0.05, 0.36, 0.08, shade(color, 1.04));
+      box(b, side * 0.9, 1.18, -0.12, 0.03, 0.26, 1.0, '#7eb0c2');
+      // Wheel arches (rounded)
+      cylinder(b, side * 0.95, 0.42, 1.35, 0.5, 0.2, shade(color, 0.8), 0);
+      cylinder(b, side * 0.95, 0.42, -1.35, 0.5, 0.2, shade(color, 0.8), 0);
+      for (const f of [-1, 1]) cylinder(b, side * 1.05, 0.4, f * 1.35, 0.42, 0.3, '#1a1e22', 0);
+      // Soft light clusters
+      cylinder(b, side * 0.62, 0.68, -2.18, 0.16, 0.12, opts.brake ? '#ff3a28' : '#e04030', Math.PI / 2);
+      cylinder(b, side * 0.62, 0.66, 2.18, 0.16, 0.12, opts.lights ? '#fff8d0' : '#e8e4c8', Math.PI / 2);
     }
     if (opts.hood) {
       const panel: Face[] = [];
@@ -153,14 +157,6 @@ export function car(
       box(b, 0, 0.99, 1.5, 1.34, 0.04, 0.9, '#192228');
       box(b, 0, 1.08, 1.4, 0.7, 0.14, 0.55, '#8e989d');
     }
-    for (const side of [-1, 1]) {
-      box(b, side * 0.68, 0.72, -2.28, 0.55, 0.14, 0.06, opts.brake ? '#ff3a28' : '#e04030');
-      box(b, side * 0.7, 0.7, 2.28, 0.5, 0.16, 0.06, opts.lights ? '#fff8d0' : '#e8e4c8');
-      box(b, side * 0.72, 0.36, -2.28, 0.16, 0.1, 0.14, '#b0bcbc');
-    }
-    box(b, 0, 0.62, -2.34, 0.5, 0.14, 0.04, '#efe9d4');
-    // Spoiler lip for silhouette
-    box(b, 0, 1.12, -2.15, 1.5, 0.06, 0.18, shade(color, 0.88));
     carCache.set(key, b);
   }
   const angle = opts.angle || 0;

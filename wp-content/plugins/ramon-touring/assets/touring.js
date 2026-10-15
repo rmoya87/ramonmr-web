@@ -814,9 +814,12 @@ const loop = new GameLoop({
         if (mode !== 'start') {
             const canvas = mode === 'road' ? rc : gc;
             const q = perf.settings();
-            if (resized || !canvas.width || sizeGameCanvas(canvas, q.resolutionScale)) {
+            if (resized || !canvas.width) {
                 sizeGameCanvas(canvas, q.resolutionScale);
                 resized = false;
+                drawKey = '';
+            }
+            else if (sizeGameCanvas(canvas, q.resolutionScale)) {
                 drawKey = '';
             }
             const key = [mode, angle, zoom, color, hood, lights, environment, weather, camera, canvas.width, canvas.height].join(':');
