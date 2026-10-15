@@ -2,7 +2,7 @@
 Contributors: rmoya87
 Requires at least: 6.5
 Requires PHP: 8.1
-Stable tag: 2.0.5
+Stable tag: 2.0.6
 License: GPLv2 or later
 
 Optional RM Touring Lab driving mode for ramonmr.com. The normal WordPress site remains the default.
@@ -21,6 +21,9 @@ TypeScript sources in src/ (mesh.ts, world.ts, touring.ts, game/*) compile to as
 
 == Rollback ==
 Deactivate the plugin, purge cache, restore previous plugin files from deployment backup; preserve the score table. Existing content and other plugins remain unchanged.
+
+== 2.0.6 ==
+* Sharp full-resolution canvas (DPR-aware); remove 900px pixel-art upscale.
 
 == 2.0.5 ==
 * Mid-distance chase camera; remove yellow center line.

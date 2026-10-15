@@ -3,7 +3,7 @@ import { VERSION, type EnvironmentId, type GameMode, type QualityProfile, type W
 import { GameLoop } from './game/GameLoop.js';
 import { InputManager } from './game/InputManager.js';
 import { AudioManager } from './game/AudioManager.js';
-import { PerformanceManager } from './game/PerformanceManager.js';
+import { PerformanceManager, prepareDrawContext, sizeGameCanvas } from './game/PerformanceManager.js';
 import { createRun, hudSnapshot, resumeFromWorkshop, simulateStep } from './game/GameManager.js';
 import {
   clearRunSnapshot,
@@ -700,17 +700,17 @@ const loop = new GameLoop({
       const canvas = mode === 'road' ? rc : gc;
       const q = perf.settings();
       if (resized || !canvas.width) {
-        const r = canvas.getBoundingClientRect();
-        const scale = Math.min(1, 900 / r.width) * q.resolutionScale;
-        canvas.width = Math.max(1, Math.round(r.width * scale));
-        canvas.height = Math.max(1, Math.round(r.height * scale));
+        sizeGameCanvas(canvas, q.resolutionScale);
         resized = false;
+        drawKey = '';
+      } else if (sizeGameCanvas(canvas, q.resolutionScale)) {
         drawKey = '';
       }
       const key = [mode, angle, zoom, color, hood, lights, environment, weather, camera, canvas.width, canvas.height].join(':');
       if ((mode === 'road' && !paused && !s.ended) || key !== drawKey) {
         const st = performance.now();
         const ctx = canvas.getContext('2d')!;
+        prepareDrawContext(ctx);
         if (mode === 'road') {
           const polled = input.poll();
           drawRoad(ctx, s, canvas.width, canvas.height, {
