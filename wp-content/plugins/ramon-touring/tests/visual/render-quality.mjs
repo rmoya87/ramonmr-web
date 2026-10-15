@@ -110,15 +110,23 @@ describe('Render quality gates', () => {
     ({ createRun } = await import(join(assets, 'game/GameManager.js')));
   });
 
-  it('car mesh includes reflective glass + gloss (r7)', () => {
+  it('car mesh includes reflective glass + gloss (arcade soft)', () => {
     const faces = [];
     car(faces, 0, 0, '#c23a2b', { lights: true });
     assert.ok(faces.length >= 90, `expected detailed car mesh, got ${faces.length} faces`);
     const colors = faces.map((f) => f.c.toLowerCase());
-    const glass = colors.some((c) => /#(1a3548|163040|183448|7ec4e4|9ad0ec|8ec8e8|c8e8f8|eef8ff|f5fbff)/.test(c));
+    const glass = colors.some((c) => /#(1e3a4c|8ec8e0|eef6fc|bee0f0)/.test(c));
     const gloss = colors.some((c) => c === '#e8eef4' || c.startsWith('#e') || c.startsWith('#f'));
-    assert.ok(glass, 'missing glass / sky-reflection colors on car');
+    assert.ok(glass, 'missing LOOK.glass colors on car');
     assert.ok(gloss, 'missing gloss highlight colors on car');
+  });
+
+  it('look bible exports shared materials', async () => {
+    const { LOOK, mixHex, fogToward } = await import(join(assets, 'look.js'));
+    assert.equal(LOOK.glass.tint, '#1e3a4c');
+    assert.equal(LOOK.asphalt.day.length, 7);
+    assert.equal(mixHex('#000000', '#ffffff', 0.5), '#808080');
+    assert.ok(fogToward('#5c646c', '#e8dcc8', 200).startsWith('#'));
   });
 
   it('road scene paints full-bleed sky + ground (no void start)', () => {

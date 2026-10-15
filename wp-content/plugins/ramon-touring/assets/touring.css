@@ -97,7 +97,8 @@ body.rm-touring-shell #rm-touring .reader-expanded .workshop .hanging-panel{heig
 #rm-touring .racer[data-mode=start] .mission-bar,
 #rm-touring .racer[data-mode=start] .exit-bar,
 #rm-touring .racer[data-mode=start] .race-notice{display:none!important}
-#rm-touring .start-screen{background:linear-gradient(180deg,#0e161c88 0%,#10202955 40%,#0e161c99 100%);backdrop-filter:blur(1.5px)}
+#rm-touring .start-screen{background:linear-gradient(180deg,#1a304088 0%,#24384844 45%,#1a283499 100%);backdrop-filter:blur(1.5px)}
+#rm-touring .instructions-card,#rm-touring .start-card{background:#1e3240f0;border-color:#c8a86a55;box-shadow:0 18px 48px #0a142088}
 #rm-touring .start-card{max-width:640px;background:#1a2a34f2;border:1px solid #6f879066;border-radius:28px;padding:26px 28px;box-shadow:0 24px 60px #0008;backdrop-filter:blur(10px)}
 #rm-touring .start-card h2{font-size:28px;letter-spacing:.02em;color:#f0e2c0;margin:0 0 8px}
 #rm-touring .start-card p{font-size:14px;line-height:1.55;margin:8px 0;color:#d2ddd8}
