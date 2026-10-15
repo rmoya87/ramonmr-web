@@ -1,5 +1,5 @@
-import { COLLISION, PHYSICS } from './config.js?v=2.1.0';
-import { applyHitImpulse } from './VehicleController.js?v=2.1.0';
+import { COLLISION, PHYSICS } from './config.js?v=2.1.1';
+import { applyHitImpulse } from './VehicleController.js?v=2.1.1';
 /** Swept-ish AABB using current positions; invulnerability prevents multi-life drain. */
 export function resolveCollisions(s) {
     if (s.inv > 0 || s.branch || s.ended)
