@@ -1,6 +1,6 @@
 # RM Touring Lab — Three.js / WebGL migration (design)
 
-**Status:** pending user review  
+**Status:** approved — implementing 3.0.0  
 **Date:** 2026-10-15  
 **Version target:** 3.0.0  
 **Decisions locked:** Option B (WebGL/Three.js), full migration (road + garage + props), packaging **A (esbuild bundle)**

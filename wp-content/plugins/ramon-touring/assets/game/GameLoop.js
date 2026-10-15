@@ -1,4 +1,4 @@
-import { FIXED_DT, MAX_FRAME_DT, MAX_PHYSICS_STEPS } from './config.js?v=2.1.2';
+import { FIXED_DT, MAX_FRAME_DT, MAX_PHYSICS_STEPS } from './config.js';
 /** Fixed-timestep simulation with render interpolation alpha. */
 export class GameLoop {
     constructor(cb) {

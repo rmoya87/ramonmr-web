@@ -1,4 +1,4 @@
-import { SCORE, TRAFFIC, VEHICLE_TYPES } from './config.js?v=2.1.2';
+import { SCORE, TRAFFIC, VEHICLE_TYPES } from './config.js';
 const COLORS = ['#d8d2c2', '#3d7388', '#b8aa72', '#465565', '#8a5a44', '#5a6d7a'];
 const TYPE_WEIGHTS = ['sedan', 'sedan', 'sport', 'van', 'truck', 'slow', 'sedan', 'sport'];
 function pickType(level) {
