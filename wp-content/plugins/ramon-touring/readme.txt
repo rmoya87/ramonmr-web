@@ -2,7 +2,7 @@
 Contributors: rmoya87
 Requires at least: 6.5
 Requires PHP: 8.1
-Stable tag: 2.0.13
+Stable tag: 2.0.14
 License: GPLv2 or later
 
 Optional RM Touring Lab driving mode for ramonmr.com. The normal WordPress site remains the default.
@@ -21,6 +21,12 @@ TypeScript sources in src/ (mesh.ts, world.ts, touring.ts, game/*) compile to as
 
 == Rollback ==
 Deactivate the plugin, purge cache, restore previous plugin files from deployment backup; preserve the score table. Existing content and other plugins remain unchanged.
+
+== 2.0.14 ==
+* Live road preview behind the start card (no empty void while loading instructions).
+* Continuous hillside ribbons, far-left water, props clear of water; softer lateral vignette.
+* Car r7 glass/reflections more visible from chase cam; snappier steering; wider traffic gaps.
+* Modulepreload for ES modules; headless render-quality gates in tests/visual.
 
 == 2.0.13 ==
 * Full-bleed ground and wider terrain skirts so laterals no longer look cut off.

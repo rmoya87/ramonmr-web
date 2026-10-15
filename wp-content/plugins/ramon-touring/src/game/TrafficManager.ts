@@ -34,7 +34,7 @@ export function createInitialTraffic(mode: 'arcade' | 'explore'): { traffic: Tra
   const lanesUsed = new Set<string>();
   for (let i = 0; i < n; i++) {
     const lane = i % 3;
-    const d = 100 + Math.floor(i / 2) * 90 + (i % 2) * 35;
+    const d = 120 + Math.floor(i / 2) * 110 + (i % 2) * 40;
     const key = `${Math.floor(d / 20)}:${lane}`;
     if (lanesUsed.has(key)) continue;
     lanesUsed.add(key);

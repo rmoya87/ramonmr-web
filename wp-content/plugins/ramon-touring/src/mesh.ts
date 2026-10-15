@@ -145,11 +145,11 @@ export function car(
   color: string,
   opts: { angle?: number; roll?: number; spin?: number; hood?: number | boolean; lights?: boolean; brake?: boolean; steer?: number } = {},
 ): void {
-  const key = 'r6:' + color + ':' + !!opts.hood + ':' + !!opts.lights + ':' + !!opts.brake;
+  const key = 'r7:' + color + ':' + !!opts.hood + ':' + !!opts.lights + ':' + !!opts.brake;
   let b = carCache.get(key);
   if (!b) {
     b = [];
-    // Smooth coupe silhouette with denser side profile
+    // Smooth coupe silhouette; glass panes layered after so rear view shows reflections
     prism(
       b,
       [
@@ -180,10 +180,9 @@ export function car(
     cylinder(b, 0, 0.38, -2.08, 0.18, 1.68, '#1a2228', 0);
     box(b, 0, 0.5, -2.2, 1.3, 0.05, 0.04, '#d8d2c4');
 
-    // Glossy paint reflections on hood / roof / trunk
+    // Glossy paint reflections on hood / roof rails / trunk
     glossStripe(b, 0.92, 0.85, 1.95, 1.55, color, 0.03);
-    glossStripe(b, 1.48, -0.85, 0.55, 1.15, color, 0.025);
-    glossStripe(b, 0.98, -2.05, -1.15, 1.4, color, 0.03);
+    glossStripe(b, 0.98, -2.05, -1.2, 1.4, color, 0.03);
     for (const side of [-1, 1]) {
       b.push({
         c: shade(color, 1.18),
@@ -195,28 +194,32 @@ export function car(
       });
     }
 
-    // Cabin frame (pillars) so glass reads clearly
-    box(b, 0, 1.42, -0.15, 1.55, 0.1, 1.55, shade(color, 0.88));
+    // Cabin frame + roof (open sides/rear for glass)
+    box(b, 0, 1.46, -0.12, 1.52, 0.09, 1.48, shade(color, 0.9));
     for (const side of [-1, 1]) {
-      box(b, side * 0.78, 1.22, 0.55, 0.08, 0.42, 0.12, shade(color, 0.9));
-      box(b, side * 0.8, 1.22, -0.15, 0.07, 0.4, 0.1, shade(color, 0.92));
-      box(b, side * 0.78, 1.2, -0.9, 0.08, 0.38, 0.12, shade(color, 0.9));
+      box(b, side * 0.8, 1.22, 0.52, 0.09, 0.44, 0.14, shade(color, 0.9));
+      box(b, side * 0.82, 1.22, -0.12, 0.08, 0.42, 0.12, shade(color, 0.92));
+      box(b, side * 0.8, 1.2, -0.88, 0.09, 0.4, 0.14, shade(color, 0.9));
     }
 
     // Windshield — reflective glass
-    glassPane(b, [v(-0.7, 1.45, 0.15), v(0.7, 1.45, 0.15), v(0.78, 0.98, 0.95), v(-0.78, 0.98, 0.95)], '#1a3548', '#8ec8e8', '#f2f8ff');
-    // Rear window
-    glassPane(b, [v(-0.68, 1.44, -0.55), v(0.68, 1.44, -0.55), v(0.76, 1.0, -1.15), v(-0.76, 1.0, -1.15)], '#152c3c', '#6aa8c8', '#dceaf4');
+    glassPane(b, [v(-0.72, 1.46, 0.12), v(0.72, 1.46, 0.12), v(0.8, 0.96, 0.98), v(-0.8, 0.96, 0.98)], '#1a3548', '#9ad0ec', '#f5fbff');
+    // Rear window — protrudes toward chase cam so it wins depth sort
+    glassPane(b, [v(-0.72, 1.46, -0.48), v(0.72, 1.46, -0.48), v(0.8, 0.96, -1.32), v(-0.8, 0.96, -1.32)], '#163040', '#7ec4e4', '#eef8ff');
+    b.push({
+      c: '#c8e8f8',
+      v: [v(-0.55, 1.32, -0.62), v(0.55, 1.32, -0.62), v(0.58, 1.18, -0.95), v(-0.58, 1.18, -0.95)],
+    });
     // Side windows
     for (const side of [-1, 1]) {
       glassPane(
         b,
-        [v(side * 0.9, 1.38, 0.45), v(side * 0.9, 1.38, -0.75), v(side * 0.9, 1.02, -0.85), v(side * 0.9, 1.02, 0.55)],
+        [v(side * 0.92, 1.4, 0.48), v(side * 0.92, 1.4, -0.78), v(side * 0.92, 1.0, -0.9), v(side * 0.92, 1.0, 0.58)],
         '#183448',
-        '#7eb8d8',
-        '#eef6fc',
+        '#8ec8e8',
+        '#f2f8fc',
       );
-      box(b, side * 0.91, 1.2, -0.12, 0.03, 0.42, 1.35, '#c8d4dc');
+      box(b, side * 0.93, 1.2, -0.12, 0.03, 0.42, 1.35, '#d0dce4');
     }
 
     if (opts.hood) {

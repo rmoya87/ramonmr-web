@@ -2,14 +2,14 @@
 /**
  * Plugin Name: Ramon Touring
  * Description: RM Touring Lab 2.0 — modo de conducción opcional con lectura del contenido publicado de WordPress.
- * Version: 2.0.13
+ * Version: 2.0.14
  * Requires at least: 6.5
  * Requires PHP: 8.1
  * Author: Ramón de Moya
  * License: GPL-2.0-or-later
  */
 if (!defined('ABSPATH')) { exit; }
-const RM_TOURING_VERSION = '2.0.13';
+const RM_TOURING_VERSION = '2.0.14';
 require_once __DIR__.'/src/scores.php';
 require_once __DIR__.'/src/admin.php';
 register_activation_hook(__FILE__,'rm_touring_scores_install');
@@ -78,7 +78,8 @@ add_action('template_redirect', static function () {
     $asset=plugins_url('assets/',__FILE__);
     $sections=rm_touring_filter_catalog(rm_touring_catalog($lang));
     $config=['lang'=>$lang,'home'=>$base,'sections'=>$sections,'version'=>RM_TOURING_VERSION,'scoreVersion'=>2,'scores'=>rest_url('ramon-touring/v1/scores'),'run'=>rest_url('ramon-touring/v1/run')];
-    ?><!doctype html><html lang="<?php echo esc_attr($en?'en':'es'); ?>"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="robots" content="noindex,follow"><meta name="referrer" content="strict-origin-when-cross-origin"><title><?php echo esc_html($en?'Driving mode | Ramón de Moya':'Modo conducción | Ramón de Moya'); ?></title><link rel="canonical" href="<?php echo esc_url($base); ?>"><link rel="stylesheet" href="<?php echo esc_url($asset.'touring.css?v='.RM_TOURING_VERSION); ?>"></head><body class="rm-touring-shell"><?php echo '<style>'.rm_touring_mode_css().'</style>'.rm_touring_mode_selector(true); ?><main id="rm-touring"><div class="header"><div><h1><?php echo esc_html($en?'Your route through my work':'Tu ruta por mi trabajo'); ?></h1></div><a href="<?php echo esc_url($base); ?>"><?php echo esc_html($en?'Return to the regular website':'Volver a la web normal'); ?></a></div><div id="rm-touring-app"><p><?php echo esc_html($en?'Loading the optional driving mode…':'Cargando el modo conducción…'); ?></p></div><noscript><p><?php echo esc_html($en?'Driving mode needs JavaScript. Use the regular website to read all content.':'El modo conducción necesita JavaScript. Puedes leer todo el contenido en la web normal.'); ?></p></noscript><script type="application/json" id="rm-touring-config"><?php echo wp_json_encode($config,JSON_HEX_TAG|JSON_HEX_AMP|JSON_HEX_APOS|JSON_HEX_QUOT); ?></script><script>
+    $preload = ['touring.js','world.js','mesh.js','game/config.js','game/GameManager.js','game/GameLoop.js','game/InputManager.js','game/PerformanceManager.js','game/CameraController.js','game/EnvironmentManager.js','game/VehicleController.js','game/TrafficManager.js','game/CollisionManager.js','game/RouteManager.js','game/ScoreManager.js','game/MissionManager.js','game/SaveManager.js','game/AudioManager.js'];
+    ?><!doctype html><html lang="<?php echo esc_attr($en?'en':'es'); ?>"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="robots" content="noindex,follow"><meta name="referrer" content="strict-origin-when-cross-origin"><title><?php echo esc_html($en?'Driving mode | Ramón de Moya':'Modo conducción | Ramón de Moya'); ?></title><link rel="canonical" href="<?php echo esc_url($base); ?>"><link rel="stylesheet" href="<?php echo esc_url($asset.'touring.css?v='.RM_TOURING_VERSION); ?>"><?php foreach ($preload as $mod) { echo '<link rel="modulepreload" href="'.esc_url($asset.$mod.'?v='.RM_TOURING_VERSION).'">'; } ?></head><body class="rm-touring-shell"><?php echo '<style>'.rm_touring_mode_css().'</style>'.rm_touring_mode_selector(true); ?><main id="rm-touring"><div class="header"><div><h1><?php echo esc_html($en?'Your route through my work':'Tu ruta por mi trabajo'); ?></h1></div><a href="<?php echo esc_url($base); ?>"><?php echo esc_html($en?'Return to the regular website':'Volver a la web normal'); ?></a></div><div id="rm-touring-app"><p><?php echo esc_html($en?'Loading the optional driving mode…':'Cargando el modo conducción…'); ?></p></div><noscript><p><?php echo esc_html($en?'Driving mode needs JavaScript. Use the regular website to read all content.':'El modo conducción necesita JavaScript. Puedes leer todo el contenido en la web normal.'); ?></p></noscript><script type="application/json" id="rm-touring-config"><?php echo wp_json_encode($config,JSON_HEX_TAG|JSON_HEX_AMP|JSON_HEX_APOS|JSON_HEX_QUOT); ?></script><script>
 (function(){
   var app=document.getElementById('rm-touring-app');
   var home=<?php echo wp_json_encode($base); ?>;

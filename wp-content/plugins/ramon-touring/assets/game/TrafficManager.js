@@ -1,4 +1,4 @@
-import { SCORE, TRAFFIC, VEHICLE_TYPES } from './config.js?v=2.0.13';
+import { SCORE, TRAFFIC, VEHICLE_TYPES } from './config.js?v=2.0.14';
 const COLORS = ['#d8d2c2', '#3d7388', '#b8aa72', '#465565', '#8a5a44', '#5a6d7a'];
 const TYPE_WEIGHTS = ['sedan', 'sedan', 'sport', 'van', 'truck', 'slow', 'sedan', 'sport'];
 function pickType(level) {
@@ -29,7 +29,7 @@ export function createInitialTraffic(mode) {
     const lanesUsed = new Set();
     for (let i = 0; i < n; i++) {
         const lane = i % 3;
-        const d = 100 + Math.floor(i / 2) * 90 + (i % 2) * 35;
+        const d = 120 + Math.floor(i / 2) * 110 + (i % 2) * 40;
         const key = `${Math.floor(d / 20)}:${lane}`;
         if (lanesUsed.has(key))
             continue;
