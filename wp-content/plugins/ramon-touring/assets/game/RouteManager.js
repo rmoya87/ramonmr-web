@@ -1,5 +1,5 @@
-import { EXIT, SCORE } from './config.js';
-import { award } from './ScoreManager.js';
+import { EXIT, SCORE } from './config.js?v=2.0.10';
+import { award } from './ScoreManager.js?v=2.0.10';
 /** Mirror of world.ramp for exit capture without circular imports during tests. */
 export function ramp(t) {
     return 4.6 + Math.max(0, t) * 0.12 + Math.sin(Math.max(0, t) / 180) * 2;

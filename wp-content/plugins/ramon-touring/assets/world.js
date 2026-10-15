@@ -1,6 +1,6 @@
-import { v, box, car, column, quad, renderer } from './mesh.js';
-import { BIOMES, effectiveNight } from './game/EnvironmentManager.js';
-import { cameraPose } from './game/CameraController.js';
+import { v, box, car, column, quad, renderer } from './mesh.js?v=2.0.10';
+import { BIOMES, effectiveNight } from './game/EnvironmentManager.js?v=2.0.10';
+import { cameraPose } from './game/CameraController.js?v=2.0.10';
 export let sectionLabels = ['Servicios', 'Curriculum', 'Portfolio', 'Blog', 'Contacto'];
 export function setSectionLabels(labels) {
     sectionLabels = labels;
