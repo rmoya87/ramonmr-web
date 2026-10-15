@@ -1,4 +1,4 @@
-import { PHYSICS, SCORE } from './config.js?v=2.0.12';
+import { PHYSICS, SCORE } from './config.js?v=2.0.13';
 export function targetTopSpeed(s) {
     if (s.branch)
         return 65;

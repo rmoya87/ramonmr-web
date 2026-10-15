@@ -139,45 +139,48 @@ export function drawRoad(c: CanvasRenderingContext2D, s: RunState, w: number, h:
     }
   }
 
-  // Hills stay behind the horizon — smoother silhouette, no full-screen green slab.
-  const horizonY = h * 0.5;
+  // Full-bleed ground first so laterals never open to void / unfinished edges.
+  const g0 = beach ? '#d4c294' : ground[0];
+  const gDeep = night ? '#2a3238' : shade(g0, 0.78);
+  const horizonY = h * 0.48;
+  const groundWash = c.createLinearGradient(0, horizonY - h * 0.04, 0, h);
+  groundWash.addColorStop(0, shade(g0, night ? 0.85 : 1));
+  groundWash.addColorStop(0.45, shade(g0, night ? 0.75 : 0.9));
+  groundWash.addColorStop(1, gDeep);
+  c.fillStyle = groundWash;
+  c.fillRect(0, horizonY - h * 0.04, w, h - horizonY + h * 0.04);
+
+  // Hills as a continuous backdrop that spills past both screen edges.
   for (let k = 0; k < 3; k++) {
     c.beginPath();
-    const foot = horizonY + h * (0.04 + k * 0.02);
-    c.moveTo(0, foot);
-    for (let i = 0; i <= 56; i++) {
-      const nx = i / 56;
+    const pad = w * 0.08;
+    const foot = h * (0.52 + k * 0.03);
+    c.moveTo(-pad, foot);
+    for (let i = 0; i <= 64; i++) {
+      const nx = i / 64;
+      const x = -pad + nx * (w + pad * 2);
       c.lineTo(
-        nx * w,
-        h * (0.33 + k * 0.032) -
-          Math.sin(nx * 5.4 + k * 2.1 + s.d * 0.002) * h * 0.028 -
-          Math.sin(nx * 2.15 + k) * h * 0.038 -
-          Math.sin(nx * 12.5 + k * 0.6) * h * 0.01,
+        x,
+        h * (0.32 + k * 0.03) -
+          Math.sin(nx * 5.4 + k * 2.1 + s.d * 0.002) * h * 0.03 -
+          Math.sin(nx * 2.15 + k) * h * 0.04 -
+          Math.sin(nx * 12.5 + k * 0.6) * h * 0.012,
       );
     }
-    c.lineTo(w, foot);
-    c.lineTo(0, foot);
+    c.lineTo(w + pad, foot);
+    c.lineTo(-pad, foot);
     c.closePath();
     c.fillStyle = ground[k] || ground[0];
     c.fill();
   }
 
-  // Soft ground wash under the horizon (matches roadside; not a fake 2D road).
-  const g0 = beach ? '#d4c294' : ground[0];
-  const groundWash = c.createLinearGradient(0, horizonY - h * 0.02, 0, h);
-  groundWash.addColorStop(0, g0);
-  groundWash.addColorStop(0.55, shade(g0, night ? 0.72 : 0.88));
-  groundWash.addColorStop(1, night ? '#2a3238' : shade(g0, 0.78));
-  c.fillStyle = groundWash;
-  c.fillRect(0, horizonY - h * 0.02, w, h - horizonY + h * 0.02);
-
   // Horizon haze
-  const haze = c.createLinearGradient(0, h * 0.28, 0, h * 0.52);
+  const haze = c.createLinearGradient(0, h * 0.26, 0, h * 0.5);
   haze.addColorStop(0, '#ffffff00');
   haze.addColorStop(0.55, biomeA.haze || '#d0dce088');
   haze.addColorStop(1, '#ffffff00');
   c.fillStyle = haze;
-  c.fillRect(0, h * 0.28, w, h * 0.24);
+  c.fillRect(0, h * 0.26, w, h * 0.24);
 
   const base = curve(s.d);
   const path = s.branch ? ramp(s.d - s.fork) : 0;
@@ -208,10 +211,16 @@ export function drawRoad(c: CanvasRenderingContext2D, s: RunState, w: number, h:
     const t = world - s.fork;
     const exitZone = inExitClearance(t);
     const mid = (zNear + z2) * 0.5;
-    const groundW = Math.min(72, 16 + Math.max(4, mid + 9) * 0.42);
-    quad(a, x, zNear, x2, z2, groundW, g0, -0.08);
-    if (mid > 50) {
-      quad(a, x - groundW * 0.34, zNear, x2 - groundW * 0.34, z2, groundW * 0.26, night ? '#2e4e58' : biomeA.water, -0.06);
+    // Wide terrain skirts so left/right never look cut off; keep near strips safer.
+    const skirt = mid < 8 ? Math.min(55, 28 + (mid + 8) * 2.2) : Math.min(130, 48 + mid * 0.35);
+    quad(a, x, zNear, x2, z2, skirt, g0, -0.1);
+    // Outer fade bands (slightly darker) to seal screen edges
+    if (mid > 6) {
+      quad(a, x - skirt * 0.42, zNear, x2 - skirt * 0.42, z2, skirt * 0.35, shade(g0, night ? 0.7 : 0.86), -0.11);
+      quad(a, x + skirt * 0.42, zNear, x2 + skirt * 0.42, z2, skirt * 0.35, shade(g0, night ? 0.7 : 0.86), -0.11);
+    }
+    if (mid > 40) {
+      quad(a, x - skirt * 0.28, zNear, x2 - skirt * 0.28, z2, skirt * 0.22, night ? '#2e4e58' : biomeA.water, -0.07);
     }
     quad(a, x, zNear, x2, z2, 12.8, asphalt);
     for (const side of [-1, 1]) {
@@ -359,6 +368,19 @@ export function drawRoad(c: CanvasRenderingContext2D, s: RunState, w: number, h:
 
   cam.draw(a);
   cam.draw(objects);
+
+  // Soft lateral seals so the landscape never looks cut off at the screen edges.
+  const edgeW = w * 0.16;
+  c.save();
+  for (const side of [0, 1] as const) {
+    const grad = c.createLinearGradient(side ? w : 0, 0, side ? w - edgeW : edgeW, 0);
+    grad.addColorStop(0, shade(g0, night ? 0.7 : 0.86));
+    grad.addColorStop(1, 'rgba(0,0,0,0)');
+    c.fillStyle = grad;
+    c.globalAlpha = 0.5;
+    c.fillRect(side ? w - edgeW : 0, horizonY, edgeW, h - horizonY);
+  }
+  c.restore();
 
   // Soft contact shadow projected in screen space under the car.
   const shadow = cam.project(v(px, 0.05, 0));
