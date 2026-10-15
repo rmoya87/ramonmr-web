@@ -2,7 +2,7 @@
 Contributors: rmoya87
 Requires at least: 6.5
 Requires PHP: 8.1
-Stable tag: 2.0.3
+Stable tag: 2.0.4
 License: GPLv2 or later
 
 Optional RM Touring Lab driving mode for ramonmr.com. The normal WordPress site remains the default.
@@ -21,6 +21,11 @@ TypeScript sources in src/ (mesh.ts, world.ts, touring.ts, game/*) compile to as
 
 == Rollback ==
 Deactivate the plugin, purge cache, restore previous plugin files from deployment backup; preserve the score table. Existing content and other plugins remain unchanged.
+
+== 2.0.4 ==
+* Classic close chase camera so the player car fills the lower frame.
+* Richer car/road graphics; tuned physics, traffic density and speed ramp.
+* Workshop: taller poster, square expand icon, remove “full page” fallback text.
 
 == 2.0.3 ==
 * Menu hamburger icon; remove Arcade/Explore menu entries and RM/TOURING labels.

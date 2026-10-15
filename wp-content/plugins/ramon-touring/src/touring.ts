@@ -183,7 +183,9 @@ root.innerHTML = `
     </aside>
     <div class="garage-scene">
       <div class="hanging-panel">
-        <button class="poster-toggle" data-action="expand-reader">${tr('Ampliar póster', 'Expand poster')}</button>
+        <button class="poster-toggle" data-action="expand-reader" aria-label="${tr('Ampliar póster', 'Expand poster')}" title="${tr('Ampliar póster', 'Expand poster')}">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        </button>
         <div class="reader-toolbar">
           <strong>${tr('Lectura', 'Reading')}</strong>
           <button data-action="close-reader" aria-expanded="false">${tr('Cerrar lectura', 'Close reader')}</button>
@@ -191,7 +193,7 @@ root.innerHTML = `
           <select id="rm-touring-select"></select>
           <a data-reader-link target="_blank" rel="noopener">${tr('Abrir en la web normal', 'Open on the regular website')} ↗</a>
         </div>
-        <p class="reader-fallback" role="status"></p>
+        <p class="reader-fallback" role="status" hidden></p>
         <iframe class="reader" title="${tr('Contenido de la web', 'Website content')}" loading="eager" referrerpolicy="same-origin"></iframe>
       </div>
       <div class="orbit-stage" tabindex="0" role="group" aria-label="${tr('Orbitar coche', 'Orbit car')}">
@@ -390,7 +392,9 @@ function loadPage(index: number): void {
   readerKey = key;
   view = index;
   readerLoaded = false;
-  $('.reader-fallback').textContent = tr('Cargando página…', 'Loading page…');
+  const fallback = $('.reader-fallback');
+  fallback.hidden = false;
+  fallback.textContent = tr('Cargando…', 'Loading…');
   reader.src = item.reader;
   select.value = String(index);
   const link = $('[data-reader-link]') as HTMLAnchorElement;
@@ -448,7 +452,9 @@ async function refreshScores(): Promise<void> {
 
 reader.addEventListener('load', () => {
   readerLoaded = true;
-  $('.reader-fallback').textContent = tr('Página completa. Usa el enlace para abrirla en la web normal.', 'Full page. Use the link to open on the regular website.');
+  const fallback = $('.reader-fallback');
+  fallback.textContent = '';
+  fallback.hidden = true;
   try {
     const u = new URL(reader.contentWindow!.location.href);
     if (u.origin !== location.origin) return;

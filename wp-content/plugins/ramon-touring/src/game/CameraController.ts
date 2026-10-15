@@ -7,7 +7,10 @@ export type CamPose = {
   fovMul: number;
 };
 
-/** Chase camera — pulled back so the full car body stays in the lower frame. */
+/**
+ * Classic chase cam: low and close so the player car fills the lower third
+ * of the frame (OutRun-style), not a bird's-eye overview.
+ */
 export function stepCamera(s: RunState, pathOffset: number, _cameraMode: number, dt: number, reduceMotion: boolean): void {
   const px = s.x + pathOffset;
   s.camX += (px - s.camX) * Math.min(1, dt * CAMERA.damp);
@@ -15,17 +18,18 @@ export function stepCamera(s: RunState, pathOffset: number, _cameraMode: number,
   s.fovBoost += (speedNorm * CAMERA.fovSpeedFactor - s.fovBoost) * Math.min(1, dt * 2);
   s.shake = Math.max(0, s.shake - dt * CAMERA.shakeDecay);
   if (reduceMotion) s.shake = 0;
-  s.camY = 5.1 + s.shake * 0.1;
-  s.camZ = -14.5;
+  // Rise slightly with speed, stay behind the rear bumper.
+  s.camY = 2.35 + speedNorm * 0.35 + s.shake * 0.08;
+  s.camZ = -5.6 - speedNorm * 0.9;
 }
 
 export function cameraPose(s: RunState, pathOffset: number, _cameraMode: number, aspectPortrait: boolean): CamPose {
   const px = s.x + pathOffset;
-  const shakeX = (Math.random() - 0.5) * s.shake * 0.12;
-  const lookAhead = Math.sin(s.steer) * 1.8;
+  const shakeX = (Math.random() - 0.5) * s.shake * 0.1;
+  const lookAhead = Math.sin(s.steer) * 1.4;
   return {
-    pos: { x: s.camX + shakeX * 0.6, y: s.camY || 5.1, z: s.camZ || -14.5 },
-    target: { x: px + lookAhead, y: 1.15, z: 8 },
-    fovMul: (aspectPortrait ? 0.98 : 0.78) * (1 - s.fovBoost),
+    pos: { x: s.camX + shakeX * 0.5, y: s.camY || 2.35, z: s.camZ || -5.6 },
+    target: { x: px + lookAhead, y: 1.05, z: 22 },
+    fovMul: (aspectPortrait ? 0.92 : 0.72) * (1 - s.fovBoost * 0.85),
   };
 }

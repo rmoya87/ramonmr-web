@@ -57,8 +57,17 @@ body.rm-touring-shell #rm-mode-pill{display:none!important}#rm-touring .options-
 @media(max-height:450px){#rm-touring .scene-car-tools{top:70px;max-height:calc(100dvh - 84px);overflow:auto}#rm-touring .hanging-panel{top:80px;height:65%!important}#rm-touring .workshop-actions{top:12px}#rm-touring .top-hud b{font-size:17px}#rm-touring .speed,#rm-touring .route-cue{bottom:70px}}
 #rm-touring .workshop .hanging-panel{width:36%;left:auto;right:20px}#rm-touring .reader-expanded .workshop .hanging-panel{width:100%;right:0}#rm-touring .scene-car-tools{max-height:calc(100dvh - 130px);overflow:auto}
 @media(max-width:899px){#rm-touring .workshop .hanging-panel{width:54%;right:10px}#rm-touring .reader-expanded .workshop .hanging-panel{width:100%;right:0}}
-#rm-touring .workshop .hanging-panel{width:30%;height:42%!important;top:85px}#rm-touring .reader-expanded .workshop .hanging-panel{width:100%;height:100dvh!important;top:0}
-@media(max-width:899px){#rm-touring .workshop .hanging-panel{width:47%;height:28%!important;top:145px}#rm-touring .reader-expanded .workshop .hanging-panel{width:100%;height:100dvh!important;top:0}#rm-touring .scene-car-tools{top:145px}}
+#rm-touring .workshop .hanging-panel{width:34%;height:68%!important;top:72px}#rm-touring .reader-expanded .workshop .hanging-panel{width:100%;height:100dvh!important;top:0}
+#rm-touring .poster-toggle{width:44px;height:44px;min-width:44px;min-height:44px;padding:0;margin:0 0 8px;display:inline-flex;align-items:center;justify-content:center;border-radius:8px;flex-shrink:0}
+#rm-touring .poster-toggle svg{width:22px;height:22px;display:block}
+#rm-touring .reader-fallback[hidden]{display:none!important}
+#rm-touring .hanging-panel .reader-fallback{display:none}
+#rm-touring .hanging-panel .reader-fallback:not([hidden]){display:block;font-size:11px;margin:0;padding:4px 6px;color:#365352}
+@media(max-width:899px){#rm-touring .workshop .hanging-panel{width:50%;height:52%!important;top:130px}#rm-touring .reader-expanded .workshop .hanging-panel{width:100%;height:100dvh!important;top:0}#rm-touring .scene-car-tools{top:145px}#rm-touring .poster-toggle{width:40px;height:40px;min-width:40px;min-height:40px}}
+/* v2.0.4 poster height wins over earlier rules */
+body.rm-touring-shell #rm-touring .workshop .hanging-panel{height:68%!important;max-height:none;width:34%}
+body.rm-touring-shell #rm-touring .reader-expanded .workshop .hanging-panel{height:100dvh!important;width:100%}
+@media(max-width:899px){body.rm-touring-shell #rm-touring .workshop .hanging-panel{height:54%!important;width:52%}}
 #rm-touring .instructions-card{max-height:calc(100dvh - 28px);overflow-y:auto;overscroll-behavior:contain}#rm-touring .hud-icons button:focus-visible,#rm-touring .hud-help:focus-visible{outline:3px solid #f0cc83;outline-offset:2px}
 
 /* RM Touring Lab 2.0 HUD / start */
