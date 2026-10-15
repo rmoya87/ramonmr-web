@@ -31,7 +31,7 @@ let mode = 'start';
 let garage = 0;
 let view = 0;
 let paused = true;
-let camera = 0;
+const camera = 0;
 let color = progress.color || '#b12f3c';
 let lights = false;
 let hood = false;
@@ -81,11 +81,10 @@ root.innerHTML = `
       <p class="start-hint">${tr('Récord personal: ', 'Personal best: ')}${progress.bestScore.toLocaleString(en ? 'en' : 'es')} · ${(progress.bestDistance / 1000).toFixed(1)} km</p>
     </div>
   </section>
-  <button class="desktop-menu-toggle" data-action="game-menu" aria-expanded="false" aria-haspopup="dialog">${tr('Menú', 'Menu')}</button>
-  <button class="hud-help" data-action="help" aria-label="${tr('Instrucciones', 'Instructions')}">?</button>
   <div class="hud-icons">
+    <button data-action="help" aria-label="${tr('Instrucciones', 'Instructions')}">?</button>
     <button data-action="pause-icon" aria-label="${tr('Pausa', 'Pause')}">Ⅱ</button>
-    <button data-action="camera" aria-label="${tr('Cambiar cámara', 'Change camera')}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7h4l2-3h6l2 3h4v13H3z"/><circle cx="12" cy="13" r="4"/></svg></button>
+    <button class="desktop-menu-toggle" data-action="game-menu" aria-expanded="false" aria-haspopup="dialog">${tr('Menú', 'Menu')}</button>
   </div>
   <section class="road" hidden>
     <div class="race-screen" tabindex="0" role="group" aria-label="${tr('Conducción', 'Driving')}">
@@ -105,7 +104,6 @@ root.innerHTML = `
       <div class="speed gauge"><b data-hud="speed">65</b><span>km/h</span></div>
       <div class="mission-bar" data-hud="mission-wrap" hidden><small>${tr('MISIÓN', 'MISSION')}</small><span data-hud="mission"></span></div>
       <div class="route-cue" aria-hidden="true"><b>↗</b><span data-route-label></span></div>
-      <div class="exit-confirm" data-exit-confirm hidden><button data-action="confirm-exit">${tr('Tomar salida', 'Take exit')}</button></div>
       <div class="game-over" hidden>
         <h2>${tr('Fin de partida', 'Run over')}</h2>
         <p data-final-score></p>
@@ -138,19 +136,17 @@ root.innerHTML = `
       <button data-action="restore">${tr('Restablecer vista', 'Reset view')}</button>
       <button data-action="resume">${text.back}</button>
     </div>
-    <div class="scene-car-tools">
-      <div class="workshop-tools">
-        <label>${tr('Pintura', 'Paint')} <select data-setting="color">
-          <option value="#b12f3c">${tr('Rojo', 'Red')}</option>
-          <option value="#254d6d">${tr('Azul', 'Blue')}</option>
-          <option value="#d1c9b6">${tr('Marfil', 'Ivory')}</option>
-          <option value="#3a454a">${tr('Grafito', 'Graphite')}</option>
-          <option value="#c9a24a">${tr('Oro', 'Gold')}</option>
-          <option value="#2a7a6e">${tr('Verde', 'Teal')}</option>
-        </select></label>
-        <button data-action="hood" aria-pressed="false">${text.open}</button>
-        <label>${tr('Acercamiento', 'Zoom')} <input data-setting="zoom" type="range" min="6" max="11" step=".25" value="8"></label>
-      </div>
+    <div class="workshop-tools" hidden>
+      <label>${tr('Pintura', 'Paint')} <select data-setting="color">
+        <option value="#b12f3c">${tr('Rojo', 'Red')}</option>
+        <option value="#254d6d">${tr('Azul', 'Blue')}</option>
+        <option value="#d1c9b6">${tr('Marfil', 'Ivory')}</option>
+        <option value="#3a454a">${tr('Grafito', 'Graphite')}</option>
+        <option value="#c9a24a">${tr('Oro', 'Gold')}</option>
+        <option value="#2a7a6e">${tr('Verde', 'Teal')}</option>
+      </select></label>
+      <button data-action="hood" aria-pressed="false">${text.open}</button>
+      <label>${tr('Acercamiento', 'Zoom')} <input data-setting="zoom" type="range" min="6" max="11" step=".25" value="8"></label>
     </div>
     <div class="garage-scene">
       <div class="hanging-panel">
@@ -249,7 +245,7 @@ const helpDialog = document.createElement('dialog');
 helpDialog.className = 'options-modal';
 helpDialog.innerHTML = `<header><h2>${tr('Cómo conducir', 'How to drive')}</h2><button data-action="close-help">✕</button></header>
 <div class="menu-body"><p>${tr('← → o A/D: girar. ↓ o S: frenar. En móvil, flechas, freno o arrastre horizontal.', '← → or A/D: steer. ↓ or S: brake. On mobile, arrows, brake or horizontal drag.')}</p>
-<p>${tr('P: pausa. C: cámara (arcade / cerca / capó). Carril derecho + confirmación para salir al taller.', 'P: pause. C: camera. Right lane + confirm to exit to the workshop.')}</p>
+<p>${tr('P: pausa. Entra en el carril derecho cerca de la salida para ir al taller.', 'P: pause. Take the right lane near the exit to enter the workshop.')}</p>
 <p>${tr('Arcade: vidas, puntos y clasificación. Exploración: ritmo suave para descubrir la web.', 'Arcade: lives, score and leaderboard. Explore: calmer pace to discover the site.')}</p></div>`;
 $('.racer').append(helpDialog);
 const pauseDialog = document.createElement('dialog');
@@ -265,8 +261,7 @@ if (pill)
     pill.hidden = true;
 let menuWasPaused = true;
 let menuFocus = null;
-let confirmExit = false;
-let coarse = matchMedia('(pointer:coarse)').matches || matchMedia('(max-width:899px)').matches;
+const coarse = matchMedia('(pointer:coarse)').matches || matchMedia('(max-width:899px)').matches;
 function announce(msg) {
     $('[data-status]').textContent = msg;
 }
@@ -343,7 +338,6 @@ function startDrive(gameMode) {
     if (snap && snap.state.mode === gameMode && !snap.state.ended) {
         s = snap.state;
         color = snap.color;
-        camera = snap.camera;
         lights = snap.lights;
         environment = snap.environment;
         garage = snap.garage;
@@ -555,15 +549,8 @@ root.addEventListener('click', (e) => {
             enter(0);
             expandReader(true);
             break;
-        case 'camera':
-            camera = (camera + 1) % 3;
-            audio.play('ui');
-            break;
         case 'refresh-scores':
             void refreshScores();
-            break;
-        case 'confirm-exit':
-            confirmExit = true;
             break;
         case 'reset':
             if (!s.ended && !window.confirm(tr('¿Reiniciar y perder los puntos?', 'Restart and lose points?')))
@@ -701,7 +688,7 @@ root.addEventListener('keydown', (e) => {
     }
     if (mode !== 'road')
         return;
-    if (!['arrowleft', 'arrowright', 'arrowdown', 'a', 'd', 's', 'p', 'c'].includes(k))
+    if (!['arrowleft', 'arrowright', 'arrowdown', 'a', 'd', 's', 'p'].includes(k))
         return;
     e.preventDefault();
     input.setKey(k, true);
@@ -742,22 +729,19 @@ const loop = new GameLoop({
             pauseDialog.showModal();
             return;
         }
-        if (polled.camera)
-            camera = (camera + 1) % 3;
         if (polled.brake)
             audio.play('brake');
         const result = simulateStep(s, sections, {
             steerAxis: polled.steerAxis,
             brake: polled.brake,
-            confirmExit: confirmExit || !coarse,
-            cameraMode: camera,
+            confirmExit: true,
+            cameraMode: 0,
             weather,
             forcedEnv: environment,
             reduceMotion: progress.reduceMotion,
             isCoarsePointer: coarse,
         }, dt, performance.now(), en, completedMissions);
         completedMissions = result.completedMissions;
-        confirmExit = false;
         pops = pops.concat(result.pops).slice(-6);
         if (result.hit)
             audio.play('hit');
@@ -840,8 +824,6 @@ const loop = new GameLoop({
                 }
                 else
                     mw.hidden = true;
-                const ec = $('[data-exit-confirm]');
-                ec.hidden = !(coarse && hud.approach < 80 && !hud.branch && s.x > 3);
                 if (pops.length) {
                     const latest = pops[pops.length - 1];
                     toast(`+${latest.points} ${latest.text}`);

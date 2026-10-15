@@ -1,5 +1,5 @@
 /** Centralized tunable constants for RM Touring Lab 2.0 */
-export const VERSION = '2.0.0';
+export const VERSION = '2.0.1';
 export const SCORE_VERSION = 2;
 export const FIXED_DT = 1 / 60;
 export const MAX_FRAME_DT = 0.1;
@@ -64,19 +64,19 @@ export const EXIT = {
     firstFork: 430,
     nextGap: 650,
     exploreGap: 380,
-    captureXMin: 3.5,
-    captureLaneTol: 2.6,
-    captureQMin: -6,
-    captureQMax: 70,
-    holdSeconds: 0.85,
-    confirmMobile: true,
+    captureXMin: 2.6,
+    captureLaneTol: 3.4,
+    captureQMin: -12,
+    captureQMax: 95,
+    holdSeconds: 0.28,
+    confirmMobile: false,
     approachWarn: 220,
     approachSign: 100,
 };
 export const CAMERA = {
-    modes: 3,
+    modes: 1,
     damp: 3,
-    fovSpeedFactor: 0.12,
+    fovSpeedFactor: 0.08,
     shakeDecay: 4,
 };
 export const SAVE_KEY = 'rm_touring_v2';
