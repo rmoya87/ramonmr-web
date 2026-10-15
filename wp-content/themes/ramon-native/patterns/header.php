@@ -18,7 +18,7 @@
 
 <!-- wp:navigation-link {"label":"Diseño de producto","url":"/servicios/diseno-de-producto/","kind":"custom"} /-->
 
-<!-- wp:navigation-link {"label":"Necesidades de negocio","url":"/servicios/necesidades-de-negocio/","kind":"custom"} /-->
+<!-- wp:navigation-link {"label":"Soluciones digitales","url":"/servicios/necesidades-de-negocio/","kind":"custom"} /-->
 <!-- /wp:navigation-submenu -->
 
 <!-- wp:navigation-link {"label":"Curriculum","url":"/curriculum-ramon-de-moya/","kind":"custom"} /-->
