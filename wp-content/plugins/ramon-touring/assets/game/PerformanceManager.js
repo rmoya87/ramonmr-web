@@ -1,7 +1,8 @@
+/** Prefer sharp output; low only dips slightly for weak devices. */
 const PRESETS = {
-    low: { drawDistance: 220, propStep: 40, shadows: false, particles: false, resolutionScale: 0.7, maxTrafficDraw: 8 },
-    medium: { drawDistance: 300, propStep: 28, shadows: true, particles: true, resolutionScale: 0.85, maxTrafficDraw: 12 },
-    high: { drawDistance: 360, propStep: 22, shadows: true, particles: true, resolutionScale: 1, maxTrafficDraw: 16 },
+    low: { drawDistance: 240, propStep: 36, shadows: true, particles: false, resolutionScale: 0.9, maxTrafficDraw: 10 },
+    medium: { drawDistance: 320, propStep: 26, shadows: true, particles: true, resolutionScale: 1, maxTrafficDraw: 14 },
+    high: { drawDistance: 380, propStep: 20, shadows: true, particles: true, resolutionScale: 1, maxTrafficDraw: 18 },
 };
 export class PerformanceManager {
     constructor() {
@@ -32,15 +33,41 @@ export class PerformanceManager {
         this.samples.push(drawMs);
         if (this.samples.length > 45)
             this.samples.shift();
-        if (this.profile !== 'auto' || now - this.lastAdjust < 4000)
+        if (this.profile !== 'auto' || now - this.lastAdjust < 5000)
             return;
         const avg = this.samples.reduce((a, b) => a + b, 0) / this.samples.length;
         this.lastAdjust = now;
-        if (avg > 18 && this.resolved !== 'low') {
+        // Stay sharper longer; only drop when clearly struggling.
+        if (avg > 22 && this.resolved !== 'low') {
             this.resolved = this.resolved === 'high' ? 'medium' : 'low';
         }
-        else if (avg < 9 && this.resolved !== 'high') {
+        else if (avg < 11 && this.resolved !== 'high') {
             this.resolved = this.resolved === 'low' ? 'medium' : 'high';
         }
     }
+}
+/** Size canvas buffer for sharp display (DPR-aware, no pixel-art upscale). */
+export function sizeGameCanvas(canvas, resolutionScale) {
+    const r = canvas.getBoundingClientRect();
+    if (r.width < 2 || r.height < 2)
+        return false;
+    const dpr = Math.min(2, window.devicePixelRatio || 1);
+    let w = Math.max(1, Math.round(r.width * dpr * resolutionScale));
+    let h = Math.max(1, Math.round(r.height * dpr * resolutionScale));
+    // Soft cap keeps the software renderer playable on large displays.
+    const maxW = 1920;
+    if (w > maxW) {
+        const f = maxW / w;
+        w = maxW;
+        h = Math.max(1, Math.round(h * f));
+    }
+    if (canvas.width === w && canvas.height === h)
+        return false;
+    canvas.width = w;
+    canvas.height = h;
+    return true;
+}
+export function prepareDrawContext(ctx) {
+    ctx.imageSmoothingEnabled = true;
+    ctx.imageSmoothingQuality = 'high';
 }
