@@ -42,6 +42,6 @@ describe('WebGL entry contract', () => {
     const pkg = JSON.parse(readFileSync(join(root, 'package.json'), 'utf8'));
     const src = readFileSync(join(assets, 'touring.js'), 'utf8');
     assert.match(src, /webgl\+esbuild/);
-    assert.equal(pkg.version, '3.0.0');
+    assert.match(src, new RegExp(`ramon-touring ${pkg.version.replace(/\./g, '\\.')} webgl\\+esbuild`));
   });
 });

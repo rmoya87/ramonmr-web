@@ -2,7 +2,7 @@
 Contributors: rmoya87
 Requires at least: 6.5
 Requires PHP: 8.1
-Stable tag: 3.0.0
+Stable tag: 3.0.1
 License: GPLv2 or later
 
 Optional RM Touring Lab driving mode for ramonmr.com. The normal WordPress site remains the default.
@@ -21,6 +21,10 @@ TypeScript in src/ typechecks with tsc; the browser entry is an esbuild ESM bund
 
 == Rollback ==
 Deactivate the plugin, purge cache, restore previous plugin files from deployment backup; preserve the score table. Existing content and other plugins remain unchanged.
+
+== 3.0.1 ==
+* Fix road ribbon face winding so asphalt/verge render under the chase camera.
+* Dispose lane-mark meshes on rebuild; solid edge lines.
 
 == 3.0.0 ==
 * WebGL/Three.js renderer for road, garage and props (arcade-soft materials + fog).

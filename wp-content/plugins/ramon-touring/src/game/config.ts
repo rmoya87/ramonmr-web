@@ -1,5 +1,5 @@
 /** Centralized tunable constants for RM Touring Lab 2.0 */
-export const VERSION = '3.0.0';
+export const VERSION = '3.0.1';
 export const SCORE_VERSION = 2;
 
 export const FIXED_DT = 1 / 60;

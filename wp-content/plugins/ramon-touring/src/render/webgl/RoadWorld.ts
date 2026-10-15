@@ -39,9 +39,10 @@ function buildRibbon(centers: { x: number; z: number }[], halfW: number, y: numb
     const nz = (dx / len) * halfW;
     positions.push(c.x + nx, y, c.z + nz, c.x - nx, y, c.z - nz);
   }
+  // CCW when viewed from +Y so FrontSide faces the chase camera.
   for (let i = 0; i < centers.length - 1; i++) {
     const a = i * 2;
-    indices.push(a, a + 1, a + 2, a + 1, a + 3, a + 2);
+    indices.push(a, a + 2, a + 1, a + 1, a + 2, a + 3);
   }
   const geo = new THREE.BufferGeometry();
   geo.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
@@ -65,6 +66,9 @@ export class RoadWorld {
   private skirt: THREE.Mesh | null = null;
   private water: THREE.Mesh | null = null;
   private rampMesh: THREE.Mesh | null = null;
+  private chalkMesh: THREE.Mesh | null = null;
+  private edgeL: THREE.Mesh | null = null;
+  private edgeR: THREE.Mesh | null = null;
   private sign: THREE.Mesh | null = null;
   private lastRoadKey = '';
   private asphaltMat: THREE.MeshStandardMaterial;
@@ -81,10 +85,23 @@ export class RoadWorld {
     this.scene.add(this.roadGroup);
     this.scene.add(this.props.root);
 
-    this.asphaltMat = new THREE.MeshStandardMaterial({ color: hex(LOOK.asphalt.day), roughness: 0.92 });
-    this.chalkMat = new THREE.MeshStandardMaterial({ color: hex(LOOK.chalk), roughness: 0.7 });
-    this.groundMat = new THREE.MeshStandardMaterial({ color: 0x6a8a5e, roughness: 1 });
-    this.waterMat = new THREE.MeshStandardMaterial({ color: 0x3a8a9a, roughness: 0.35, metalness: 0.2 });
+    this.asphaltMat = new THREE.MeshStandardMaterial({
+      color: hex(LOOK.asphalt.day),
+      roughness: 0.92,
+      side: THREE.DoubleSide,
+    });
+    this.chalkMat = new THREE.MeshStandardMaterial({
+      color: hex(LOOK.chalk),
+      roughness: 0.7,
+      side: THREE.DoubleSide,
+    });
+    this.groundMat = new THREE.MeshStandardMaterial({ color: 0x6a8a5e, roughness: 1, side: THREE.DoubleSide });
+    this.waterMat = new THREE.MeshStandardMaterial({
+      color: 0x3a8a9a,
+      roughness: 0.35,
+      metalness: 0.2,
+      side: THREE.DoubleSide,
+    });
 
     this.player = createVehicle('sport', '#c23a2b');
     this.scene.add(this.player);
@@ -124,7 +141,17 @@ export class RoadWorld {
     if (key === this.lastRoadKey) return;
     this.lastRoadKey = key;
 
-    for (const m of [this.roadMesh, this.vergeL, this.vergeR, this.skirt, this.water, this.rampMesh]) {
+    for (const m of [
+      this.roadMesh,
+      this.vergeL,
+      this.vergeR,
+      this.skirt,
+      this.water,
+      this.rampMesh,
+      this.chalkMesh,
+      this.edgeL,
+      this.edgeR,
+    ]) {
       if (m) {
         this.roadGroup.remove(m);
         m.geometry.dispose();
@@ -143,6 +170,8 @@ export class RoadWorld {
     this.vergeL = new THREE.Mesh(buildRibbon(centers.map((c) => ({ x: c.x - 6.5, z: c.z })), 0.55, 0.03), this.groundMat);
     this.vergeR = new THREE.Mesh(buildRibbon(centers.map((c) => ({ x: c.x + 6.5, z: c.z })), 0.55, 0.03), this.groundMat);
     this.skirt = new THREE.Mesh(buildRibbon(centers, 55, -0.08), this.groundMat);
+    this.edgeL = new THREE.Mesh(buildRibbon(centers.map((c) => ({ x: c.x - 5.85, z: c.z })), 0.1, 0.045), this.chalkMat);
+    this.edgeR = new THREE.Mesh(buildRibbon(centers.map((c) => ({ x: c.x + 5.85, z: c.z })), 0.1, 0.045), this.chalkMat);
 
     const beach = env === 'beach' || env === 'coast' || Math.floor(s.d / 1600) % BIOMES.length === 0;
     if (beach) {
@@ -171,9 +200,17 @@ export class RoadWorld {
 
     // Lane dashes as thin chalk ribbons near center
     const dashCenters = centers.filter((_, i) => i % 3 < 2);
-    const chalk = new THREE.Mesh(buildRibbon(dashCenters, 0.08, 0.04), this.chalkMat);
+    this.chalkMesh = new THREE.Mesh(buildRibbon(dashCenters, 0.08, 0.04), this.chalkMat);
 
-    this.roadGroup.add(this.skirt, this.roadMesh, this.vergeL, this.vergeR, chalk);
+    this.roadGroup.add(
+      this.skirt,
+      this.roadMesh,
+      this.vergeL,
+      this.vergeR,
+      this.edgeL,
+      this.edgeR,
+      this.chalkMesh,
+    );
     if (this.water) this.roadGroup.add(this.water);
     if (this.rampMesh) this.roadGroup.add(this.rampMesh);
 
