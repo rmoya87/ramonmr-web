@@ -205,23 +205,28 @@ export class RoadWorld {
     );
     this.scene.add(this.sunDisc);
 
+    // Hills stay far past sign range so they never occlude exit boards (~110–280 m).
     this.hills = new THREE.Group();
     for (let band = 0; band < 4; band++) {
       const shape = new THREE.Shape();
-      shape.moveTo(-220, 0);
+      shape.moveTo(-260, 0);
       for (let i = 0; i <= 48; i++) {
-        const x = -220 + (i / 48) * 440;
-        const y = 7 + band * 3.5 + Math.sin(i * 0.5 + band * 1.3) * (6 - band) + Math.sin(i * 1.4) * 2.2;
-        shape.lineTo(x, y);
+        const x = -260 + (i / 48) * 520;
+        // Dip the center corridor so the road/sign silhouette stays clear.
+        const centerDip = Math.max(0, 1 - Math.abs(x) / 55) * 10;
+        const y =
+          5 + band * 2.8 + Math.sin(i * 0.5 + band * 1.3) * (5 - band) + Math.sin(i * 1.4) * 1.8 - centerDip;
+        shape.lineTo(x, Math.max(0.5, y));
       }
-      shape.lineTo(220, 0);
+      shape.lineTo(260, 0);
       shape.closePath();
       const mesh = new THREE.Mesh(
         new THREE.ShapeGeometry(shape),
         new THREE.MeshStandardMaterial({ color: 0x5a7a54, flatShading: true, side: THREE.DoubleSide }),
       );
-      mesh.position.set(0, -2 + band * 0.35, 80 + band * 50);
-      mesh.scale.set(1.15 + band * 0.12, 1, 1);
+      mesh.position.set(0, -2 + band * 0.35, 360 + band * 55);
+      mesh.scale.set(1.2 + band * 0.1, 1, 1);
+      mesh.renderOrder = -2;
       this.hills.add(mesh);
     }
     this.scene.add(this.hills);
@@ -450,9 +455,19 @@ export class RoadWorld {
     tex.colorSpace = THREE.SRGBColorSpace;
     const board = new THREE.Mesh(
       new THREE.PlaneGeometry(9.2, 3.1),
-      new THREE.MeshBasicMaterial({ map: tex, transparent: true, side: THREE.DoubleSide, depthWrite: false }),
+      new THREE.MeshBasicMaterial({
+        map: tex,
+        transparent: false,
+        side: THREE.DoubleSide,
+        depthTest: true,
+        depthWrite: true,
+        fog: false,
+      }),
     );
-    board.position.set(-2.6, 5.4, 0);
+    board.position.set(-2.6, 5.8, 0);
+    board.renderOrder = 5;
+    post.renderOrder = 5;
+    g.renderOrder = 5;
     g.add(post, board);
     g.userData.canvas = canvas;
     g.userData.tex = tex;
@@ -502,7 +517,8 @@ export class RoadWorld {
       g.visible = true;
       this.paintSign(g, name, approach);
       const x = curve(s.d + signZ) - base + 7.4;
-      g.position.set(x, 0, signZ);
+      // Keep boards above the hill silhouette and slightly toward camera.
+      g.position.set(x, 0.4, signZ);
       // Billboard toward camera (works with mirrored chase projection).
       g.quaternion.copy(this.camera.quaternion);
       g.rotateY(Math.PI);

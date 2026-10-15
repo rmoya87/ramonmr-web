@@ -37,7 +37,7 @@ describe('VehicleController', () => {
   it('reaches a punchy arcade top speed quickly', () => {
     const s = createRun('arcade');
     for (let i = 0; i < 180; i++) stepVehicle(s, 0, false, FIXED_DT);
-    assert.ok(s.speed >= 145, `expected >= 145 km/h early, got ${s.speed}`);
+    assert.ok(s.speed >= 155, `expected >= 155 km/h early, got ${s.speed}`);
   });
 
   it('raises the speed ceiling hard by level 10', () => {
@@ -48,7 +48,16 @@ describe('VehicleController', () => {
     const tEarly = targetTopSpeed(early);
     const tLate = targetTopSpeed(late);
     assert.ok(tLate > tEarly + 90, `level 10 top (${tLate}) should crush level 1 (${tEarly})`);
-    assert.ok(tLate >= 270, `level 10 should approach the ceiling, got ${tLate}`);
+    assert.ok(tLate >= 280, `level 10 should approach the ceiling, got ${tLate}`);
+  });
+});
+
+describe('Traffic density', () => {
+  it('seeds a dense arcade pack', () => {
+    const { traffic } = createInitialTraffic('arcade');
+    assert.ok(traffic.length >= 20);
+    const near = traffic.filter((c) => c.d < 220).length;
+    assert.ok(near >= 10, `expected crowded first 220 m, got ${near}`);
   });
 });
 

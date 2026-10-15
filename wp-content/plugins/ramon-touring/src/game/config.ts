@@ -1,5 +1,5 @@
 /** Centralized tunable constants for RM Touring Lab 2.0 */
-export const VERSION = '3.0.7';
+export const VERSION = '3.0.8';
 export const SCORE_VERSION = 2;
 
 export const FIXED_DT = 1 / 60;
@@ -7,16 +7,16 @@ export const MAX_FRAME_DT = 0.1;
 export const MAX_PHYSICS_STEPS = 5;
 
 export const PHYSICS = {
-  baseSpeed: 98,
-  maxSpeed: 285,
+  baseSpeed: 105,
+  maxSpeed: 300,
   /** Level-1 cruise ceiling; each level adds arcadeTopPerLevel. */
-  arcadeTopBase: 158,
-  arcadeTopPerLevel: 13.5,
+  arcadeTopBase: 168,
+  arcadeTopPerLevel: 15.5,
   /** Soft time drip so mid-level still climbs a little. */
-  arcadeTopRamp: 0.22,
+  arcadeTopRamp: 0.32,
   exploreTop: 150,
-  accelGain: 1.05,
-  accelCap: 42,
+  accelGain: 1.15,
+  accelCap: 52,
   brakeDecel: 55,
   shoulderPenalty: 32,
   steerSpeedFactor: 190,
@@ -44,14 +44,15 @@ export const COLLISION = {
 
 export const TRAFFIC = {
   lanes: [-4, 0, 4] as const,
-  poolArcade: 14,
-  poolExplore: 6,
-  spawnAheadMin: 85,
-  spawnAheadMax: 220,
-  recycleBehind: 28,
-  minGap: 40,
-  safeGap: 18,
-  laneChangeCooldown: 2.1,
+  /** Dense arcade pack; recycle packs tighter each level. */
+  poolArcade: 26,
+  poolExplore: 8,
+  spawnAheadMin: 48,
+  spawnAheadMax: 160,
+  recycleBehind: 22,
+  minGap: 22,
+  safeGap: 12,
+  laneChangeCooldown: 1.4,
   overtakeCloseDist: 2.0,
 } as const;
 
@@ -66,8 +67,8 @@ export const SCORE = {
   cleanStretch: 500,
   discoverZone: 750,
   distanceMulPerLevel: 0.18,
-  /** ~55s/level → level 10 after ~8+ minutes of clean survival. */
-  levelSeconds: 55,
+  /** ~40s/level → level 10 after ~6 minutes of survival. */
+  levelSeconds: 40,
 } as const;
 
 export const EXIT = {

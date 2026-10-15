@@ -30,10 +30,11 @@ describe('Look + path (3.0)', () => {
     const { createInitialTraffic } = await import(join(assets, 'game/TrafficManager.js'));
     const { TRAFFIC } = await import(join(assets, 'game/config.js'));
     const { traffic } = createInitialTraffic('arcade');
-    assert.ok(traffic.length >= 6);
+    assert.ok(traffic.length >= 18);
     const sorted = traffic.slice().sort((a, b) => a.d - b.d);
-    assert.ok(sorted[0].d >= 100);
-    assert.ok(TRAFFIC.minGap >= 36);
+    assert.ok(sorted[0].d >= 60);
+    assert.ok(TRAFFIC.minGap >= 18);
+    assert.ok(TRAFFIC.poolArcade >= 22);
   });
 });
 

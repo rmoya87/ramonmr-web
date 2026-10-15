@@ -22,18 +22,23 @@ function makeCar(id, d, lane, type) {
         length: def.l,
     };
 }
+/** Tighter packs as level climbs — late game should force crashes. */
+function packGap(level, mode) {
+    if (mode === 'explore')
+        return TRAFFIC.minGap * 1.5;
+    const shrink = Math.min(12, (level - 1) * 1.35 + level * 0.4);
+    return Math.max(11, TRAFFIC.minGap - shrink);
+}
 export function createInitialTraffic(mode) {
     const n = mode === 'explore' ? TRAFFIC.poolExplore : TRAFFIC.poolArcade;
     const traffic = [];
     let nextId = 1;
-    const lanesUsed = new Set();
+    // Staggered dense seed: every lane fills every ~28–36 m.
+    const rowGap = mode === 'explore' ? 70 : 32;
     for (let i = 0; i < n; i++) {
         const lane = i % 3;
-        const d = 120 + Math.floor(i / 2) * 110 + (i % 2) * 40;
-        const key = `${Math.floor(d / 20)}:${lane}`;
-        if (lanesUsed.has(key))
-            continue;
-        lanesUsed.add(key);
+        const row = Math.floor(i / 3);
+        const d = 70 + row * rowGap + (lane - 1) * 8 + (i % 5) * 3;
         traffic.push(makeCar(nextId++, d, lane, TYPE_WEIGHTS[i % TYPE_WEIGHTS.length]));
     }
     return { traffic, nextId };
@@ -65,20 +70,21 @@ function frontCar(traffic, me) {
 /** Advance NPCs, lane AI, recycle. Returns overtake events. */
 export function stepTraffic(s, dt) {
     const level = 1 + Math.floor(s.time / SCORE.levelSeconds);
-    // Late levels pack faster packs and tighter gaps — level 10 should feel brutal.
-    const densityBoost = s.mode === 'explore' ? 0.6 : 1 + Math.min(1.35, (level - 1) * 0.12 + Math.min(0.4, s.time * 0.0015));
+    // Keep relative closing rate high: traffic lags the player more as levels climb.
+    const lag = s.mode === 'explore' ? 1 : Math.max(0.72, 1 - Math.min(0.28, (level - 1) * 0.025 + s.time * 0.00035));
     const events = [];
     for (const o of s.traffic) {
         const def = VEHICLE_TYPES[o.type];
         const front = frontCar(s.traffic, o);
         let desired = def.preferred +
-            (s.mode === 'arcade' ? Math.min(55, (level - 1) * 5.5 + s.time * 0.06) : Math.min(18, s.time * 0.08));
+            (s.mode === 'arcade' ? Math.min(40, (level - 1) * 3.5 + s.time * 0.04) : Math.min(18, s.time * 0.08));
+        desired *= lag;
         if (front) {
             const gap = front.d - o.d;
             if (gap < def.gap) {
                 o.state = 'follow';
                 desired = Math.min(desired, front.speed - 4);
-                if (gap < def.gap * 0.7 && o.changeTimer <= 0 && Math.random() < def.overtake * dt) {
+                if (gap < def.gap * 0.7 && o.changeTimer <= 0 && Math.random() < def.overtake * dt * (1 + level * 0.08)) {
                     const myLane = TRAFFIC.lanes.indexOf(o.targetX);
                     const candidates = [myLane - 1, myLane + 1].filter((l) => l >= 0 && l < 3);
                     for (const lane of candidates) {
@@ -100,10 +106,10 @@ export function stepTraffic(s, dt) {
             o.state = o.changeTimer > 0 ? 'change' : 'cruise';
         }
         o.speed += (desired - o.speed) * Math.min(1, dt * (def.accel / 10));
-        o.d += (o.speed / 3.6) * dt * densityBoost;
+        o.d += (o.speed / 3.6) * dt;
         if (o.changeTimer > 0) {
             o.changeTimer -= dt;
-            o.x += (o.targetX - o.x) * Math.min(1, dt * 3);
+            o.x += (o.targetX - o.x) * Math.min(1, dt * 3.4);
             if (o.changeTimer <= 0) {
                 o.x = o.targetX;
                 o.state = 'cruise';
@@ -121,17 +127,21 @@ export function stepTraffic(s, dt) {
             recycleCar(s, o, level);
         }
     }
-    // Avoid full triple-lane wall just ahead of the player
-    preventBlockade(s);
+    // Avoid full triple-lane wall just ahead of the player (early levels only).
+    if (level < 6)
+        preventBlockade(s);
     return events;
 }
 function recycleCar(s, o, level) {
     const maxD = Math.max(...s.traffic.map((x) => x.d), s.d);
-    const gap = Math.max(26, TRAFFIC.minGap - (level - 1) * 1.6) * (s.mode === 'explore' ? 1.4 : 1);
-    let d = maxD + gap + Math.random() * 20;
-    // Never spawn suddenly in front close to the player
+    const gap = packGap(level, s.mode);
+    let d = maxD + gap + Math.random() * (8 + Math.max(0, 14 - level));
+    // Keep the pack near the player so the road stays busy.
+    const aheadCap = TRAFFIC.spawnAheadMin + 20 + Math.random() * 55;
+    if (d - s.d > TRAFFIC.spawnAheadMax)
+        d = s.d + aheadCap;
     if (d - s.d < TRAFFIC.spawnAheadMin)
-        d = s.d + TRAFFIC.spawnAheadMin + Math.random() * 40;
+        d = s.d + TRAFFIC.spawnAheadMin + Math.random() * 24;
     const type = pickType(level);
     const def = VEHICLE_TYPES[type];
     let lane = Math.floor(Math.random() * 3);
@@ -157,13 +167,12 @@ function recycleCar(s, o, level) {
 function preventBlockade(s) {
     const ahead = s.traffic.filter((c) => {
         const z = c.d - s.d;
-        return z > 8 && z < 45;
+        return z > 8 && z < 40;
     });
     const lanes = new Set(ahead.map((c) => Math.round(c.x)));
     if (lanes.size < 3)
         return;
-    // Open the rightmost car by pushing it farther
     const right = ahead.reduce((a, b) => (b.x > a.x ? b : a));
-    right.d += 35;
+    right.d += 28;
     right.passed = false;
 }
