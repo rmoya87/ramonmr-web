@@ -68,17 +68,17 @@ const text = {
 };
 root.innerHTML = `
 <div class="racer" data-v="${VERSION}">
-  <section class="start-screen" role="dialog" aria-modal="true" aria-label="${tr('Inicio RM Touring Lab', 'RM Touring Lab start')}">
+  <section class="start-screen" role="dialog" aria-modal="true" aria-label="${tr('Instrucciones del juego', 'Game instructions')}">
     <div class="instructions-card start-card">
-      <header><small>RM / TOURING LAB 2.0</small><h2>${tr('Tu ruta por mi trabajo', 'Your route through my work')}</h2></header>
-      <p>${tr('Arcade de conducción con salidas a las secciones reales de la web. El recorrido no arranca hasta que eliges un modo.', 'Driving arcade with exits to real website sections. Nothing starts until you pick a mode.')}</p>
-      <div class="start-actions">
-        <button data-action="arcade">${text.arcade}</button>
+      <header><small>RM / TOURING LAB</small><h2>${tr('Cómo conducir', 'How to drive')}</h2></header>
+      <p>${tr('← → o A / D: girar. ↓ o S: frenar. En móvil, usa las flechas y el freno. El coche acelera al soltar el freno.', '← → or A / D: steer. ↓ or S: brake. On mobile, use the arrows and brake. The car accelerates when you release the brake.')}</p>
+      <p>${tr('Ⅱ o P: pausa. Toma el carril derecho cerca de la salida para entrar al taller y leer las secciones de la web.', 'Ⅱ or P: pause. Take the right lane near the exit to enter the workshop and read the site sections.')}</p>
+      <p>${tr('Adelanta sin chocar para sumar puntos. Tres golpes terminan la partida en Arcade.', 'Pass traffic without crashing to score. Three hits end an Arcade run.')}</p>
+      <div class="start-actions start-actions-play">
+        <button class="start-play" data-action="arcade" autofocus>▶ ${tr('Jugar', 'Play')}</button>
         <button data-action="explore">${text.explore}</button>
         <button data-action="read">${text.read}</button>
-        <button data-action="help">${tr('Instrucciones y controles', 'Instructions and controls')}</button>
       </div>
-      <p class="start-hint">${tr('Récord personal: ', 'Personal best: ')}${progress.bestScore.toLocaleString(en ? 'en' : 'es')} · ${(progress.bestDistance / 1000).toFixed(1)} km</p>
     </div>
   </section>
   <div class="hud-icons">
