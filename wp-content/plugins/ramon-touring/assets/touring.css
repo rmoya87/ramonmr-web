@@ -63,16 +63,40 @@ body.rm-touring-shell #rm-mode-pill{display:none!important}#rm-touring .options-
 
 /* RM Touring Lab 2.0 HUD / start */
 #rm-touring .start-card{max-width:640px}#rm-touring .start-card p{font-size:14px;line-height:1.55;margin:8px 0}#rm-touring .start-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:18px 0 6px}#rm-touring .start-actions-play{grid-template-columns:1fr}#rm-touring .start-actions button{min-height:48px;font-weight:600}#rm-touring .start-play,#rm-touring .start-actions button[data-action=arcade]{background:#d9c28f;color:#20313a;border-color:#d9c28f;font-size:18px;min-height:56px}#rm-touring .start-actions-play button[data-action=explore],#rm-touring .start-actions-play button[data-action=read]{background:#2e424c;font-size:13px;min-height:44px;font-weight:500}
-#rm-touring .hud-stack{padding:6px 9px;background:#152936bd;border-top:1px solid #d2dbcc66;border-radius:3px;min-height:44px;display:flex;flex-direction:column;justify-content:center}#rm-touring .hud-stack small{font-size:8px;letter-spacing:.08em;display:block;color:#c1d0ce}#rm-touring .hud-stack b{font-size:18px;font-variant-numeric:tabular-nums;color:#f3e7c8;line-height:1.15}
+#rm-touring .hud-stack{padding:6px 9px;background:#152936bd;border-radius:3px;min-height:44px;display:flex;flex-direction:column;justify-content:center}#rm-touring .hud-stack b{font-size:18px;font-variant-numeric:tabular-nums;color:#f3e7c8;line-height:1.15}
 #rm-touring .hud-icons{position:absolute;top:max(12px,env(safe-area-inset-top));right:max(12px,env(safe-area-inset-right));display:flex;gap:7px;z-index:10;align-items:center}#rm-touring .hud-icons button,#rm-touring .hud-icons .desktop-menu-toggle{position:static;width:auto;min-width:46px;min-height:46px;padding:8px 12px;font-size:15px;margin:0}#rm-touring .hud-icons [data-action=help],#rm-touring .hud-icons [data-action=pause-icon]{width:46px;font-size:22px;font-weight:600}#rm-touring .hud-help{display:none!important}
 #rm-touring .desktop-menu-toggle{top:auto;bottom:auto;right:auto}
-#rm-touring .top-hud{top:max(12px,env(safe-area-inset-top));left:14px;right:180px;align-items:stretch}#rm-touring .top-hud .level-box{display:flex;align-items:center;justify-content:center;gap:10px;padding:6px 10px;min-height:44px;background:#152936bd;border-top:1px solid #d2dbcc66;border-radius:3px;box-sizing:border-box}#rm-touring [data-hud=lives]{font-size:22px;line-height:1;color:#efdfb3;letter-spacing:2px}
+#rm-touring .top-hud{top:max(12px,env(safe-area-inset-top));left:14px;right:180px;align-items:stretch}#rm-touring .top-hud .level-box{display:flex;align-items:center;justify-content:center;gap:10px;padding:6px 10px;min-height:44px;background:#152936bd;border-radius:3px;box-sizing:border-box}#rm-touring [data-hud=lives]{font-size:22px;line-height:1;color:#efdfb3;letter-spacing:2px}
 #rm-touring .speed,#rm-touring .speed.gauge,#rm-touring .route-cue{bottom:max(10px,env(safe-area-inset-bottom))}
 #rm-touring .speed.gauge{border-radius:50%;width:88px;height:88px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:0;gap:0;border:3px solid #d6bf86;background:#182c38e6}#rm-touring .speed.gauge b{font-size:26px}#rm-touring .speed.gauge span{font-size:9px;letter-spacing:.08em}
 #rm-touring .mission-bar{position:absolute;left:50%;transform:translateX(-50%);bottom:max(14px,env(safe-area-inset-bottom));max-width:min(70%,420px);padding:6px 12px;background:#1a3340e8;border:1px solid #8aa39a;border-radius:8px;font-size:11px;text-align:center;z-index:3}#rm-touring .mission-bar small{display:block;font-size:8px;letter-spacing:.1em;color:#c9d5d0}
 #rm-touring .hud-toast{position:absolute;top:22%;left:50%;transform:translateX(-50%);padding:8px 14px;background:#234c43f0;border:1px solid #e3c78e;border-radius:8px;color:#fff3d0;font-size:14px;font-weight:600;z-index:5;pointer-events:none}
-#rm-touring .scene-car-tools{display:none!important}
-#rm-touring .menu-tabs{grid-template-columns:repeat(5,1fr)}#rm-touring .options-modal [data-panel=settings] label{display:flex;flex-direction:column;gap:6px;margin:10px 0;font-size:13px}#rm-touring .options-modal [data-panel=drive] button{width:100%;margin:0 0 8px}
+#rm-touring .menu-burger{display:flex;flex-direction:column;justify-content:center;gap:5px;width:18px;height:14px;margin:0 auto}#rm-touring .menu-burger i{display:block;height:2px;background:currentColor;border-radius:1px}
+#rm-touring .hud-icons .desktop-menu-toggle{min-width:46px;padding:10px}
+#rm-touring .scene-car-tools{display:block;position:absolute;left:14px;top:112px;width:190px;z-index:4;padding:12px;border:1px solid #8da1a5;border-radius:10px;background:#142a34e8;max-height:calc(100dvh - 130px);overflow:auto}
+#rm-touring .scene-car-tools .workshop-tools{display:flex;flex-direction:column;gap:10px;padding:0;min-height:0}
+#rm-touring .scene-car-tools label{display:flex;flex-direction:column;align-items:stretch;font-size:12px;gap:5px;margin:0;color:#e8edeb}
+#rm-touring .scene-car-tools input,#rm-touring .scene-car-tools select{width:100%;min-width:0;min-height:44px;font:inherit;color:#20313a;background:#eef3f1;border:1px solid #71838a;border-radius:5px;padding:6px 8px}
+#rm-touring .scene-car-tools button{width:100%;margin:0}
+#rm-touring .reader-expanded .scene-car-tools,#rm-touring .reader-expanded .workshop-actions{display:none}
+#rm-touring .menu-tabs{grid-template-columns:repeat(5,1fr)}#rm-touring .options-modal [data-panel=settings] label{display:flex;flex-direction:column;gap:6px;margin:10px 0;font-size:13px}#rm-touring .options-modal [data-panel=drive] label{display:flex;flex-direction:column;gap:6px;margin:10px 0;font-size:13px}
+#rm-touring .game-over{display:flex;align-items:center;justify-content:center;padding:20px;background:#0c1820e8;backdrop-filter:blur(4px)}
+#rm-touring .game-over[hidden]{display:none}
+#rm-touring .game-over-card{width:min(100%,480px);background:#1a303c;border:1px solid #6f8790;border-radius:16px;padding:22px 22px 18px;box-shadow:0 18px 50px #0008;display:flex;flex-direction:column;gap:14px}
+#rm-touring .game-over-head{text-align:center}
+#rm-touring .game-over-head h2{margin:0 0 8px;font-size:26px;color:#efdfbd}
+#rm-touring .game-over .final-score{margin:0;font-size:28px;font-weight:700;color:#f3e7c8}
+#rm-touring .game-over .final-stats{margin:4px 0 0;font-size:13px;color:#c1d0ce}
+#rm-touring .game-over .leaderboard{padding:12px 14px;border:0;background:#152936;border-radius:10px}
+#rm-touring .game-over .leaderboard h3{margin:0 0 8px;font-size:15px;color:#efdfbd}
+#rm-touring .game-over .leaderboard ol{margin:0;padding-left:22px;font:13px/1.7 monospace}
+#rm-touring .game-over .score-form{margin:0}
+#rm-touring .game-over .score-row{display:flex;gap:8px;align-items:stretch;width:100%}
+#rm-touring .game-over .score-row input{flex:1;min-width:0;min-height:46px;font:16px monospace;padding:8px 12px;border-radius:6px;border:1px solid #71838a;background:#eef3f1;color:#20313a}
+#rm-touring .game-over .score-row button{flex:0 0 auto;margin:0;min-height:46px;background:#d9c28f;color:#20313a;border-color:#d9c28f;font-weight:600}
+#rm-touring .game-over-actions{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between}
+#rm-touring .game-over-actions button{flex:1;min-width:140px}
+#rm-touring .game-over-actions .web-return{display:inline-flex;align-items:center;min-height:46px;padding:0 12px;font-size:13px;color:#d7e4d9;text-decoration:none;border-bottom:1px solid #d7e4d966}
 #rm-touring [data-mode=garage] .hud-icons{display:flex}#rm-touring [data-mode=garage] .hud-icons [data-action=pause-icon]{display:none}
 @media(max-width:899px),(pointer:coarse){#rm-touring .top-hud{left:12px;right:168px}#rm-touring .hud-icons{top:max(10px,env(safe-area-inset-top));right:max(8px,env(safe-area-inset-right));bottom:auto}#rm-touring .hud-icons button,#rm-touring .hud-icons .desktop-menu-toggle{min-height:42px;min-width:42px;padding:6px 8px;font-size:13px}#rm-touring .speed.gauge{width:72px;height:72px}#rm-touring .speed.gauge b{font-size:20px}#rm-touring .mission-bar{bottom:max(78px,calc(env(safe-area-inset-bottom) + 66px));font-size:10px}#rm-touring .speed,#rm-touring .route-cue{bottom:max(78px,calc(env(safe-area-inset-bottom) + 66px))}#rm-touring .menu-tabs{grid-template-columns:repeat(3,1fr)}#rm-touring .menu-tabs button{font-size:11px}#rm-touring .driving-controls{bottom:max(8px,env(safe-area-inset-bottom))}}
 @media(prefers-reduced-motion:reduce){#rm-touring .hud-toast{transition:none}}

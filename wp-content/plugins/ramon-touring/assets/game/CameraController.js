@@ -1,5 +1,5 @@
 import { CAMERA } from './config.js';
-/** Chase camera only — player car must stay visible ahead of the lens. */
+/** Chase camera — pulled back so the full car body stays in the lower frame. */
 export function stepCamera(s, pathOffset, _cameraMode, dt, reduceMotion) {
     const px = s.x + pathOffset;
     s.camX += (px - s.camX) * Math.min(1, dt * CAMERA.damp);
@@ -8,16 +8,16 @@ export function stepCamera(s, pathOffset, _cameraMode, dt, reduceMotion) {
     s.shake = Math.max(0, s.shake - dt * CAMERA.shakeDecay);
     if (reduceMotion)
         s.shake = 0;
-    s.camY = 3.35 + s.shake * 0.1;
-    s.camZ = -9.2;
+    s.camY = 5.1 + s.shake * 0.1;
+    s.camZ = -14.5;
 }
 export function cameraPose(s, pathOffset, _cameraMode, aspectPortrait) {
     const px = s.x + pathOffset;
     const shakeX = (Math.random() - 0.5) * s.shake * 0.12;
-    const lookAhead = Math.sin(s.steer) * 2.2;
+    const lookAhead = Math.sin(s.steer) * 1.8;
     return {
-        pos: { x: s.camX + shakeX * 0.6, y: s.camY || 3.35, z: s.camZ || -9.2 },
-        target: { x: px + lookAhead, y: 0.95, z: 14 },
-        fovMul: (aspectPortrait ? 1.05 : 0.85) * (1 - s.fovBoost),
+        pos: { x: s.camX + shakeX * 0.6, y: s.camY || 5.1, z: s.camZ || -14.5 },
+        target: { x: px + lookAhead, y: 1.15, z: 8 },
+        fovMul: (aspectPortrait ? 0.98 : 0.78) * (1 - s.fovBoost),
     };
 }
