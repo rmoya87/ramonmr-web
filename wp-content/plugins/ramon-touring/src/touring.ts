@@ -1,9 +1,9 @@
-import { drawRoad, drawGarage, setSectionLabels } from './world.js';
+import { setSectionLabels } from './labels.js';
 import { VERSION, type EnvironmentId, type GameMode, type QualityProfile, type WeatherId } from './game/config.js';
 import { GameLoop } from './game/GameLoop.js';
 import { InputManager } from './game/InputManager.js';
 import { AudioManager } from './game/AudioManager.js';
-import { PerformanceManager, prepareDrawContext, sizeGameCanvas } from './game/PerformanceManager.js';
+import { PerformanceManager } from './game/PerformanceManager.js';
 import { createRun, hudSnapshot, resumeFromWorkshop, simulateStep } from './game/GameManager.js';
 import {
   clearRunSnapshot,
@@ -15,6 +15,8 @@ import {
 } from './game/SaveManager.js';
 import type { RunState, TouringConfig } from './game/types.js';
 import type { ScorePopup } from './game/ScoreManager.js';
+import { detectWebGL, showWebGLFailure } from './render/webgl/detect.js';
+import { GameView } from './render/webgl/GameView.js';
 
 const cfg = JSON.parse(document.getElementById('rm-touring-config')!.textContent!) as TouringConfig;
 const en = cfg.lang === 'en';
@@ -30,6 +32,10 @@ if (!sections.length) {
     'No published content is available. Return to the regular website.',
   );
   throw new Error('Empty published catalog');
+}
+if (!detectWebGL()) {
+  showWebGLFailure(root, en);
+  throw new Error('WebGL unavailable');
 }
 setSectionLabels(sections.map((x) => x.name));
 
@@ -217,8 +223,16 @@ const workshop = $('.workshop');
 const start = $('.start-screen');
 const rc = road.querySelector('canvas') as HTMLCanvasElement;
 const gc = workshop.querySelector('canvas') as HTMLCanvasElement;
+const roadGL = new GameView(rc);
+const garageGL = new GameView(gc);
 const reader = $('.reader') as HTMLIFrameElement;
 const stage = $('.orbit-stage');
+
+function fitGL(view: GameView, canvas: HTMLCanvasElement): void {
+  const r = canvas.getBoundingClientRect();
+  if (r.width < 2 || r.height < 2) return;
+  view.resize(r.width, r.height, perf.settings().resolutionScale);
+}
 
 const menu = document.createElement('dialog');
 menu.className = 'options-modal';
@@ -701,23 +715,21 @@ const loop = new GameLoop({
     const now = performance.now();
     if (mode === 'start' || mode === 'road' || mode === 'garage') {
       const canvas = mode === 'garage' ? gc : rc;
+      const viewGL = mode === 'garage' ? garageGL : roadGL;
       const q = perf.settings();
-      if (resized || !canvas.width) {
-        sizeGameCanvas(canvas, q.resolutionScale);
+      if (resized) {
+        fitGL(viewGL, canvas);
         resized = false;
         drawKey = '';
-      } else if (sizeGameCanvas(canvas, q.resolutionScale)) {
-        drawKey = '';
       }
-      const key = [mode, angle, zoom, color, hood, lights, environment, weather, camera, canvas.width, canvas.height, Math.floor(s.d)].join(':');
+      const key = [mode, angle, zoom, color, hood, lights, environment, weather, camera, canvas.clientWidth, canvas.clientHeight, Math.floor(s.d)].join(':');
       const liveRoad = mode === 'road' && !paused && !s.ended;
       const livePreview = mode === 'start';
       if (liveRoad || livePreview || key !== drawKey) {
-        const st = performance.now();
-        const ctx = canvas.getContext('2d')!;
-        prepareDrawContext(ctx);
+        fitGL(viewGL, canvas);
+        let drawMs = 0;
         if (mode === 'garage') {
-          drawGarage(ctx, canvas.width, canvas.height, angle, zoom, color, hood ? 1 : 0, lights, view);
+          drawMs = garageGL.renderGarage({ angle, zoom, color, hood, lights });
         } else {
           if (livePreview) {
             s.d += Math.min(0.45, Math.max(0, frameDt)) * 18;
@@ -725,7 +737,7 @@ const loop = new GameLoop({
             s.x *= 0.96;
           }
           const polled = liveRoad ? input.poll() : { brake: false, steerAxis: 0, pause: false };
-          drawRoad(ctx, s, canvas.width, canvas.height, {
+          drawMs = roadGL.renderRoad(s, {
             color,
             camera: livePreview ? 0 : camera,
             brake: !!polled.brake,
@@ -736,7 +748,6 @@ const loop = new GameLoop({
             reduceEffects: progress.reduceMotion || livePreview,
           });
         }
-        const drawMs = performance.now() - st;
         canvas.dataset.drawMs = drawMs.toFixed(2);
         if (liveRoad) perf.sampleFrame(drawMs, now);
         drawKey = key;
@@ -780,9 +791,11 @@ window.addEventListener('pagehide', () => {
   loop.stop();
   obs.disconnect();
   input.clear();
+  roadGL.dispose();
+  garageGL.dispose();
   if (mode === 'road' && !s.ended) {
     saveRunSnapshot({ state: s, garage, view, color, camera, lights, environment });
   }
 });
 
-console.info(`Touring ${VERSION}`);
+console.info(`Touring ${VERSION} webgl`);

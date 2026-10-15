@@ -1,7 +1,7 @@
-import { v, box, car, column, quad, renderer, shade } from './mesh.js?v=2.1.2';
-import { BIOMES, effectiveNight } from './game/EnvironmentManager.js?v=2.1.2';
-import { cameraPose } from './game/CameraController.js?v=2.1.2';
-import { LOOK, depthMist, fogToward, mixHex, paintAtmosphere, warmGrade, } from './look.js?v=2.1.2';
+import { v, box, car, column, quad, renderer, shade } from './mesh.js';
+import { BIOMES, effectiveNight } from './game/EnvironmentManager.js';
+import { cameraPose } from './game/CameraController.js';
+import { LOOK, depthMist, fogToward, mixHex, paintAtmosphere, warmGrade, } from './look.js';
 export let sectionLabels = ['Servicios', 'Curriculum', 'Portfolio', 'Blog', 'Contacto'];
 export function setSectionLabels(labels) {
     sectionLabels = labels;

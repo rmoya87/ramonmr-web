@@ -2,7 +2,7 @@
 Contributors: rmoya87
 Requires at least: 6.5
 Requires PHP: 8.1
-Stable tag: 2.1.2
+Stable tag: 3.0.0
 License: GPLv2 or later
 
 Optional RM Touring Lab driving mode for ramonmr.com. The normal WordPress site remains the default.
@@ -17,10 +17,15 @@ The catalog uses published, non-password-protected public post types and Polylan
 The game does not start automatically. Arcade, Explore and Read-without-driving are explicit choices. Buttons, keyboard controls, gamepad (optional), labeled page selector, iframe title, pause, focus indicators and non-driving links are provided. Moving counters are not live announcements. Reduce-motion and mute preferences are stored locally. No external libraries, telemetry, new cookies, API credentials or analytics are added. Voluntarily submitted public scores persist in the plugin table. The full page reader keeps the website's own consent controls.
 
 == Build ==
-TypeScript sources in src/ (mesh.ts, world.ts, touring.ts, game/*) compile to assets/ with `npm run build` (ES2020 modules). No CDN or runtime build dependency. assets/touring.css is scoped to #rm-touring.
+TypeScript in src/ typechecks with tsc; the browser entry is an esbuild ESM bundle (`assets/touring.js`) that includes Three.js. No CDN. `assets/touring.css` is scoped to #rm-touring. Requires WebGL.
 
 == Rollback ==
 Deactivate the plugin, purge cache, restore previous plugin files from deployment backup; preserve the score table. Existing content and other plugins remain unchanged.
+
+== 3.0.0 ==
+* WebGL/Three.js renderer for road, garage and props (arcade-soft materials + fog).
+* Single esbuild bundle (Three.js vendored in touring.js); no Canvas soft-3D fallback.
+* Physics, HUD and WordPress catalog unchanged.
 
 == 2.1.2 ==
 * Hero GT car mesh (r9): denser silhouette, grille, chrome, mirrors, rimmed wheels.
