@@ -1,4 +1,4 @@
-import { SCORE, SCORE_VERSION } from './config.js?v=2.0.10';
+import { SCORE, SCORE_VERSION } from './config.js?v=2.0.11';
 const awardedPasses = new Set();
 export function resetPassTracking() {
     awardedPasses.clear();
