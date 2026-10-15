@@ -132,13 +132,15 @@ export function drawRoad(c, s, w, h, opts) {
     const objects = [];
     const cx = (z) => curve(s.d + z) - base;
     const far = Math.floor((s.d + quality.drawDistance) / 6) * 6;
-    // Elevation undulation (visual only on props via road grade cue)
-    for (let world = far; world > s.d - 18; world -= 6) {
+    // Road strips ahead of the camera only — behind-camera quads can project as a full-screen asphalt slab.
+    for (let world = far; world > s.d - 6; world -= 6) {
         const z = world - s.d;
         const z2 = z + 6;
+        if (z2 < -1.5)
+            continue;
         const x = cx(z);
         const x2 = cx(z2);
-        const asphalt = night ? '#2c3236' : ((Math.floor(world / 6) % 2) ? '#4a5054' : '#464c50');
+        const asphalt = night ? '#3a4248' : ((Math.floor(world / 6) % 2) ? '#5a6268' : '#545c62');
         quad(a, x, z, x2, z2, 150, beach ? '#d4c294' : ground[0], -0.08);
         quad(a, x - 46, z, x2 - 46, z2, 40, night ? '#2e4e58' : biomeA.water, -0.06);
         quad(a, x, z, x2, z2, 12.6, asphalt);
@@ -189,9 +191,11 @@ export function drawRoad(c, s, w, h, opts) {
         }
     }
     const step = quality.propStep;
-    for (let n = Math.floor((s.d - 20) / step); n * step < s.d + quality.drawDistance - 10; n++) {
+    for (let n = Math.floor((s.d - 4) / step); n * step < s.d + quality.drawDistance - 10; n++) {
         const world = n * step;
         const z = world - s.d;
+        if (z < -2)
+            continue;
         const x = cx(z);
         const t = world - s.fork;
         const right = Math.max(14 + ((n % 4 + 4) % 4) * 3, t > -20 && t < 330 ? ramp(Math.max(0, t)) + 6 : 0);
@@ -376,19 +380,12 @@ export function drawRoad(c, s, w, h, opts) {
             c.fill();
         }
     }
-    // Atmospheric depth fade toward horizon
-    const depth = c.createLinearGradient(0, h * 0.25, 0, h * 0.55);
-    depth.addColorStop(0, night ? '#0a152055' : '#c8d4dc33');
+    // Gentle horizon mist only — keep the road and car clear.
+    const depth = c.createLinearGradient(0, h * 0.22, 0, h * 0.48);
+    depth.addColorStop(0, night ? '#0a152033' : '#d0dce022');
     depth.addColorStop(1, '#ffffff00');
     c.fillStyle = depth;
-    c.fillRect(0, h * 0.22, w, h * 0.35);
-    // Soft edge vignette
-    const edge = c.createRadialGradient(w / 2, h * 0.45, w * 0.22, w / 2, h * 0.5, w * 0.78);
-    edge.addColorStop(0, '#0c182200');
-    edge.addColorStop(0.8, '#0c182200');
-    edge.addColorStop(1, night ? '#06101855' : '#14202833');
-    c.fillStyle = edge;
-    c.fillRect(0, 0, w, h);
+    c.fillRect(0, h * 0.2, w, h * 0.28);
 }
 export function drawGarage(c, w, h, angle, zoom, color, hood, lights, _focus) {
     const bg = c.createLinearGradient(0, 0, 0, h);
