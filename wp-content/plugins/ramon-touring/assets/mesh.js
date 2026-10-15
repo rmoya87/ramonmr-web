@@ -89,9 +89,33 @@ function prism(a, side, width, c) {
         a.push({ v: [l[i], r[i], r[j], l[j]], c: shade(c, i === 1 ? 1.15 : 0.95) });
     }
 }
+/** Layered glass: dark tint + sky band + specular edge. */
+function glassPane(a, corners, tint, sky, highlight) {
+    a.push({ c: tint, v: corners });
+    const [A, B, C, D] = corners;
+    const mix = (p, q, t) => v(p.x + (q.x - p.x) * t, p.y + (q.y - p.y) * t, p.z + (q.z - p.z) * t);
+    a.push({ c: sky, v: [mix(A, D, 0.12), mix(B, C, 0.12), mix(B, C, 0.42), mix(A, D, 0.42)] });
+    a.push({ c: highlight, v: [mix(A, D, 0.18), mix(B, C, 0.18), mix(B, C, 0.28), mix(A, D, 0.28)] });
+}
+/** Paint highlight strips to fake glossy body reflections. */
+function glossStripe(a, y, z0, z1, width, color, lift = 0.02) {
+    a.push({
+        c: shade(color, 1.22),
+        v: [v(-width / 2, y + lift, z0), v(width / 2, y + lift, z0), v(width / 2, y + lift, z1), v(-width / 2, y + lift, z1)],
+    });
+    a.push({
+        c: shade(color, 1.08),
+        v: [
+            v(-width / 2.4, y + lift * 0.6, z0 + 0.08),
+            v(width / 2.4, y + lift * 0.6, z0 + 0.08),
+            v(width / 2.4, y + lift * 0.6, z1 - 0.08),
+            v(-width / 2.4, y + lift * 0.6, z1 - 0.08),
+        ],
+    });
+}
 const carCache = new Map();
 export function car(a, x, z, color, opts = {}) {
-    const key = 'r5:' + color + ':' + !!opts.hood + ':' + !!opts.lights + ':' + !!opts.brake;
+    const key = 'r6:' + color + ':' + !!opts.hood + ':' + !!opts.lights + ':' + !!opts.brake;
     let b = carCache.get(key);
     if (!b) {
         b = [];
@@ -120,16 +144,41 @@ export function car(a, x, z, color, opts = {}) {
         cylinder(b, 0, 0.36, 2.08, 0.2, 1.72, '#1a2228', 0);
         cylinder(b, 0, 0.38, -2.08, 0.18, 1.68, '#1a2228', 0);
         box(b, 0, 0.5, -2.2, 1.3, 0.05, 0.04, '#d8d2c4');
-        // Cabin glass bubble
-        prism(b, [[1.0, -0.95], [1.4, -0.55], [1.42, 0.2], [1.05, 0.75]], 1.35, '#3a4e58');
-        b.push({ c: '#b4d8e8', v: [v(-0.62, 1.38, 0.22), v(0.62, 1.38, 0.22), v(0.7, 1.02, 0.78), v(-0.7, 1.02, 0.78)] });
-        b.push({ c: '#5a7a88', v: [v(-0.62, 1.38, -0.55), v(0.62, 1.38, -0.55), v(0.7, 1.02, -0.98), v(-0.7, 1.02, -0.98)] });
+        // Glossy paint reflections on hood / roof / trunk
+        glossStripe(b, 0.92, 0.85, 1.95, 1.55, color, 0.03);
+        glossStripe(b, 1.48, -0.85, 0.55, 1.15, color, 0.025);
+        glossStripe(b, 0.98, -2.05, -1.15, 1.4, color, 0.03);
+        for (const side of [-1, 1]) {
+            b.push({
+                c: shade(color, 1.18),
+                v: [v(side * 0.96, 0.72, 1.6), v(side * 0.98, 0.78, 1.55), v(side * 0.98, 0.78, -1.55), v(side * 0.96, 0.72, -1.6)],
+            });
+            b.push({
+                c: '#e8eef4',
+                v: [v(side * 0.985, 0.8, 0.9), v(side * 0.99, 0.84, 0.85), v(side * 0.99, 0.84, -0.2), v(side * 0.985, 0.8, -0.15)],
+            });
+        }
+        // Cabin frame (pillars) so glass reads clearly
+        box(b, 0, 1.42, -0.15, 1.55, 0.1, 1.55, shade(color, 0.88));
+        for (const side of [-1, 1]) {
+            box(b, side * 0.78, 1.22, 0.55, 0.08, 0.42, 0.12, shade(color, 0.9));
+            box(b, side * 0.8, 1.22, -0.15, 0.07, 0.4, 0.1, shade(color, 0.92));
+            box(b, side * 0.78, 1.2, -0.9, 0.08, 0.38, 0.12, shade(color, 0.9));
+        }
+        // Windshield — reflective glass
+        glassPane(b, [v(-0.7, 1.45, 0.15), v(0.7, 1.45, 0.15), v(0.78, 0.98, 0.95), v(-0.78, 0.98, 0.95)], '#1a3548', '#8ec8e8', '#f2f8ff');
+        // Rear window
+        glassPane(b, [v(-0.68, 1.44, -0.55), v(0.68, 1.44, -0.55), v(0.76, 1.0, -1.15), v(-0.76, 1.0, -1.15)], '#152c3c', '#6aa8c8', '#dceaf4');
+        // Side windows
+        for (const side of [-1, 1]) {
+            glassPane(b, [v(side * 0.9, 1.38, 0.45), v(side * 0.9, 1.38, -0.75), v(side * 0.9, 1.02, -0.85), v(side * 0.9, 1.02, 0.55)], '#183448', '#7eb8d8', '#eef6fc');
+            box(b, side * 0.91, 1.2, -0.12, 0.03, 0.42, 1.35, '#c8d4dc');
+        }
         if (opts.hood) {
             box(b, 0, 0.9, 1.3, 1.4, 0.05, 1.1, '#192228');
             box(b, 0, 1.05, 1.35, 0.7, 0.18, 0.55, '#8e989d');
         }
         for (const side of [-1, 1]) {
-            box(b, side * 0.86, 1.12, -0.1, 0.04, 0.28, 0.9, '#7eb0c2');
             cylinder(b, side * 0.92, 0.4, 1.32, 0.48, 0.18, shade(color, 0.82), 0);
             cylinder(b, side * 0.92, 0.4, -1.32, 0.48, 0.18, shade(color, 0.82), 0);
             for (const f of [-1, 1])
