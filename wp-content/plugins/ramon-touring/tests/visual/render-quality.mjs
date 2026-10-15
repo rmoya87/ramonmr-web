@@ -110,15 +110,27 @@ describe('Render quality gates', () => {
     ({ createRun } = await import(join(assets, 'game/GameManager.js')));
   });
 
-  it('car mesh includes reflective glass + gloss (arcade soft)', () => {
+  it('hero sport car mesh is detailed (glass, chrome, rims)', () => {
     const faces = [];
-    car(faces, 0, 0, '#c23a2b', { lights: true });
-    assert.ok(faces.length >= 90, `expected detailed car mesh, got ${faces.length} faces`);
+    car(faces, 0, 0, '#c23a2b', { lights: true, variant: 'sport' });
+    assert.ok(faces.length >= 140, `expected hero car detail, got ${faces.length} faces`);
     const colors = faces.map((f) => f.c.toLowerCase());
     const glass = colors.some((c) => /#(1e3a4c|8ec8e0|eef6fc|bee0f0)/.test(c));
-    const gloss = colors.some((c) => c === '#e8eef4' || c.startsWith('#e') || c.startsWith('#f'));
-    assert.ok(glass, 'missing LOOK.glass colors on car');
-    assert.ok(gloss, 'missing gloss highlight colors on car');
+    // box()/cylinder shade materials — accept nearby cool greys used for chrome/rims
+    const chrome = colors.some((c) => /^#(a8|b0|b8|c0|c8|d0|d8)[0-9a-f]{4}$/i.test(c));
+    assert.ok(glass, 'missing glass colors on hero car');
+    assert.ok(chrome, 'missing chrome/rim materials on hero car');
+  });
+
+  it('traffic variants produce distinct meshes', () => {
+    const counts = {};
+    for (const variant of ['sport', 'sedan', 'van', 'truck', 'slow']) {
+      const faces = [];
+      car(faces, 0, 0, '#465565', { variant });
+      counts[variant] = faces.length;
+      assert.ok(faces.length >= 100, `${variant} too sparse (${faces.length})`);
+    }
+    assert.notEqual(counts.sport, counts.van);
   });
 
   it('look bible exports shared materials', async () => {

@@ -114,85 +114,243 @@ function glossStripe(a, y, z0, z1, width, color, lift = 0.02) {
     });
 }
 const carCache = new Map();
+/** Wheel with tire + rim + hub — readable from chase cam. */
+function wheelAssembly(a, x, y, z, tireR, width, spin = 0) {
+    cylinder(a, x, y, z, tireR, width, '#1a1e22', spin);
+    cylinder(a, x, y, z, tireR * 0.62, width * 0.55, '#c8d0d4', spin);
+    cylinder(a, x, y, z, tireR * 0.28, width * 0.35, '#3a4248', spin);
+    // Arch lip so wheels sit in sculpted body
+    column(a, x, y + tireR * 0.15, z, tireR * 0.95, tireR * 0.22, '#2a3036', 8);
+}
+function carSilhouette(variant) {
+    switch (variant) {
+        case 'van':
+            return {
+                width: 1.95,
+                wheelZ: 1.25,
+                wheelR: 0.42,
+                profile: [
+                    [0.22, 2.35],
+                    [0.55, 2.45],
+                    [0.95, 2.25],
+                    [1.15, 1.55],
+                    [1.35, 0.55],
+                    [1.55, 0.12],
+                    [1.55, -0.55],
+                    [1.45, -1.35],
+                    [1.25, -1.95],
+                    [0.95, -2.25],
+                    [0.45, -2.35],
+                    [0.22, -2.15],
+                    [0.2, 1.85],
+                ],
+            };
+        case 'truck':
+            return {
+                width: 2.05,
+                wheelZ: 1.35,
+                wheelR: 0.48,
+                profile: [
+                    [0.25, 2.4],
+                    [0.7, 2.5],
+                    [1.05, 2.15],
+                    [1.2, 1.35],
+                    [1.45, 0.55],
+                    [1.65, 0.12],
+                    [1.65, -0.4],
+                    [1.55, -1.0],
+                    [1.35, -1.55],
+                    [1.05, -2.0],
+                    [0.7, -2.35],
+                    [0.35, -2.45],
+                    [0.22, -2.2],
+                    [0.22, 1.55],
+                ],
+            };
+        case 'slow':
+            return {
+                width: 1.72,
+                wheelZ: 1.15,
+                wheelR: 0.4,
+                profile: [
+                    [0.2, 1.85],
+                    [0.45, 1.95],
+                    [0.75, 1.75],
+                    [0.9, 1.2],
+                    [1.05, 0.55],
+                    [1.28, 0.12],
+                    [1.28, -0.45],
+                    [1.15, -1.05],
+                    [0.95, -1.55],
+                    [0.7, -1.9],
+                    [0.4, -2.05],
+                    [0.2, -1.85],
+                    [0.18, 1.25],
+                ],
+            };
+        case 'sedan':
+            return {
+                width: 1.9,
+                wheelZ: 1.28,
+                wheelR: 0.44,
+                profile: [
+                    [0.2, 2.2],
+                    [0.48, 2.32],
+                    [0.78, 2.15],
+                    [0.95, 1.55],
+                    [1.05, 0.95],
+                    [1.22, 0.45],
+                    [1.42, 0.12],
+                    [1.42, -0.4],
+                    [1.32, -1.0],
+                    [1.12, -1.55],
+                    [0.9, -1.95],
+                    [0.55, -2.2],
+                    [0.28, -2.15],
+                    [0.18, -1.65],
+                    [0.16, 1.45],
+                ],
+            };
+        case 'sport':
+            // Low GT coupe — long hood, tucked cabin, tapered rear (hero player car)
+            return {
+                width: 1.92,
+                wheelZ: 1.38,
+                wheelR: 0.46,
+                profile: [
+                    [0.18, 2.35],
+                    [0.38, 2.48],
+                    [0.62, 2.4],
+                    [0.82, 2.05],
+                    [0.92, 1.45],
+                    [0.98, 0.95],
+                    [1.08, 0.55],
+                    [1.32, 0.28],
+                    [1.48, 0.1],
+                    [1.48, -0.35],
+                    [1.4, -0.85],
+                    [1.22, -1.35],
+                    [1.02, -1.75],
+                    [0.78, -2.05],
+                    [0.48, -2.22],
+                    [0.26, -2.12],
+                    [0.16, -1.55],
+                    [0.14, 0.85],
+                    [0.15, 1.65],
+                ],
+            };
+        default: {
+            const _exhaustive = variant;
+            return _exhaustive;
+        }
+    }
+}
 export function car(a, x, z, color, opts = {}) {
-    const key = 'r8:' + color + ':' + !!opts.hood + ':' + !!opts.lights + ':' + !!opts.brake;
+    const variant = opts.variant || 'sport';
+    const key = 'r9:' + variant + ':' + color + ':' + !!opts.hood + ':' + !!opts.lights + ':' + !!opts.brake;
     let b = carCache.get(key);
     if (!b) {
         b = [];
-        // Smooth coupe silhouette; glass panes layered after so rear view shows reflections
-        prism(b, [
-            [0.2, 2.12],
-            [0.42, 2.22],
-            [0.68, 2.12],
-            [0.86, 1.7],
-            [0.94, 1.15],
-            [1.0, 0.7],
-            [1.38, 0.42],
-            [1.5, 0.1],
-            [1.5, -0.35],
-            [1.42, -0.85],
-            [1.18, -1.35],
-            [0.98, -1.75],
-            [0.78, -2.05],
-            [0.48, -2.22],
-            [0.26, -2.14],
-            [0.18, -1.7],
-            [0.15, 1.55],
-        ], 1.88, color);
-        // Soft underbody + rocker
-        box(b, 0, 0.28, 0, 1.78, 0.22, 3.7, shade(color, 0.7));
-        cylinder(b, 0, 0.36, 2.08, 0.2, 1.72, '#1a2228', 0);
-        cylinder(b, 0, 0.38, -2.08, 0.18, 1.68, '#1a2228', 0);
-        box(b, 0, 0.5, -2.2, 1.3, 0.05, 0.04, '#d8d2c4');
-        // Glossy paint reflections on hood / roof rails / trunk
-        glossStripe(b, 0.92, 0.85, 1.95, 1.55, color, 0.03);
-        glossStripe(b, 0.98, -2.05, -1.2, 1.4, color, 0.03);
-        for (const side of [-1, 1]) {
-            b.push({
-                c: shade(color, 1.18),
-                v: [v(side * 0.96, 0.72, 1.6), v(side * 0.98, 0.78, 1.55), v(side * 0.98, 0.78, -1.55), v(side * 0.96, 0.72, -1.6)],
-            });
-            b.push({
-                c: '#e8eef4',
-                v: [v(side * 0.985, 0.8, 0.9), v(side * 0.99, 0.84, 0.85), v(side * 0.99, 0.84, -0.2), v(side * 0.985, 0.8, -0.15)],
-            });
-        }
-        // Cabin frame + roof (open sides/rear for glass)
-        box(b, 0, 1.46, -0.12, 1.52, 0.09, 1.48, shade(color, 0.9));
-        for (const side of [-1, 1]) {
-            box(b, side * 0.8, 1.22, 0.52, 0.09, 0.44, 0.14, shade(color, 0.9));
-            box(b, side * 0.82, 1.22, -0.12, 0.08, 0.42, 0.12, shade(color, 0.92));
-            box(b, side * 0.8, 1.2, -0.88, 0.09, 0.4, 0.14, shade(color, 0.9));
-        }
-        // Glass hexes must match LOOK.glass in look.ts (avoid mesh↔look cycle)
+        const { profile, width, wheelZ, wheelR } = carSilhouette(variant);
         const glassTint = '#1e3a4c';
         const glassSky = '#8ec8e0';
         const glassHi = '#eef6fc';
-        glassPane(b, [v(-0.72, 1.46, 0.12), v(0.72, 1.46, 0.12), v(0.8, 0.96, 0.98), v(-0.8, 0.96, 0.98)], glassTint, glassSky, glassHi);
-        glassPane(b, [v(-0.72, 1.46, -0.48), v(0.72, 1.46, -0.48), v(0.8, 0.96, -1.32), v(-0.8, 0.96, -1.32)], glassTint, glassSky, glassHi);
+        const chrome = '#d8dee2';
+        const dark = '#1a2228';
+        // Body extrusion
+        prism(b, profile, width, color);
+        // Rocker / undertray
+        box(b, 0, 0.22, 0, width * 0.92, 0.18, wheelZ * 2.55, shade(color, 0.62));
+        // Front splitter + rear diffuser lip
+        box(b, 0, 0.16, wheelZ + 0.85, width * 0.78, 0.06, 0.28, dark);
+        box(b, 0, 0.18, -(wheelZ + 0.85), width * 0.72, 0.08, 0.32, dark);
+        // Front grille
+        box(b, 0, 0.52, wheelZ + 0.95, width * 0.55, 0.28, 0.08, dark);
+        box(b, 0, 0.52, wheelZ + 1.0, width * 0.42, 0.16, 0.04, chrome);
+        // Chrome bumper strip
+        box(b, 0, 0.42, wheelZ + 1.05, width * 0.7, 0.05, 0.06, chrome);
+        box(b, 0, 0.4, -(wheelZ + 0.95), width * 0.65, 0.05, 0.06, chrome);
+        // Door character line + side chrome
+        for (const side of [-1, 1]) {
+            b.push({
+                c: shade(color, 1.16),
+                v: [
+                    v(side * (width / 2 + 0.01), 0.62, wheelZ * 0.85),
+                    v(side * (width / 2 + 0.02), 0.68, wheelZ * 0.8),
+                    v(side * (width / 2 + 0.02), 0.68, -wheelZ * 0.75),
+                    v(side * (width / 2 + 0.01), 0.62, -wheelZ * 0.8),
+                ],
+            });
+            b.push({
+                c: '#f2f6fa',
+                v: [
+                    v(side * (width / 2 + 0.025), 0.72, 0.55),
+                    v(side * (width / 2 + 0.03), 0.78, 0.5),
+                    v(side * (width / 2 + 0.03), 0.78, -0.15),
+                    v(side * (width / 2 + 0.025), 0.72, -0.1),
+                ],
+            });
+            // Mirror
+            box(b, side * (width / 2 + 0.08), 1.05, 0.55, 0.12, 0.08, 0.22, shade(color, 0.88));
+            box(b, side * (width / 2 + 0.12), 1.05, 0.55, 0.04, 0.1, 0.14, glassTint);
+        }
+        // Hood / roof / trunk gloss
+        glossStripe(b, 0.88, wheelZ * 0.15, wheelZ + 0.7, width * 0.78, color, 0.035);
+        glossStripe(b, variant === 'van' ? 1.72 : 1.42, -0.55, 0.45, width * 0.55, color, 0.03);
+        glossStripe(b, 0.92, -(wheelZ + 0.7), -wheelZ * 0.2, width * 0.7, color, 0.03);
+        // Cabin roof rail
+        const roofY = variant === 'van' ? 1.85 : variant === 'truck' ? 1.55 : 1.42;
+        box(b, 0, roofY, -0.05, width * 0.78, 0.1, variant === 'van' ? 1.9 : 1.45, shade(color, 0.9));
+        for (const side of [-1, 1]) {
+            box(b, side * width * 0.4, roofY - 0.22, 0.45, 0.08, 0.4, 0.12, shade(color, 0.92));
+            box(b, side * width * 0.4, roofY - 0.22, -0.75, 0.08, 0.38, 0.12, shade(color, 0.92));
+        }
+        // Glass — large readable panes
+        const cabinTop = roofY + 0.02;
+        const windBot = 0.95;
+        glassPane(b, [v(-width * 0.36, cabinTop, 0.2), v(width * 0.36, cabinTop, 0.2), v(width * 0.4, windBot, 0.95), v(-width * 0.4, windBot, 0.95)], glassTint, glassSky, glassHi);
+        glassPane(b, [
+            v(-width * 0.36, cabinTop, -0.4),
+            v(width * 0.36, cabinTop, -0.4),
+            v(width * 0.4, windBot, -1.15),
+            v(-width * 0.4, windBot, -1.15),
+        ], glassTint, glassSky, glassHi);
         b.push({
             c: '#bee0f0',
-            v: [v(-0.55, 1.32, -0.62), v(0.55, 1.32, -0.62), v(0.58, 1.18, -0.95), v(-0.58, 1.18, -0.95)],
+            v: [
+                v(-width * 0.28, cabinTop - 0.12, -0.55),
+                v(width * 0.28, cabinTop - 0.12, -0.55),
+                v(width * 0.3, cabinTop - 0.28, -0.9),
+                v(-width * 0.3, cabinTop - 0.28, -0.9),
+            ],
         });
         for (const side of [-1, 1]) {
-            glassPane(b, [v(side * 0.92, 1.4, 0.48), v(side * 0.92, 1.4, -0.78), v(side * 0.92, 1.0, -0.9), v(side * 0.92, 1.0, 0.58)], glassTint, glassSky, glassHi);
-            box(b, side * 0.93, 1.2, -0.12, 0.03, 0.42, 1.35, glassHi);
+            glassPane(b, [
+                v(side * width * 0.48, cabinTop - 0.05, 0.4),
+                v(side * width * 0.48, cabinTop - 0.05, -0.7),
+                v(side * width * 0.48, windBot + 0.05, -0.85),
+                v(side * width * 0.48, windBot + 0.05, 0.55),
+            ], glassTint, glassSky, glassHi);
         }
-        if (opts.hood) {
-            box(b, 0, 0.9, 1.3, 1.4, 0.05, 1.1, '#192228');
-            box(b, 0, 1.05, 1.35, 0.7, 0.18, 0.55, '#8e989d');
-        }
+        // Lights
         for (const side of [-1, 1]) {
-            cylinder(b, side * 0.92, 0.4, 1.32, 0.48, 0.18, shade(color, 0.82), 0);
-            cylinder(b, side * 0.92, 0.4, -1.32, 0.48, 0.18, shade(color, 0.82), 0);
-            for (const f of [-1, 1])
-                cylinder(b, side * 1.02, 0.38, f * 1.32, 0.4, 0.28, '#1a1e22', 0);
-            cylinder(b, side * 0.58, 0.66, -2.12, 0.15, 0.11, opts.brake ? '#ff3a28' : '#e04030', Math.PI / 2);
-            cylinder(b, side * 0.58, 0.64, 2.12, 0.15, 0.11, opts.lights ? '#fff8d0' : '#e8e4c8', Math.PI / 2);
+            column(b, side * width * 0.32, 0.58, wheelZ + 1.05, 0.14, 0.14, opts.lights ? '#fff8d0' : '#e8e4c8', 6);
+            column(b, side * width * 0.32, 0.58, -(wheelZ + 1.0), 0.14, 0.14, opts.brake ? '#ff3a28' : '#e04030', 6);
+        }
+        // Wheels in arches
+        for (const side of [-1, 1]) {
+            wheelAssembly(b, side * (width / 2 - 0.02), wheelR * 0.92, wheelZ, wheelR, 0.32);
+            wheelAssembly(b, side * (width / 2 - 0.02), wheelR * 0.92, -wheelZ, wheelR, 0.32);
+        }
+        if (variant === 'truck') {
+            box(b, 0, 1.05, -1.35, width * 0.88, 0.12, 1.6, shade(color, 0.75));
+            box(b, 0, 0.7, -1.35, width * 0.82, 0.55, 1.5, shade(color, 0.82));
         }
         if (opts.hood) {
+            box(b, 0, 0.88, 1.15, width * 0.72, 0.05, 1.0, dark);
+            box(b, 0, 1.02, 1.2, 0.65, 0.16, 0.5, '#8e989d');
             const panel = [];
-            box(panel, 0, 1.02, 1.45, 1.55, 0.06, 1.05, color);
+            box(panel, 0, 1.0, 1.35, width * 0.8, 0.06, 1.0, color);
             for (const f of panel) {
                 b.push({
                     c: f.c,
@@ -203,8 +361,6 @@ export function car(a, x, z, color, opts = {}) {
                     }),
                 });
             }
-            box(b, 0, 0.99, 1.5, 1.28, 0.04, 0.85, '#192228');
-            box(b, 0, 1.08, 1.4, 0.66, 0.14, 0.5, '#8e989d');
         }
         carCache.set(key, b);
     }
@@ -221,7 +377,6 @@ export function car(a, x, z, color, opts = {}) {
                     const y = p.y - f.wheel.y;
                     const z0 = p.z - f.wheel.z;
                     p = v(p.x, f.wheel.y + y * Math.cos(t) - z0 * Math.sin(t), f.wheel.z + y * Math.sin(t) + z0 * Math.cos(t));
-                    // Front wheels yaw with steer
                     if (f.wheel.z > 0.5 && Math.abs(steer) > 0.01) {
                         const lx = p.x;
                         const lz = p.z - f.wheel.z;

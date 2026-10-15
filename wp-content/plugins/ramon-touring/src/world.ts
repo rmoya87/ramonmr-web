@@ -1,4 +1,4 @@
-import { v, box, car, column, quad, renderer, shade, type Face } from './mesh.js';
+import { v, box, car, column, quad, renderer, shade, type CarVariant, type Face } from './mesh.js';
 import { BIOMES, effectiveNight } from './game/EnvironmentManager.js';
 import { cameraPose } from './game/CameraController.js';
 import type { QualitySettings } from './game/PerformanceManager.js';
@@ -301,6 +301,7 @@ export function drawRoad(c: CanvasRenderingContext2D, s: RunState, w: number, h:
         angle: Math.atan2(cx(z + 3) - cx(z - 3), 6),
         lights: atm.night,
         spin: (s.time * 85) / 3.6 / 0.44,
+        variant: (tr.type as CarVariant) || 'sedan',
       });
       drawn++;
     }
@@ -323,6 +324,7 @@ export function drawRoad(c: CanvasRenderingContext2D, s: RunState, w: number, h:
     brake: opts.brake,
     lights: opts.lights || atm.night,
     steer: s.steer * 0.35,
+    variant: 'sport',
   });
 
   cam.draw(a);
