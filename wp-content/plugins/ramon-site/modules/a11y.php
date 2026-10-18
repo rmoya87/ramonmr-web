@@ -133,13 +133,13 @@ add_filter( 'wp_get_attachment_image_attributes', function ( $attr ) {
 /* Rendimiento: precarga de la imagen del hero del CV (es un fondo CSS que el navegador descubre tarde). Reversible: borrar este bloque. */
 add_action( 'wp_head', function () {
 	$path = wp_parse_url( isset( $_SERVER['REQUEST_URI'] ) ? wp_unslash( $_SERVER['REQUEST_URI'] ) : '', PHP_URL_PATH );
-	$cv   = array( '/curriculum-ramon-de-moya/', '/en/cv/' );
+	$cv   = array( '/curriculum-ramon-de-moya/', '/en/cv-delivery-manager/' );
 	if ( ! in_array( $path, $cv, true ) ) {
 		return;
 	}
 	$base = 'https://ramonmr.com/wp-content/themes/ramon-native/assets/images/';
 	echo '<link rel="preload" as="image" href="' . esc_url( $base . 'hero-cv-likeness-mobile.webp' ) . '" fetchpriority="high" media="(max-width:781px)">' . "\n";
-	if ( '/en/cv/' === $path ) {
+	if ( '/en/cv-delivery-manager/' === $path ) {
 		echo '<link rel="preload" as="image" href="' . esc_url( $base . 'hero-cv-likeness.webp' ) . '" fetchpriority="high" media="(min-width:782px)">' . "\n";
 	}
 }, 1 );
