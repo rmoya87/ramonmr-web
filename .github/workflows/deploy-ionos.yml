@@ -79,7 +79,7 @@ jobs:
           dry=os.environ['DRY_RUN'].lower()=='true'
           print('SFTP authenticated; root validated. Compared',len(files),'files. Changes',len(changes),'Dry run',dry)
           def health():
-              for url in ['https://ramonmr.com/','https://ramonmr.com/en/','https://ramonmr.com/contactame/']:
+              for url in ['https://ramonmr.com/','https://ramonmr.com/en/','https://ramonmr.com/contacto-consultor-digital/']:
                   req=urllib.request.Request(url,headers={'User-Agent':'Ramon-site-deploy-check'},method='GET')
                   with urllib.request.urlopen(req,timeout=30) as r:
                       body=r.read();assert r.status==200 and len(body)>1000
