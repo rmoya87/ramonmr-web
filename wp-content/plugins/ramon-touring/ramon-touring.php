@@ -40,8 +40,8 @@ function rm_touring_catalog($lang) {
         if ($post->post_type === 'post' || preg_match('~/(blog|articles)/?$~',$path)) { $index=3; }
         elseif ($post->post_type === 'ohio_portfolio' || preg_match('~/(portfolio|projects)(/|$)~',$path)) { $index=2; }
         elseif (preg_match('~/(servicios|services)(/|$)~',$path)) { $index=0; }
-        elseif (preg_match('~/(curriculum-ramon-de-moya|cv)/?$~',$path)) { $index=1; }
-        elseif (preg_match('~/(contactame|contact)/?$~',$path)) { $index=4; }
+        elseif (preg_match('~/(curriculum-ramon-de-moya|cv|cv-delivery-manager)/?$~',$path)) { $index=1; }
+        elseif (preg_match('~/(contactame|contact|contacto-consultor-digital|contact-digital-consultant)/?$~',$path)) { $index=4; }
         $groups[$index]['items'][] = ['id'=>(int)$post->ID,'title'=>wp_strip_all_tags(get_the_title($post)),'url'=>$url,'reader'=>add_query_arg(['rm_reader'=>'1','ri_noredirect'=>'1'],$url)];
     }
     foreach ($groups as &$group) { usort($group['items'], static function ($a, $b) { return substr_count(wp_parse_url($a['url'],PHP_URL_PATH),'/') <=> substr_count(wp_parse_url($b['url'],PHP_URL_PATH),'/'); }); } unset($group);
