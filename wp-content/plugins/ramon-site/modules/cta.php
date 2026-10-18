@@ -153,3 +153,4 @@ html body .wp-block-query-pagination .wp-block-query-pagination-previous-arrow,h
 	echo '<style id="rsite-pager-css">' . $css . '</style>' . "\n"; // phpcs:ignore
 }, 99 );
 
+
