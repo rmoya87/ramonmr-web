@@ -154,7 +154,7 @@ function rsite_perf_render() {
 	$row( 'min_js', 'JS minificado', 'Usa header.js y reveal.js del tema, ya minificados. Desmarcado carga las copias legibles incluidas en este plugin (comentarios y espacios incluidos).' );
 	$row( 'forms', 'Formularios solo donde hay formulario', 'El CSS y JS de Contact Form 7 solo se cargan en páginas que muestran un formulario. Desmarcado se cargan en todas (el reCAPTCHA sigue cargándose solo con formulario).' );
 	$area = function ( $k, $label, $desc ) {
-		echo '<tr><th scope="row"><label for="rsite_' . esc_attr( $k ) . '">' . esc_html( $label ) . '</label></th><td><textarea id="rsite_' . esc_attr( $k ) . '" name="rsite_perf[' . esc_attr( $k ) . ']" rows="3" cols="50" class="large-text code">' . esc_textarea( (string) rsite_perf( $k ) ) . '</textarea><p class="description">' . esc_html( $desc ) . ' Una ruta por línea, empezando por «/»; «*» al final vale como prefijo (por ejemplo /contactame/*).</p></td></tr>';
+		echo '<tr><th scope="row"><label for="rsite_' . esc_attr( $k ) . '">' . esc_html( $label ) . '</label></th><td><textarea id="rsite_' . esc_attr( $k ) . '" name="rsite_perf[' . esc_attr( $k ) . ']" rows="3" cols="50" class="large-text code">' . esc_textarea( (string) rsite_perf( $k ) ) . '</textarea><p class="description">' . esc_html( $desc ) . ' Una ruta por línea, empezando por «/»; «*» al final vale como prefijo (por ejemplo /contacto-consultor-digital/*).</p></td></tr>';
 	};
 	$area( 'form_paths', 'Rutas con formulario forzado', 'Solo afecta a los archivos de Contact Form 7: en estas páginas se cargan siempre.' );
 	$area( 'excl_min', 'Rutas siempre minificadas', 'Excluye estas páginas del modo legible de CSS y JS: usan siempre los archivos minificados del tema.' );

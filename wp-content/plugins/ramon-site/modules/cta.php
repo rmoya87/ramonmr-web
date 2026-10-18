@@ -26,7 +26,7 @@ add_action( 'template_redirect', function () {
 	if ( ! is_front_page() || is_feed() ) { return; }
 	ob_start( function ( $html ) {
 		$en  = function_exists( 'pll_current_language' ) && 'en' === pll_current_language();
-		$url = $en ? home_url( '/en/contact/' ) : home_url( '/contactame/' );
+		$url = $en ? home_url( '/en/contact-digital-consultant/' ) : home_url( '/contacto-consultor-digital/' );
 		$new = $en
 			? '<section class="native-cta"><div class="native-width"><h2>LET&#8217;S TALK ABOUT<br>YOUR PROJECT</h2><p>Tell me what you need and where you are.</p><a class="native-button" href="' . esc_url( $url ) . '">Contact me</a></div></section>'
 			: '<section class="native-cta"><div class="native-width"><h2>HABLEMOS DE<br>TU PROYECTO</h2><p>Cuéntame qué necesitas y en qué punto estás.</p><a class="native-button" href="' . esc_url( $url ) . '">Contactar</a></div></section>';

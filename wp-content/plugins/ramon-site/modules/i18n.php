@@ -113,7 +113,7 @@ function ri_map_url( $url ) {
 	$cache = wp_cache_get( 'ri_map_' . $path, 'ri' );
 	if ( $cache !== false ) { return $cache === '' ? $url : $cache . $qs . $frag; }
 	$out = '';
-	$id  = ( rtrim( $path, '/' ) === '/portfolio' ) ? 249 : url_to_postid( home_url( $path ) );
+	$id  = ( rtrim( $path, '/' ) === '/portfolio-de-proyectos-digitales' ) ? 249 : url_to_postid( home_url( $path ) );
 	if ( $id ) {
 		$en = pll_get_post( $id, 'en' );
 		if ( $en && get_post_status( $en ) === 'publish' ) { $out = get_permalink( $en ); }
@@ -239,11 +239,11 @@ location.replace(alt.href);
 	<?php
 }, 1 );
 
-// 301: /en/portfolio/ -> /en/projects/ (la URL EN real del portfolio).
+// 301: /en/portfolio/ -> /en/digital-projects-portfolio/ (la URL EN real del portfolio).
 add_action( 'plugins_loaded', function () {
 	$p = isset( $_SERVER['REQUEST_URI'] ) ? strtok( $_SERVER['REQUEST_URI'], '?' ) : '';
 	if ( rtrim( $p, '/' ) === '/en/portfolio' ) {
-		wp_redirect( home_url( '/en/projects/' ), 301 );
+		wp_redirect( home_url( '/en/digital-projects-portfolio/' ), 301 );
 		exit;
 	}
 }, 1 );
