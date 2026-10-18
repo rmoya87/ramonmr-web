@@ -304,7 +304,7 @@ add_filter('render_block_core/navigation',function($html){
   $route=trailingslashit(wp_parse_url($href,PHP_URL_PATH)?:'/');
   $exact=$route===$path;
   $section=($route==='/blog/'&&(is_singular('post')||is_category()||str_starts_with($path,'/blog/')))
-   ||($route==='/portfolio/'&&(is_singular('ohio_portfolio')||str_starts_with($path,'/portfolio/')))
+   ||(in_array($route,['/portfolio/','/portfolio-de-proyectos-digitales/','/en/digital-projects-portfolio/'],true)&&(is_singular('ohio_portfolio')||str_starts_with($path,'/portfolio/')||str_starts_with($path,'/en/portfolio/')))
    ||($route==='/servicios/'&&str_starts_with($path,'/servicios/'));
   if(!$exact&&!$section)return $m[0];
   $tag=$m[0];
