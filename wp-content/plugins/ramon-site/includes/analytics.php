@@ -164,8 +164,8 @@ add_action( 'wp_footer', function () {
     if(a.classList.contains('lang-switch')){send('language_switch',{to_language:(a.getAttribute('hreflang')||'').slice(0,2)});return;}
     if(host==='linkedin.com'||host==='x.com'||host==='twitter.com'){send('social_click',{network:host==='linkedin.com'?'linkedin':'x',link_zone:zone(a)});return;}
     if(host===location.hostname.replace(/^www\./,'')){
-      if(/^(\/en)?\/(curriculum-ramon-de-moya|cv)$/.test(path)){send('cv_click',{link_zone:zone(a)});return;}
-      if(/^(\/en)?\/(contactame|contact)$/.test(path)){send('contact_click',{link_zone:zone(a)});return;}
+      if(/^(\/en)?\/(curriculum-ramon-de-moya|cv-delivery-manager)$/.test(path)){send('cv_click',{link_zone:zone(a)});return;}
+      if(/^(\/en)?\/(contacto-consultor-digital|contact-digital-consultant)$/.test(path)){send('contact_click',{link_zone:zone(a)});return;}
     }
   },true);
   var started=false;
