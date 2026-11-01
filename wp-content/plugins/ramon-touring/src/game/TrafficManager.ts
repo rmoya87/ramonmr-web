@@ -254,6 +254,18 @@ export function stepTraffic(s: RunState, dt: number): PassEvent[] {
       }
     }
 
+    // After separation or braking a car can still close the third lane. Far in
+    // the fog (beyond view) it is moved to a clear slot; nearer it keeps pace.
+    if (s.mode === 'arcade' && formsWall(s.traffic, o, o.id, TRAFFIC.wallHold)) {
+      if (o.d - s.d > 75 && o.changeTimer <= 0) {
+        const others = s.traffic.filter((x) => x.id !== o.id);
+        const slot = findSlot(others, o.d + 8, TRAFFIC.lanes.indexOf(o.x as (typeof TRAFFIC.lanes)[number]), o.width, o.length, o.id);
+        o.d = slot.d;
+        o.x = TRAFFIC.lanes[slot.lane];
+        o.targetX = o.x;
+      }
+    }
+
     {
       // Heading follows the lateral motion of a lane change; the hull uses the same angle.
       const lat = o.changeTimer > 0 ? (o.targetX - o.x) * 3.4 : 0;
