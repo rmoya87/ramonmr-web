@@ -107,7 +107,7 @@ function findSlot(
   length: number,
   exceptId: number,
 ): { lane: number; d: number } {
-  for (let nudge = 0; nudge < 40; nudge++) {
+  for (let nudge = 0; nudge < 160; nudge++) {
     const d = d0 + nudge * 5;
     const open = openLaneAt(d);
     const load = [0, 1, 2].map((l) => traffic.filter((c) => c.id !== exceptId && Math.abs(c.d - d) < 90 && blocksLane(c, l)).length);
@@ -120,7 +120,7 @@ function findSlot(
       return { lane, d };
     }
   }
-  return { lane: startLane % 3, d: d0 + 200 };
+  return { lane: startLane % 3, d: d0 + 800 };
 }
 
 function carsInLane(traffic: TrafficCar[], laneX: number, exceptId: number): TrafficCar[] {

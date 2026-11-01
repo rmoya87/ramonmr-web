@@ -91,7 +91,7 @@ function formsWall(traffic, probe, exceptId, S = TRAFFIC.wallSpan) {
 }
 /** First lane/depth at or beyond d0 with clear road and no wall. */
 function findSlot(traffic, d0, startLane, width, length, exceptId) {
-    for (let nudge = 0; nudge < 40; nudge++) {
+    for (let nudge = 0; nudge < 160; nudge++) {
         const d = d0 + nudge * 5;
         const open = openLaneAt(d);
         const load = [0, 1, 2].map((l) => traffic.filter((c) => c.id !== exceptId && Math.abs(c.d - d) < 90 && blocksLane(c, l)).length);
@@ -106,7 +106,7 @@ function findSlot(traffic, d0, startLane, width, length, exceptId) {
             return { lane, d };
         }
     }
-    return { lane: startLane % 3, d: d0 + 200 };
+    return { lane: startLane % 3, d: d0 + 800 };
 }
 function carsInLane(traffic, laneX, exceptId) {
     return traffic.filter((c) => c.id !== exceptId &&
