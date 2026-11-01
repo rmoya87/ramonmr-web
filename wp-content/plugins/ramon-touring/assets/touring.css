@@ -214,3 +214,5 @@ body.rm-touring-shell #rm-touring .reader-expanded .workshop .hanging-panel{heig
 @media (max-width:899px), (pointer:coarse) {
   #rm-touring .mission-bar { bottom: auto; left: 14px; right: auto; transform: none; max-width: 62%; text-align: left; }
 }
+/* 3.2.2 workshop: on narrow screens the options panel covered the section page and its expand button */
+@media(max-width:899px){body.rm-touring-shell #rm-touring #rm-touring-app:not(.reader-expanded) .workshop .scene-car-tools{width:min(158px,40vw)}body.rm-touring-shell #rm-touring #rm-touring-app:not(.reader-expanded) .workshop .hanging-panel{width:calc(100% - min(158px,40vw) - 36px)!important;right:10px;left:auto}}

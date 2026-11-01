@@ -6,6 +6,10 @@ export class GarageWorld {
   readonly scene = new THREE.Scene();
   readonly camera = new THREE.PerspectiveCamera(45, 1, 0.2, 80);
   private car: THREE.Group;
+  private readonly hoodGroup = new THREE.Group();
+  private readonly flap: THREE.Group;
+  private readonly flapMat = new THREE.MeshStandardMaterial({ roughness: 0.4, metalness: 0.06, side: THREE.DoubleSide });
+  private hoodOpen = 0;
   private readonly hemi: THREE.HemisphereLight;
   private readonly key: THREE.DirectionalLight;
 
@@ -52,6 +56,30 @@ export class GarageWorld {
 
     this.car = createVehicle('hatch' as CarVariant, '#c23a2b');
     this.scene.add(this.car);
+
+    // Hood: the body is one merged solid, so "open" shows an engine bay on the hood area and a
+    // hinged panel (hinge at the windshield base) raised above it. Closed hides both.
+    const bay = new THREE.Mesh(
+      new THREE.BoxGeometry(1.5, 0.06, 0.95),
+      new THREE.MeshStandardMaterial({ color: 0x15191d, roughness: 0.85 }),
+    );
+    bay.position.set(0, 0.8, 1.66);
+    bay.rotation.x = 0.17; // follows the slope of the hood
+    const block = new THREE.Mesh(
+      new THREE.BoxGeometry(0.8, 0.22, 0.5),
+      new THREE.MeshStandardMaterial({ color: 0x8a949a, metalness: 0.5, roughness: 0.45 }),
+    );
+    block.position.set(0, 0.93, 1.66);
+    block.rotation.x = 0.17;
+    this.flap = new THREE.Group();
+    this.flap.position.set(0, 0.84, 1.14);
+    const panel = new THREE.Mesh(new THREE.BoxGeometry(1.6, 0.05, 1.02), this.flapMat);
+    panel.position.set(0, 0, 0.51);
+    panel.castShadow = true;
+    this.flap.add(panel);
+    this.hoodGroup.add(bay, block, this.flap);
+    this.hoodGroup.visible = false;
+    this.scene.add(this.hoodGroup);
   }
 
   update(opts: { angle: number; zoom: number; color: string; hood: boolean; lights: boolean; aspect: number }): void {
@@ -62,7 +90,17 @@ export class GarageWorld {
       this.scene.add(this.car);
     }
     setVehicleLights(this.car, opts.lights, false);
-    this.car.rotation.y = opts.angle;
+    // The camera orbits the car. Turning the car by the same angle cancelled the orbit, so the
+    // side, front and hood views always showed the same face.
+    this.car.rotation.y = 0;
+    const paint = new THREE.Color(opts.color);
+    paint.offsetHSL(0, 0.03, 0.09);
+    this.flapMat.color.copy(paint);
+    this.flapMat.emissive.copy(paint).multiplyScalar(0.12);
+    this.flapMat.emissiveIntensity = 0.35;
+    this.hoodOpen = opts.hood ? 1 : 0;
+    this.hoodGroup.visible = opts.hood;
+    this.flap.rotation.x = -1.05 * this.hoodOpen;
 
     this.camera.aspect = opts.aspect;
     this.camera.fov = opts.aspect < 1 ? 52 : 42;
@@ -72,7 +110,6 @@ export class GarageWorld {
 
     // Subtle LOOK grade
     this.hemi.color.set(LOOK.sun);
-    void opts.hood;
   }
 
   dispose(): void {
