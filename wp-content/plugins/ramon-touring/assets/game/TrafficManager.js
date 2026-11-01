@@ -230,15 +230,20 @@ export function stepTraffic(s, dt) {
                 o.speed = Math.min(o.speed, front.speed);
             }
         }
-        // After separation or braking a car can still close the third lane. Far in
-        // the fog (beyond view) it is moved to a clear slot; nearer it keeps pace.
-        if (s.mode === 'arcade' && formsWall(s.traffic, o, o.id, TRAFFIC.wallHold)) {
-            if (o.d - s.d > 75 && o.changeTimer <= 0) {
-                const others = s.traffic.filter((x) => x.id !== o.id);
-                const slot = findSlot(others, o.d + 8, TRAFFIC.lanes.indexOf(o.x), o.width, o.length, o.id);
-                o.d = slot.d;
-                o.x = TRAFFIC.lanes[slot.lane];
-                o.targetX = o.x;
+        // After braking or separation a car can still close the third lane. It then
+        // leaves for a neighbouring lane with a normal, smooth lane change (never a jump).
+        if (s.mode === 'arcade' && o.changeTimer <= 0 && formsWall(s.traffic, o, o.id, TRAFFIC.wallHold)) {
+            const myLane = TRAFFIC.lanes.indexOf(o.targetX);
+            for (const lane of [myLane - 1, myLane + 1].filter((l) => l >= 0 && l < 3)) {
+                const lx = TRAFFIC.lanes[lane];
+                if (gapClear(s.traffic, lx, o.d, o.id, o.length) &&
+                    gapClear(s.traffic, lx, o.d + 12, o.id, o.length) &&
+                    !formsWall(s.traffic, { x: lx, targetX: lx, width: o.width, d: o.d }, o.id, TRAFFIC.wallHold)) {
+                    o.targetX = lx;
+                    o.state = 'change';
+                    o.changeTimer = TRAFFIC.laneChangeCooldown;
+                    break;
+                }
             }
         }
         {
