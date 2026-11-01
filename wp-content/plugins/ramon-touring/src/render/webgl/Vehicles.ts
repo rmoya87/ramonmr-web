@@ -14,6 +14,8 @@ function glassMat() {
     roughness: 0.22,
     emissive: 0x16303f,
     emissiveIntensity: 0.55,
+    // thin panes are seen from either side depending on slope and camera
+    side: THREE.DoubleSide,
   });
 }
 
@@ -97,8 +99,10 @@ function pane(a: Pt, b: Pt, width: number, mat: THREE.Material, lift = 0.015): T
   // push out along the surface normal (pointing outward) so it sits proud of the paint
   const nz = Math.cos(ang);
   const ny = -Math.sin(ang);
-  m.position.z += nz * lift;
-  m.position.y += ny * lift;
+  // outward is +z/up for a windshield (leans back going up) and -z/up for a rear glass
+  const out = b[0] - a[0] <= 0 ? 1 : -1;
+  m.position.z += out * nz * lift;
+  m.position.y += out * ny * lift;
   return m;
 }
 
@@ -470,8 +474,40 @@ function mergeStatic(g: THREE.Group): THREE.Group {
   return g;
 }
 
-export function createVehicle(variant: CarVariant, color: string): THREE.Group {
-  return mergeStatic(createVehicleRaw(variant, color));
+/**
+ * The road camera mirrors X in its projection so the arrows match the screen. That reverses
+ * the on-screen winding of every triangle, so an opaque FrontSide car showed its inside faces
+ * (wheels and glass seen through the paint). Reverse the winding once for that camera and keep
+ * the outward normals, so the visible faces are the outside ones and light correctly.
+ */
+function reverseWinding(geo: THREE.BufferGeometry): void {
+  const swap = (a: THREE.BufferAttribute | THREE.InterleavedBufferAttribute | undefined, i: number, j: number) => {
+    if (!a) return;
+    for (let k = 0; k < a.itemSize; k++) {
+      const t = a.getComponent(i, k);
+      a.setComponent(i, k, a.getComponent(j, k));
+      a.setComponent(j, k, t);
+    }
+    (a as THREE.BufferAttribute).needsUpdate = true;
+  };
+  if (geo.index) {
+    const ix = geo.index;
+    for (let i = 0; i + 2 < ix.count; i += 3) {
+      const t = ix.getX(i + 1);
+      ix.setX(i + 1, ix.getX(i + 2));
+      ix.setX(i + 2, t);
+    }
+    ix.needsUpdate = true;
+    return;
+  }
+  const n = geo.attributes.position.count;
+  for (let i = 0; i + 2 < n; i += 3) for (const name of Object.keys(geo.attributes)) swap(geo.attributes[name] as THREE.BufferAttribute, i + 1, i + 2);
+}
+
+export function createVehicle(variant: CarVariant, color: string, mirroredView = false): THREE.Group {
+  const g = mergeStatic(createVehicleRaw(variant, color));
+  if (mirroredView) g.traverse((o) => { if ((o as THREE.Mesh).isMesh) reverseWinding((o as THREE.Mesh).geometry); });
+  return g;
 }
 
 export function setVehicleLights(group: THREE.Group, on: boolean, brake: boolean): void {

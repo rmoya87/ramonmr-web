@@ -254,7 +254,7 @@ export class RoadWorld {
       side: THREE.DoubleSide,
     });
 
-    this.player = createVehicle('sport', '#c23a2b');
+    this.player = createVehicle('sport', '#c23a2b', true);
     this.scene.add(this.player);
 
     this.playerShadow = new THREE.Mesh(
@@ -544,7 +544,7 @@ export class RoadWorld {
 
     if (this.player.userData.color !== opts.color) {
       this.scene.remove(this.player);
-      this.player = createVehicle('hatch' as CarVariant, opts.color);
+      this.player = createVehicle('hatch' as CarVariant, opts.color, true);
       this.scene.add(this.player);
       this.player.userData.color = opts.color;
     }
@@ -578,7 +578,7 @@ export class RoadWorld {
       let mesh = this.traffic.get(t.id);
       if (!mesh || mesh.userData.color !== t.color || mesh.userData.type !== t.type) {
         if (mesh) this.scene.remove(mesh);
-        mesh = createVehicle((t.type as CarVariant) || 'sedan', t.color);
+        mesh = createVehicle((t.type as CarVariant) || 'sedan', t.color, true);
         mesh.userData.color = t.color;
         mesh.userData.type = t.type;
         this.traffic.set(t.id, mesh);

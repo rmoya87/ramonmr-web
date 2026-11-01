@@ -9,6 +9,8 @@ function glassMat() {
         roughness: 0.22,
         emissive: 0x16303f,
         emissiveIntensity: 0.55,
+        // thin panes are seen from either side depending on slope and camera
+        side: THREE.DoubleSide,
     });
 }
 function paintMat(color, gloss = 0.32) {
@@ -84,8 +86,10 @@ function pane(a, b, width, mat, lift = 0.015) {
     // push out along the surface normal (pointing outward) so it sits proud of the paint
     const nz = Math.cos(ang);
     const ny = -Math.sin(ang);
-    m.position.z += nz * lift;
-    m.position.y += ny * lift;
+    // outward is +z/up for a windshield (leans back going up) and -z/up for a rear glass
+    const out = b[0] - a[0] <= 0 ? 1 : -1;
+    m.position.z += out * nz * lift;
+    m.position.y += out * ny * lift;
     return m;
 }
 function wheel(g, x, z, r, w = 0.3) {
@@ -428,8 +432,44 @@ function mergeStatic(g) {
     }
     return g;
 }
-export function createVehicle(variant, color) {
-    return mergeStatic(createVehicleRaw(variant, color));
+/**
+ * The road camera mirrors X in its projection so the arrows match the screen. That reverses
+ * the on-screen winding of every triangle, so an opaque FrontSide car showed its inside faces
+ * (wheels and glass seen through the paint). Reverse the winding once for that camera and keep
+ * the outward normals, so the visible faces are the outside ones and light correctly.
+ */
+function reverseWinding(geo) {
+    const swap = (a, i, j) => {
+        if (!a)
+            return;
+        for (let k = 0; k < a.itemSize; k++) {
+            const t = a.getComponent(i, k);
+            a.setComponent(i, k, a.getComponent(j, k));
+            a.setComponent(j, k, t);
+        }
+        a.needsUpdate = true;
+    };
+    if (geo.index) {
+        const ix = geo.index;
+        for (let i = 0; i + 2 < ix.count; i += 3) {
+            const t = ix.getX(i + 1);
+            ix.setX(i + 1, ix.getX(i + 2));
+            ix.setX(i + 2, t);
+        }
+        ix.needsUpdate = true;
+        return;
+    }
+    const n = geo.attributes.position.count;
+    for (let i = 0; i + 2 < n; i += 3)
+        for (const name of Object.keys(geo.attributes))
+            swap(geo.attributes[name], i + 1, i + 2);
+}
+export function createVehicle(variant, color, mirroredView = false) {
+    const g = mergeStatic(createVehicleRaw(variant, color));
+    if (mirroredView)
+        g.traverse((o) => { if (o.isMesh)
+            reverseWinding(o.geometry); });
+    return g;
 }
 export function setVehicleLights(group, on, brake) {
     group.traverse((obj) => {
