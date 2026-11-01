@@ -38,12 +38,12 @@ export class GarageWorld {
         this.scene.add(this.car);
         // Hood: the body is one merged solid, so "open" shows an engine bay on the hood area and a
         // hinged panel (hinge at the windshield base) raised above it. Closed hides both.
-        const bay = new THREE.Mesh(new THREE.BoxGeometry(1.5, 0.06, 0.95), new THREE.MeshStandardMaterial({ color: 0x15191d, roughness: 0.85 }));
-        bay.position.set(0, 0.8, 1.66);
-        bay.rotation.x = 0.17; // follows the slope of the hood
+        const bay = new THREE.Mesh(new THREE.BoxGeometry(1.5, 0.05, 0.75), new THREE.MeshStandardMaterial({ color: 0x15191d, roughness: 0.85 }));
+        bay.position.set(0, 0.73, 1.68);
+        bay.rotation.x = 0.3; // follows the slope of the hood (0.76 at z 1.46 down to 0.55 at the nose)
         const block = new THREE.Mesh(new THREE.BoxGeometry(0.8, 0.22, 0.5), new THREE.MeshStandardMaterial({ color: 0x8a949a, metalness: 0.5, roughness: 0.45 }));
-        block.position.set(0, 0.93, 1.66);
-        block.rotation.x = 0.17;
+        block.position.set(0, 0.85, 1.68);
+        block.rotation.x = 0.3;
         this.flap = new THREE.Group();
         this.flap.position.set(0, 0.84, 1.14);
         const panel = new THREE.Mesh(new THREE.BoxGeometry(1.6, 0.05, 1.02), this.flapMat);
@@ -75,8 +75,16 @@ export class GarageWorld {
         this.flap.rotation.x = -1.05 * this.hoodOpen;
         this.camera.aspect = opts.aspect;
         this.camera.fov = opts.aspect < 1 ? 52 : 42;
-        this.camera.position.set(Math.sin(opts.angle) * opts.zoom, 3.2, Math.cos(opts.angle) * opts.zoom);
+        const dist = opts.aspect < 1 ? opts.zoom * 1.35 : opts.zoom; // tall screens: the car is wider than the view
+        this.camera.position.set(Math.sin(opts.angle) * dist, 3.2, Math.cos(opts.angle) * dist);
         this.camera.lookAt(0, opts.aspect < 1 ? 1.6 : 0.9, 0);
+        // Keep the car clear of the section page and the options panel: shift it left on wide
+        // screens (page on the right) and down on tall ones (panels stacked above).
+        const fw = opts.aspect * 1000;
+        if (opts.aspect >= 1)
+            this.camera.setViewOffset(fw, 1000, fw * 0.13, 0, fw, 1000);
+        else
+            this.camera.setViewOffset(fw, 1000, 0, -200, fw, 1000);
         this.camera.updateProjectionMatrix();
         // Subtle LOOK grade
         this.hemi.color.set(LOOK.sun);

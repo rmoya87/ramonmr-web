@@ -216,3 +216,6 @@ body.rm-touring-shell #rm-touring .reader-expanded .workshop .hanging-panel{heig
 }
 /* 3.2.2 workshop: on narrow screens the options panel covered the section page and its expand button */
 @media(max-width:899px){body.rm-touring-shell #rm-touring #rm-touring-app:not(.reader-expanded) .workshop .scene-car-tools{width:min(158px,40vw)}body.rm-touring-shell #rm-touring #rm-touring-app:not(.reader-expanded) .workshop .hanging-panel{width:calc(100% - min(158px,40vw) - 36px)!important;right:10px;left:auto}}
+/* 3.2.2 workshop: the section page was small and tilted; straighten it and give it more room on desktop */
+body.rm-touring-shell #rm-touring #rm-touring-app:not(.reader-expanded) .workshop .hanging-panel{transform:none}
+@media(min-width:900px){body.rm-touring-shell #rm-touring #rm-touring-app:not(.reader-expanded) .workshop .hanging-panel{width:min(42%,640px)}}
