@@ -224,5 +224,14 @@ body.rm-touring-shell #rm-touring #rm-touring-app:not(.reader-expanded) .worksho
 body.rm-touring-shell #rm-touring #rm-touring-app:not(.reader-expanded) .workshop .scene-car-tools select,body.rm-touring-shell #rm-touring #rm-touring-app:not(.reader-expanded) .workshop .scene-car-tools button{min-height:40px}
 body.rm-touring-shell #rm-touring #rm-touring-app:not(.reader-expanded) .workshop .scene-car-tools label:has(input[type=range]){display:none}
 body.rm-touring-shell #rm-touring #rm-touring-app:not(.reader-expanded) .workshop .scene-car-tools input[type=range]{min-height:28px}
-body.rm-touring-shell #rm-touring #rm-touring-app:not(.reader-expanded) .workshop .hanging-panel{left:10px!important;right:10px;width:auto!important;top:250px;height:max(300px,calc(100dvh - 470px))!important}
+body.rm-touring-shell #rm-touring #rm-touring-app:not(.reader-expanded) .workshop .hanging-panel{left:10px!important;right:10px;width:auto!important;top:250px;height:56px!important;min-height:0;overflow:hidden}
+body.rm-touring-shell #rm-touring #rm-touring-app:not(.reader-expanded) .workshop .hanging-panel .reader{display:none}
+body.rm-touring-shell #rm-touring #rm-touring-app:not(.reader-expanded) .workshop .hanging-panel .poster-toggle{position:static;display:flex;align-items:center;justify-content:center;gap:10px;width:100%;height:56px;border-radius:14px;font:600 15px system-ui,sans-serif;color:#fff;background:#243b40;border:0}
+body.rm-touring-shell #rm-touring #rm-touring-app:not(.reader-expanded) .workshop .hanging-panel .poster-toggle svg{width:24px;height:24px}
+body.rm-touring-shell #rm-touring #rm-touring-app:not(.reader-expanded) .workshop .hanging-panel .poster-toggle::after{content:attr(aria-label)}
+}
+@media(max-width:899px){
+body.rm-touring-shell #rm-touring #rm-touring-app.reader-expanded .reader-toolbar{display:flex;flex-wrap:wrap;gap:6px 8px;justify-content:flex-start}
+body.rm-touring-shell #rm-touring #rm-touring-app.reader-expanded .reader-toolbar select{flex:1 1 140px;min-width:0}
+body.rm-touring-shell #rm-touring #rm-touring-app.reader-expanded .reader-toolbar a{flex:1 0 100%;white-space:nowrap;font-size:13px}
 }
