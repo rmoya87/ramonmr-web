@@ -214,8 +214,15 @@ body.rm-touring-shell #rm-touring .reader-expanded .workshop .hanging-panel{heig
 @media (max-width:899px), (pointer:coarse) {
   #rm-touring .mission-bar { bottom: auto; left: 14px; right: auto; transform: none; max-width: 62%; text-align: left; }
 }
-/* 3.2.2 workshop: on narrow screens the options panel covered the section page and its expand button */
-@media(max-width:899px){body.rm-touring-shell #rm-touring #rm-touring-app:not(.reader-expanded) .workshop .scene-car-tools{width:min(158px,40vw)}body.rm-touring-shell #rm-touring #rm-touring-app:not(.reader-expanded) .workshop .hanging-panel{width:calc(100% - min(158px,40vw) - 36px)!important;right:10px;left:auto}}
-/* 3.2.2 workshop: the section page was small and tilted; straighten it and give it more room on desktop */
+/* 3.2.2 workshop: the section page was small and tilted, and on phones the options panel covered it */
 body.rm-touring-shell #rm-touring #rm-touring-app:not(.reader-expanded) .workshop .hanging-panel{transform:none}
 @media(min-width:900px){body.rm-touring-shell #rm-touring #rm-touring-app:not(.reader-expanded) .workshop .hanging-panel{width:min(42%,640px)}}
+@media(max-width:899px) and (orientation:landscape){body.rm-touring-shell #rm-touring #rm-touring-app:not(.reader-expanded) .workshop .scene-car-tools{width:min(158px,30vw)}body.rm-touring-shell #rm-touring #rm-touring-app:not(.reader-expanded) .workshop .hanging-panel{width:calc(100% - min(158px,30vw) - 36px)!important;right:10px;left:auto}}
+@media(max-width:899px) and (orientation:portrait){
+body.rm-touring-shell #rm-touring #rm-touring-app:not(.reader-expanded) .workshop .scene-car-tools{left:10px;right:10px;width:auto;top:118px;padding:8px 10px;max-height:none;overflow:visible;border-radius:18px}
+body.rm-touring-shell #rm-touring #rm-touring-app:not(.reader-expanded) .workshop .scene-car-tools .workshop-tools{display:grid;grid-template-columns:1fr 1fr;gap:6px 8px}
+body.rm-touring-shell #rm-touring #rm-touring-app:not(.reader-expanded) .workshop .scene-car-tools select,body.rm-touring-shell #rm-touring #rm-touring-app:not(.reader-expanded) .workshop .scene-car-tools button{min-height:40px}
+body.rm-touring-shell #rm-touring #rm-touring-app:not(.reader-expanded) .workshop .scene-car-tools label:has(input[type=range]){display:none}
+body.rm-touring-shell #rm-touring #rm-touring-app:not(.reader-expanded) .workshop .scene-car-tools input[type=range]{min-height:28px}
+body.rm-touring-shell #rm-touring #rm-touring-app:not(.reader-expanded) .workshop .hanging-panel{left:10px!important;right:10px;width:auto!important;top:250px;height:max(300px,calc(100dvh - 470px))!important}
+}

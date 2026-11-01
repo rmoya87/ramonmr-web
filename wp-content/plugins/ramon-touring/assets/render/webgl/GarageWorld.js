@@ -75,7 +75,7 @@ export class GarageWorld {
         this.flap.rotation.x = -1.05 * this.hoodOpen;
         this.camera.aspect = opts.aspect;
         this.camera.fov = opts.aspect < 1 ? 52 : 42;
-        const dist = opts.aspect < 1 ? opts.zoom * 1.35 : opts.zoom; // tall screens: the car is wider than the view
+        const dist = opts.aspect < 1 ? opts.zoom * 2.0 : opts.zoom; // tall screens: the car is wider than the view
         this.camera.position.set(Math.sin(opts.angle) * dist, 3.2, Math.cos(opts.angle) * dist);
         this.camera.lookAt(0, opts.aspect < 1 ? 1.6 : 0.9, 0);
         // Keep the car clear of the section page and the options panel: shift it left on wide
