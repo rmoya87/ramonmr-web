@@ -107,6 +107,16 @@ export function stepTraffic(s, dt) {
         }
         o.speed += (desired - o.speed) * Math.min(1, dt * (def.accel / 10));
         o.d += (o.speed / 3.6) * dt;
+        // Hard separation: an NPC may never overlap the car in front of it,
+        // no matter how its speed was set (spawns, blockade gaps, boosts).
+        // Without this, fast cars visibly drove through slower ones.
+        if (front) {
+            const minSep = (o.length + front.length) * 0.5 + 1.2;
+            if (front.d - o.d < minSep) {
+                o.d = front.d - minSep;
+                o.speed = Math.min(o.speed, front.speed);
+            }
+        }
         if (o.changeTimer > 0) {
             o.changeTimer -= dt;
             o.x += (o.targetX - o.x) * Math.min(1, dt * 3.4);
@@ -129,7 +139,7 @@ export function stepTraffic(s, dt) {
     }
     // Avoid full triple-lane wall just ahead of the player (early levels only).
     if (level < 6)
-        preventBlockade(s);
+        preventBlockade(s, dt);
     return events;
 }
 function recycleCar(s, o, level) {
@@ -144,12 +154,29 @@ function recycleCar(s, o, level) {
         d = s.d + TRAFFIC.spawnAheadMin + Math.random() * 24;
     const type = pickType(level);
     const def = VEHICLE_TYPES[type];
+    // Find a lane with room; if every lane is blocked at this d, push the spawn
+    // further out instead of dropping the car on top of someone (the following
+    // hard separation clamp would then have to snap it back, which reads as a
+    // visible jump).
     let lane = Math.floor(Math.random() * 3);
-    for (let attempt = 0; attempt < 6; attempt++) {
-        const lx = TRAFFIC.lanes[lane];
-        if (gapClear(s.traffic, lx, d, o.id))
-            break;
-        lane = (lane + 1) % 3;
+    let placed = false;
+    for (let nudge = 0; nudge < 4 && !placed; nudge++) {
+        for (let attempt = 0; attempt < 6; attempt++) {
+            const lx = TRAFFIC.lanes[lane];
+            if (gapClear(s.traffic, lx, d, o.id)) {
+                placed = true;
+                break;
+            }
+            lane = (lane + 1) % 3;
+        }
+        if (!placed)
+            d += TRAFFIC.safeGap + 6;
+    }
+    if (!placed) {
+        // Pack is full at every reachable depth: spawn just past the farthest car
+        // (clear of every lane by construction) instead of on top of someone. The
+        // extra meters sit inside the far fog fade, so this is never visible.
+        d = Math.max(...s.traffic.map((x) => x.d), s.d) + gap + 8;
     }
     o.id = s.nextTrafficId++;
     o.d = d;
@@ -164,7 +191,7 @@ function recycleCar(s, o, level) {
     o.changeTimer = 0;
     o.color = COLORS[o.id % COLORS.length];
 }
-function preventBlockade(s) {
+function preventBlockade(s, dt) {
     const ahead = s.traffic.filter((c) => {
         const z = c.d - s.d;
         return z > 8 && z < 40;
@@ -172,12 +199,23 @@ function preventBlockade(s) {
     const lanes = new Set(ahead.map((c) => Math.round(c.x)));
     if (lanes.size < 3)
         return;
-    // Open a gap by speeding the right car up gradually. The old code teleported
-    // it +28 m, which read as "the car ahead disappears" exactly when the player
-    // committed to a lane behind the wall.
-    const right = ahead.reduce((a, b) => (b.x > a.x ? b : a));
-    const def = VEHICLE_TYPES[right.type];
-    right.speed = Math.min(right.speed + 26, def.preferred + 45);
-    right.state = 'cruise';
-    right.changeTimer = 0;
+    // Open a gap in the wall WITHOUT rockets: pick the wall car with the most
+    // room ahead and let it pull away gently (dt-scaled, capped). The old code
+    // teleported it +28 m (read as "the car ahead disappears"); the next one
+    // stacked +26 km/h per frame on the right car, which launched it forward
+    // and made it phase through slower cars in its lane.
+    let best = null;
+    let bestGap = -1;
+    for (const c of ahead) {
+        const front = frontCar(s.traffic, c);
+        const gap = front ? front.d - c.d : 1e9;
+        if (gap > bestGap) {
+            bestGap = gap;
+            best = c;
+        }
+    }
+    if (!best || bestGap < 26)
+        return; // nowhere safe to accelerate into
+    const def = VEHICLE_TYPES[best.type];
+    best.speed = Math.min(best.speed + 11 * dt, def.preferred + 18);
 }

@@ -136,8 +136,6 @@ export class RoadWorld {
   private laneR: THREE.Mesh | null = null;
   private edgeL: THREE.Mesh | null = null;
   private edgeR: THREE.Mesh | null = null;
-  private wearL: THREE.Mesh | null = null;
-  private wearR: THREE.Mesh | null = null;
   private signs: THREE.Group[] = [];
   private playerShadow: THREE.Mesh;
   private lastRoadKey = '';
@@ -145,7 +143,6 @@ export class RoadWorld {
   private chalkMat: THREE.MeshStandardMaterial;
   private groundMat: THREE.MeshStandardMaterial;
   private waterMat: THREE.MeshStandardMaterial;
-  private wearMat: THREE.MeshStandardMaterial;
 
   constructor() {
     this.scene.fog = new THREE.FogExp2(0xd8e4e8, 0.009);
@@ -252,11 +249,6 @@ export class RoadWorld {
       metalness: 0.28,
       side: THREE.DoubleSide,
     });
-    this.wearMat = new THREE.MeshStandardMaterial({
-      color: hex(LOOK.asphalt.wear),
-      roughness: 0.95,
-      side: THREE.DoubleSide,
-    });
 
     this.player = createVehicle('sport', '#c23a2b');
     this.scene.add(this.player);
@@ -355,8 +347,6 @@ export class RoadWorld {
       this.laneR,
       this.edgeL,
       this.edgeR,
-      this.wearL,
-      this.wearR,
     ]) {
       if (m) {
         this.roadGroup.remove(m);
@@ -392,14 +382,8 @@ export class RoadWorld {
       buildRibbon(centers.map((c) => ({ x: c.x + 5.95, z: c.z })), 0.045, 0.05),
       this.chalkMat,
     );
-    this.wearL = new THREE.Mesh(
-      buildRibbon(centers.map((c) => ({ x: c.x - 3.7, z: c.z })), 0.28, 0.024),
-      this.wearMat,
-    );
-    this.wearR = new THREE.Mesh(
-      buildRibbon(centers.map((c) => ({ x: c.x + 3.7, z: c.z })), 0.28, 0.024),
-      this.wearMat,
-    );
+    // Tire-wear strips removed: they read as stray lines painted down the
+    // middle of the outer lanes.
     // Three lanes (−4 / 0 / +4): two dashed separators at ±2 (scroll with s.d).
     this.laneL = new THREE.Mesh(
       buildDashes(centers.map((c) => ({ x: c.x - 2, z: c.z })), 0.1, 0.048, s.d),
@@ -436,8 +420,6 @@ export class RoadWorld {
     this.roadGroup.add(
       this.skirt,
       this.roadMesh,
-      this.wearL,
-      this.wearR,
       this.vergeL,
       this.vergeR,
       this.edgeL,
@@ -583,7 +565,10 @@ export class RoadWorld {
     const ordered = s.traffic.slice().sort((a, b) => a.d - b.d);
     for (const t of ordered) {
       const z = t.d - s.d;
-      const presence = depthPresence(z, trafficFar, -14, 60, 16);
+      // Near zone: cars stay full size until they reach the camera plane; the
+      // old 16 m shrink-fade made cars visibly shrivel and vanish while the
+      // player was still passing them.
+      const presence = depthPresence(z, trafficFar, -13.5, 60, 2);
       if (presence < 0.03 || drawn >= opts.quality.maxTrafficDraw) continue;
       seen.add(t.id);
       let mesh = this.traffic.get(t.id);
