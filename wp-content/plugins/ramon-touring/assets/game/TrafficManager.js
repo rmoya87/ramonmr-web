@@ -1,8 +1,8 @@
 import { SCORE, TRAFFIC, VEHICLE_TYPES } from './config.js';
 const COLORS = ['#f0e8d8', '#5a9ab0', '#d4c07a', '#6a7a8c', '#c07858', '#7a9aac', '#e8a0a8', '#88b878'];
-const TYPE_WEIGHTS = ['sedan', 'sedan', 'sport', 'van', 'truck', 'slow', 'sedan', 'sport'];
+const TYPE_WEIGHTS = ['sedan', 'sedan', 'sport', 'van', 'moto', 'slow', 'sedan', 'truck', 'sport', 'bus', 'moto', 'sedan'];
 function pickType(level) {
-    const idx = Math.min(TYPE_WEIGHTS.length - 1, Math.floor(Math.random() * (3 + Math.min(4, level))));
+    const idx = Math.min(TYPE_WEIGHTS.length - 1, Math.floor(Math.random() * (6 + Math.min(6, level))));
     return TYPE_WEIGHTS[idx];
 }
 function makeCar(id, d, lane, type) {
@@ -18,6 +18,7 @@ function makeCar(id, d, lane, type) {
         speed: def.preferred,
         state: 'cruise',
         changeTimer: 0,
+        yaw: 0,
         width: def.w,
         length: def.l,
     };
@@ -33,32 +34,79 @@ export function createInitialTraffic(mode) {
     const n = mode === 'explore' ? TRAFFIC.poolExplore : TRAFFIC.poolArcade;
     const traffic = [];
     let nextId = 1;
-    // Staggered dense seed: every lane fills every ~28–36 m.
-    const rowGap = mode === 'explore' ? 70 : 32;
+    const step = mode === 'explore' ? 24 : 11;
     for (let i = 0; i < n; i++) {
-        const lane = i % 3;
-        const row = Math.floor(i / 3);
-        const d = 70 + row * rowGap + (lane - 1) * 8 + (i % 5) * 3;
-        traffic.push(makeCar(nextId++, d, lane, TYPE_WEIGHTS[i % TYPE_WEIGHTS.length]));
+        const type = TYPE_WEIGHTS[i % TYPE_WEIGHTS.length];
+        const def = VEHICLE_TYPES[type];
+        const slot = findSlot(traffic, 70 + i * step, Math.floor(Math.random() * 3), def.w, def.l, -1);
+        const car = makeCar(nextId++, slot.d, slot.lane, type);
+        traffic.push(car);
     }
     return { traffic, nextId };
 }
-function carsInLane(traffic, laneX, exceptId) {
-    return traffic.filter((c) => c.id !== exceptId && Math.abs(c.x - laneX) < 1.2);
+/** Does this car stop the player from using lane i? (body or its lane-change target) */
+function blocksLane(c, i) {
+    const lx = TRAFFIC.lanes[i];
+    return Math.abs(c.x - lx) < c.width / 2 + 0.95 || Math.abs(c.targetX - lx) < 0.6;
 }
-function gapClear(traffic, laneX, d, exceptId) {
+/**
+ * Would a car at (x, d) complete a wall: all three lanes blocked inside one
+ * stretch of road shorter than TRAFFIC.wallSpan? Used for spawns and lane
+ * changes so the player always keeps a reachable gap.
+ */
+function formsWall(traffic, probe, exceptId, S = TRAFFIC.wallSpan) {
+    const others = traffic.filter((c) => c.id !== exceptId && Math.abs(c.d - probe.d) < S);
+    const members = [probe, ...others];
+    for (const m of members) {
+        if (m.d < probe.d - S || m.d > probe.d)
+            continue; // window starts at m, must contain probe
+        const lanes = [false, false, false];
+        for (const c of members) {
+            if (c.d < m.d || c.d > m.d + S)
+                continue;
+            for (let i = 0; i < 3; i++)
+                if (blocksLane(c, i))
+                    lanes[i] = true;
+        }
+        if (lanes[0] && lanes[1] && lanes[2])
+            return true;
+    }
+    return false;
+}
+/** First lane/depth at or beyond d0 with clear road and no wall. */
+function findSlot(traffic, d0, startLane, width, length, exceptId) {
+    for (let nudge = 0; nudge < 40; nudge++) {
+        const d = d0 + nudge * 5;
+        for (let k = 0; k < 3; k++) {
+            const lane = (startLane + k) % 3;
+            const lx = TRAFFIC.lanes[lane];
+            if (!gapClear(traffic, lx, d, exceptId, length))
+                continue;
+            if (formsWall(traffic, { x: lx, targetX: lx, width, d }, exceptId))
+                continue;
+            return { lane, d };
+        }
+    }
+    return { lane: startLane % 3, d: d0 + 200 };
+}
+function carsInLane(traffic, laneX, exceptId) {
+    return traffic.filter((c) => c.id !== exceptId &&
+        (Math.abs(c.x - laneX) < c.width / 2 + 1.0 || Math.abs(c.targetX - laneX) < 0.6));
+}
+function gapClear(traffic, laneX, d, exceptId, myLength = 4.5) {
     for (const c of carsInLane(traffic, laneX, exceptId)) {
-        if (Math.abs(c.d - d) < TRAFFIC.safeGap + c.length * 0.5)
+        if (Math.abs(c.d - d) < TRAFFIC.safeGap + (c.length + myLength) * 0.5)
             return false;
     }
     return true;
 }
+/** Nearest car ahead that overlaps my body sideways (real widths, mid-change cars included). */
 function frontCar(traffic, me) {
     let best = null;
     for (const c of traffic) {
         if (c.id === me.id)
             continue;
-        if (Math.abs(c.x - me.x) > 1.5)
+        if (Math.abs(c.x - me.x) > (c.width + me.width) * 0.5 + 0.15)
             continue;
         if (c.d <= me.d)
             continue;
@@ -67,18 +115,21 @@ function frontCar(traffic, me) {
     }
     return best;
 }
+const WALL_LOOKAHEAD = [0.4, 0.8, 1.2, 1.6, 2, 2.4, 2.8, 3.2, 3.6, 4, 4.5, 5, 5.5];
 /** Advance NPCs, lane AI, recycle. Returns overtake events. */
 export function stepTraffic(s, dt) {
     const level = 1 + Math.floor(s.time / SCORE.levelSeconds);
     // Keep relative closing rate high: traffic lags the player more as levels climb.
     const lag = s.mode === 'explore' ? 1 : Math.max(0.72, 1 - Math.min(0.28, (level - 1) * 0.025 + s.time * 0.00035));
     const events = [];
+    const bias = wallBias(s);
     for (const o of s.traffic) {
         const def = VEHICLE_TYPES[o.type];
         const front = frontCar(s.traffic, o);
         let desired = def.preferred +
             (s.mode === 'arcade' ? Math.min(40, (level - 1) * 3.5 + s.time * 0.04) : Math.min(18, s.time * 0.08));
         desired *= lag;
+        desired += bias.get(o.id) ?? 0;
         if (front) {
             const gap = front.d - o.d;
             if (gap < def.gap) {
@@ -89,7 +140,9 @@ export function stepTraffic(s, dt) {
                     const candidates = [myLane - 1, myLane + 1].filter((l) => l >= 0 && l < 3);
                     for (const lane of candidates) {
                         const lx = TRAFFIC.lanes[lane];
-                        if (gapClear(s.traffic, lx, o.d, o.id) && gapClear(s.traffic, lx, o.d + 12, o.id)) {
+                        if (gapClear(s.traffic, lx, o.d, o.id, o.length) &&
+                            gapClear(s.traffic, lx, o.d + 12, o.id, o.length) &&
+                            !formsWall(s.traffic, { x: lx, targetX: lx, width: o.width, d: o.d }, o.id)) {
                             o.targetX = lx;
                             o.state = 'change';
                             o.changeTimer = TRAFFIC.laneChangeCooldown;
@@ -105,8 +158,49 @@ export function stepTraffic(s, dt) {
         else {
             o.state = o.changeTimer > 0 ? 'change' : 'cruise';
         }
+        // Do not drift into a three-lane wall: if moving at this speed would line
+        // me up with cars in the other lanes inside wallSpan, ease off to their pace.
+        if (s.mode === 'arcade' && !formsWall(s.traffic, o, o.id)) {
+            for (const tau of WALL_LOOKAHEAD) {
+                const proxies = s.traffic.map((c) => ({
+                    id: c.id,
+                    x: c.x,
+                    targetX: c.targetX,
+                    width: c.width,
+                    length: c.length,
+                    d: c.d + (c.speed / 3.6) * tau,
+                }));
+                const me = proxies.find((c) => c.id === o.id);
+                if (formsWall(proxies, me, o.id)) {
+                    const slower = Math.min(...s.traffic.filter((c) => c.id !== o.id && Math.abs(c.d - o.d) < 40).map((c) => c.speed), o.speed);
+                    desired = Math.min(desired, slower - 2);
+                    break;
+                }
+            }
+        }
         o.speed += (desired - o.speed) * Math.min(1, dt * (def.accel / 10));
+        if (desired < o.speed - 6)
+            o.speed = Math.max(desired, o.speed - 28 * dt);
+        const prevD = o.d;
         o.d += (o.speed / 3.6) * dt;
+        // Hard hold: a move that would complete a tight three-lane wall is undone
+        // and the car takes the pace of its neighbours instead.
+        if (s.mode === 'arcade' && formsWall(s.traffic, o, o.id, TRAFFIC.wallHold)) {
+            const wasD = o.d;
+            o.d = prevD;
+            if (!formsWall(s.traffic, o, o.id, TRAFFIC.wallHold)) {
+                const near = s.traffic.filter((c) => c.id !== o.id && Math.abs(c.d - o.d) < TRAFFIC.wallHold + 6);
+                const pace = near.length ? Math.min(...near.map((c) => c.speed)) : o.speed;
+                o.speed = Math.min(o.speed, pace);
+                o.d = prevD + Math.min(wasD - prevD, (o.speed / 3.6) * dt);
+                // The slower step may still close the wall: then do not move at all.
+                if (formsWall(s.traffic, o, o.id, TRAFFIC.wallHold))
+                    o.d = prevD;
+            }
+            else {
+                o.d = wasD; // already walled before moving: let the resolver handle it
+            }
+        }
         // Hard separation: an NPC may never overlap the car in front of it,
         // no matter how its speed was set (spawns, blockade gaps, boosts).
         // Without this, fast cars visibly drove through slower ones.
@@ -116,6 +210,14 @@ export function stepTraffic(s, dt) {
                 o.d = front.d - minSep;
                 o.speed = Math.min(o.speed, front.speed);
             }
+        }
+        {
+            // Heading follows the lateral motion of a lane change; the hull uses the same angle.
+            const lat = o.changeTimer > 0 ? (o.targetX - o.x) * 3.4 : 0;
+            const yt = Math.max(-0.14, Math.min(0.14, Math.atan2(lat, Math.max(18, o.speed / 3.6))));
+            o.yaw += (yt - o.yaw) * Math.min(1, dt * 6);
+            if (Math.abs(o.yaw) < 0.002 && yt === 0)
+                o.yaw = 0;
         }
         if (o.changeTimer > 0) {
             o.changeTimer -= dt;
@@ -137,15 +239,12 @@ export function stepTraffic(s, dt) {
             recycleCar(s, o, level);
         }
     }
-    // Avoid full triple-lane wall just ahead of the player (early levels only).
-    if (level < 6)
-        preventBlockade(s, dt);
     return events;
 }
 function recycleCar(s, o, level) {
     const maxD = Math.max(...s.traffic.map((x) => x.d), s.d);
     const gap = packGap(level, s.mode);
-    let d = maxD + gap + Math.random() * (8 + Math.max(0, 14 - level));
+    let d = maxD + gap * 0.6 + Math.random() * (6 + Math.max(0, 10 - level));
     // Keep the pack near the player so the road stays busy.
     const aheadCap = TRAFFIC.spawnAheadMin + 20 + Math.random() * 55;
     if (d - s.d > TRAFFIC.spawnAheadMax)
@@ -154,33 +253,13 @@ function recycleCar(s, o, level) {
         d = s.d + TRAFFIC.spawnAheadMin + Math.random() * 24;
     const type = pickType(level);
     const def = VEHICLE_TYPES[type];
-    // Find a lane with room; if every lane is blocked at this d, push the spawn
-    // further out instead of dropping the car on top of someone (the following
-    // hard separation clamp would then have to snap it back, which reads as a
-    // visible jump).
-    let lane = Math.floor(Math.random() * 3);
-    let placed = false;
-    for (let nudge = 0; nudge < 4 && !placed; nudge++) {
-        for (let attempt = 0; attempt < 6; attempt++) {
-            const lx = TRAFFIC.lanes[lane];
-            if (gapClear(s.traffic, lx, d, o.id)) {
-                placed = true;
-                break;
-            }
-            lane = (lane + 1) % 3;
-        }
-        if (!placed)
-            d += TRAFFIC.safeGap + 6;
-    }
-    if (!placed) {
-        // Pack is full at every reachable depth: spawn just past the farthest car
-        // (clear of every lane by construction) instead of on top of someone. The
-        // extra meters sit inside the far fog fade, so this is never visible.
-        d = Math.max(...s.traffic.map((x) => x.d), s.d) + gap + 8;
-    }
+    // Lane and depth with real road clear and no three-lane wall; if the pack is
+    // too dense, slide further out (fog zone) rather than overlap or wall.
+    const others = s.traffic.filter((x) => x.id !== o.id);
+    const slot = findSlot(others, d, Math.floor(Math.random() * 3), def.w, def.l, o.id);
     o.id = s.nextTrafficId++;
-    o.d = d;
-    o.x = TRAFFIC.lanes[lane];
+    o.d = slot.d;
+    o.x = TRAFFIC.lanes[slot.lane];
     o.targetX = o.x;
     o.passed = false;
     o.type = type;
@@ -189,33 +268,79 @@ function recycleCar(s, o, level) {
     o.length = def.l;
     o.state = 'cruise';
     o.changeTimer = 0;
+    o.yaw = 0;
     o.color = COLORS[o.id % COLORS.length];
 }
-function preventBlockade(s, dt) {
-    const ahead = s.traffic.filter((c) => {
-        const z = c.d - s.d;
-        return z > 8 && z < 40;
-    });
-    const lanes = new Set(ahead.map((c) => Math.round(c.x)));
-    if (lanes.size < 3)
-        return;
-    // Open a gap in the wall WITHOUT rockets: pick the wall car with the most
-    // room ahead and let it pull away gently (dt-scaled, capped). The old code
-    // teleported it +28 m (read as "the car ahead disappears"); the next one
-    // stacked +26 km/h per frame on the right car, which launched it forward
-    // and made it phase through slower cars in its lane.
-    let best = null;
-    let bestGap = -1;
-    for (const c of ahead) {
-        const front = frontCar(s.traffic, c);
-        const gap = front ? front.d - c.d : 1e9;
-        if (gap > bestGap) {
-            bestGap = gap;
-            best = c;
+/** Cars (one per lane) that currently form a wall inside TRAFFIC.wallSpan. */
+function findWall(s, tau) {
+    const S = TRAFFIC.wallSpan;
+    const proj = s.traffic
+        .filter((c) => c.d - s.d > -6 && c.d - s.d < 300)
+        .map((c) => ({ c, d: c.d + (c.speed / 3.6) * tau }))
+        .sort((a, b) => a.d - b.d);
+    for (const p of proj) {
+        const pick = [undefined, undefined, undefined];
+        for (const q of proj) {
+            if (q.d < p.d || q.d > p.d + S)
+                continue;
+            for (let i = 0; i < 3; i++)
+                if (!pick[i] && blocksLane(q.c, i))
+                    pick[i] = q.c;
         }
+        if (pick[0] && pick[1] && pick[2])
+            return Array.from(new Set(pick));
     }
-    if (!best || bestGap < 26)
-        return; // nowhere safe to accelerate into
-    const def = VEHICLE_TYPES[best.type];
-    best.speed = Math.min(best.speed + 11 * dt, def.preferred + 18);
+    return null;
+}
+/**
+ * Dissolve walls instead of preventing them only at spawn: cars drift at
+ * different speeds, so a wall can form later. Resolve it dt-scaled (no
+ * teleports near the player): the member with the most road ahead pulls away
+ * while the member with the most room behind eases off. Far in the fog
+ * (beyond view) a clear slot is taken directly.
+ */
+function wallBias(s) {
+    const bias = new Map();
+    if (s.mode !== 'arcade')
+        return bias;
+    for (const tau of [0, 1, 2, 3, 4, 5, 6]) {
+        const wall = findWall(s, tau);
+        if (!wall)
+            continue;
+        const rank = wall.map((c) => {
+            const front = frontCar(s.traffic, c);
+            const ahead = front ? front.d - front.length / 2 - (c.d + c.length / 2) : 1e9;
+            let behind = 1e9;
+            for (const r of s.traffic) {
+                if (r.id === c.id || r.d >= c.d)
+                    continue;
+                if (Math.abs(r.x - c.x) > (r.width + c.width) * 0.5 + 0.15)
+                    continue;
+                behind = Math.min(behind, c.d - c.length / 2 - (r.d + r.length / 2));
+            }
+            return { c, ahead, behind };
+        });
+        const far = rank.filter((r) => r.c.d - s.d > 440);
+        if (far.length) {
+            // Invisible zone: relocate the car with most room to a wall-free slot.
+            const m = far.sort((a, b) => b.ahead - a.ahead)[0].c;
+            const rest = s.traffic.filter((x) => x.id !== m.id);
+            const slot = findSlot(rest, m.d + 6, TRAFFIC.lanes.indexOf(m.targetX), m.width, m.length, m.id);
+            if (slot.d - s.d > 440) {
+                m.d = slot.d;
+                m.x = m.targetX = TRAFFIC.lanes[slot.lane];
+                m.changeTimer = 0;
+                m.yaw = 0;
+                break;
+            }
+        }
+        const fwd = rank.slice().sort((a, b) => b.ahead - a.ahead)[0];
+        const back = rank.filter((r) => r !== fwd).sort((a, b) => b.behind - a.behind)[0];
+        if (fwd.ahead >= 18)
+            bias.set(fwd.c.id, 30);
+        if (back && back.behind >= 18)
+            bias.set(back.c.id, -40);
+        break;
+    }
+    return bias;
 }

@@ -1,3 +1,4 @@
+import { safeFork } from './tunnel.js';
 import { EXIT, SCORE } from './config.js';
 import { award, type ScorePopup } from './ScoreManager.js';
 import type { CatalogGroup, RunState } from './types.js';
@@ -58,7 +59,7 @@ export function stepRoute(
     }
   } else if (q > 90) {
     const gap = s.mode === 'explore' ? EXIT.exploreGap : EXIT.nextGap;
-    s.fork = s.d + gap;
+    s.fork = safeFork(s.d + gap);
     s.exit = (s.exit + 1) % sections.length;
   }
 

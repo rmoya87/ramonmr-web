@@ -1,3 +1,4 @@
+import { safeFork } from './tunnel.js';
 import { EXIT, PHYSICS, SCORE, type EnvironmentId, type GameMode, type WeatherId } from './config.js';
 import { livesRemaining, resolveCollisions, isShoulder } from './CollisionManager.js';
 import { stepCamera } from './CameraController.js';
@@ -164,7 +165,7 @@ export function hudSnapshot(s: RunState, sections: CatalogGroup[], en: boolean) 
 
 export function resumeFromWorkshop(s: RunState, sectionCount: number): void {
   s.exit = (s.exit + 1) % Math.max(1, sectionCount);
-  s.fork = s.d + (s.mode === 'explore' ? EXIT.exploreGap : 520);
+  s.fork = safeFork(s.d + (s.mode === 'explore' ? EXIT.exploreGap : 520));
   s.branch = false;
   s.branchTime = 0;
   s.exitHold = 0;

@@ -2,8 +2,10 @@ import * as THREE from 'three';
 import { BIOMES, biomeForEnv, effectiveNight } from '../../game/EnvironmentManager.js';
 import { cameraPose } from '../../game/CameraController.js';
 import { LOOK } from '../../look.js';
-import { curve, depthPresence, inExitClearance, mirrorChaseProjection, ramp } from './path.js';
+import { curve, roadYaw, depthPresence, inExitClearance, mirrorChaseProjection, ramp } from './path.js';
 import { PropField } from './Props.js';
+import { TunnelField } from './Tunnel.js';
+import { tunnelAmount } from '../../game/tunnel.js';
 import { createVehicle, setVehicleLights } from './Vehicles.js';
 function hex(c) {
     return new THREE.Color(c).getHex();
@@ -87,6 +89,7 @@ export class RoadWorld {
         this.camera = new THREE.PerspectiveCamera(50, 1, 0.2, 560);
         this.roadGroup = new THREE.Group();
         this.props = new PropField();
+        this.tunnel = new TunnelField();
         this.traffic = new Map();
         this.roadMesh = null;
         this.vergeL = null;
@@ -119,6 +122,7 @@ export class RoadWorld {
         this.scene.add(this.hemi, this.sun, this.fill);
         this.scene.add(this.roadGroup);
         this.scene.add(this.props.root);
+        this.scene.add(this.tunnel.root);
         const skyGeo = new THREE.SphereGeometry(420, 32, 20);
         const skyMat = new THREE.ShaderMaterial({
             side: THREE.BackSide,
@@ -439,8 +443,8 @@ export class RoadWorld {
             this.player.userData.color = opts.color;
         }
         this.player.position.set(px, 0, 0.02);
-        // Locked to chase +Z; no yaw (yaw made the body read “de lado”).
-        this.player.rotation.set(0, 0, THREE.MathUtils.clamp(-s.vx * 0.004, -0.04, 0.04));
+        // Road tangent plus the simulated yaw (the collision hull uses the same yaw).
+        this.player.rotation.set(0, roadYaw(s.d, 0) + s.yaw, THREE.MathUtils.clamp(-s.vx * 0.004, -0.04, 0.04));
         setVehicleLights(this.player, opts.lights, opts.brake);
         // Arcade hit flash while invulnerable (~7 Hz).
         const blinkOn = s.inv <= 0 || Math.floor(s.inv * 14) % 2 === 0;
@@ -477,7 +481,8 @@ export class RoadWorld {
             }
             const x = curve(s.d + z) - base + t.x;
             mesh.position.set(x, 0, z);
-            mesh.rotation.set(0, 0, 0);
+            // Road tangent (curves) plus the simulated heading; the hull uses the same heading.
+            mesh.rotation.set(0, roadYaw(s.d, z) + t.yaw, 0);
             const sc = 0.35 + 0.65 * presence;
             mesh.scale.setScalar(sc);
             mesh.visible = true;
@@ -486,6 +491,15 @@ export class RoadWorld {
         for (const [id, mesh] of this.traffic) {
             if (!seen.has(id))
                 mesh.visible = false;
+        }
+        this.tunnel.sync(s, opts.quality.drawDistance);
+        // Ease the light down inside a tunnel.
+        const inside = tunnelAmount(s.d);
+        if (inside > 0) {
+            this.hemi.intensity *= 1 - 0.28 * inside;
+            this.sun.intensity *= 1 - 0.8 * inside;
+            this.fill.intensity *= 1 - 0.5 * inside;
+            this.scene.fog.color.lerp(new THREE.Color(0x30363a), 0.6 * inside);
         }
         if (!opts.reduceEffects) {
             this.props.sync(s, opts.environment, opts.quality.drawDistance, opts.quality.propStep);

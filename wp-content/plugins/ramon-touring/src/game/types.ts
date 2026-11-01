@@ -11,6 +11,8 @@ export type TrafficCar = {
   speed: number;
   state: 'cruise' | 'follow' | 'change' | 'merge';
   changeTimer: number;
+  /** Heading relative to the road (rad). Same value drives the model and the hull. */
+  yaw: number;
   width: number;
   length: number;
 };

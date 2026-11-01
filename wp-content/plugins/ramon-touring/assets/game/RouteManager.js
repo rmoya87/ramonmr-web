@@ -1,3 +1,4 @@
+import { safeFork } from './tunnel.js';
 import { EXIT, SCORE } from './config.js';
 import { award } from './ScoreManager.js';
 /** Mirror of world.ramp for exit capture without circular imports during tests. */
@@ -41,7 +42,7 @@ export function stepRoute(s, sections, dt, confirmHeld, isCoarsePointer, now, en
     }
     else if (q > 90) {
         const gap = s.mode === 'explore' ? EXIT.exploreGap : EXIT.nextGap;
-        s.fork = s.d + gap;
+        s.fork = safeFork(s.d + gap);
         s.exit = (s.exit + 1) % sections.length;
     }
     // Discover zone bonus once per region when approaching first exit of region

@@ -1,5 +1,5 @@
 /** Centralized tunable constants for RM Touring Lab 2.0 */
-export const VERSION = '3.1.0';
+export const VERSION = '3.2.0';
 export const SCORE_VERSION = 2;
 
 export const FIXED_DT = 1 / 60;
@@ -37,15 +37,16 @@ export const PHYSICS = {
   rainGripMul: 0.85,
 } as const;
 
+/** Player hull = the visible hatch (1.86 x 4.3) so contact matches what you see. */
 export const COLLISION = {
-  length: 4,
-  width: 1.65,
+  length: 4.3,
+  width: 1.84,
 } as const;
 
 export const TRAFFIC = {
   lanes: [-4, 0, 4] as const,
   /** Dense arcade pack; recycle packs tighter each level. */
-  poolArcade: 26,
+  poolArcade: 24,
   poolExplore: 8,
   spawnAheadMin: 48,
   spawnAheadMax: 160,
@@ -54,6 +55,14 @@ export const TRAFFIC = {
   safeGap: 12,
   laneChangeCooldown: 1.4,
   overtakeCloseDist: 2.0,
+  /**
+   * Reachable-gap rule: cars that block all three lanes may never sit inside
+   * the same stretch of road this long (centre to centre, metres). Anything
+   * tighter is an unpassable wall.
+   */
+  wallSpan: 22,
+  /** Hard floor enforced every step: no car may move into a wall tighter than this. */
+  wallHold: 16,
 } as const;
 
 export const SCORE = {
@@ -110,11 +119,13 @@ export type QualityProfile = 'low' | 'medium' | 'high' | 'auto';
 export type WeatherId = 'clear' | 'cloudy' | 'rain' | 'fog' | 'sunset';
 
 export const VEHICLE_TYPES = {
-  sedan: { w: 1.7, l: 4.2, preferred: 95, accel: 10, gap: 16, overtake: 0.35 },
-  sport: { w: 1.75, l: 4.1, preferred: 125, accel: 16, gap: 14, overtake: 0.7 },
-  van: { w: 1.9, l: 5.0, preferred: 85, accel: 7, gap: 20, overtake: 0.2 },
-  truck: { w: 2.2, l: 7.5, preferred: 75, accel: 5, gap: 28, overtake: 0.08 },
-  slow: { w: 1.65, l: 3.8, preferred: 60, accel: 4, gap: 18, overtake: 0.05 },
+  sedan: { w: 1.82, l: 4.5, preferred: 95, accel: 10, gap: 16, overtake: 0.35 },
+  sport: { w: 1.88, l: 4.4, preferred: 125, accel: 16, gap: 14, overtake: 0.7 },
+  van: { w: 2.0, l: 5.3, preferred: 85, accel: 7, gap: 20, overtake: 0.2 },
+  truck: { w: 2.45, l: 8.4, preferred: 75, accel: 5, gap: 28, overtake: 0.08 },
+  slow: { w: 1.7, l: 3.7, preferred: 60, accel: 4, gap: 18, overtake: 0.05 },
+  bus: { w: 2.55, l: 11.5, preferred: 70, accel: 4, gap: 30, overtake: 0.05 },
+  moto: { w: 0.85, l: 2.2, preferred: 135, accel: 20, gap: 12, overtake: 0.8 },
 } as const;
 
 export type VehicleTypeId = keyof typeof VEHICLE_TYPES;

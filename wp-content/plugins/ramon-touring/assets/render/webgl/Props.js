@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js';
 import { BIOMES, biomeForEnv } from '../../game/EnvironmentManager.js';
 import { LOOK } from '../../look.js';
 import { curve, depthPresence, inExitClearance, ramp } from './path.js';
@@ -98,6 +99,223 @@ function makeBuilding() {
     }
     return g;
 }
+const FACADES = [
+    { wall: '#b9a58c', win: '#27394a', lit: '#f6d98a', cols: 4, h: 22, w: 12 },
+    { wall: '#8c98a4', win: '#1d2b3a', lit: '#e8ecc0', cols: 5, h: 38, w: 11 },
+    { wall: '#a8574a', win: '#2a2f38', lit: '#f6cf80', cols: 4, h: 17, w: 13 },
+    { wall: '#d6d2c6', win: '#33495c', lit: '#f2e6b0', cols: 6, h: 30, w: 12 },
+    { wall: '#5d7f93', win: '#142536', lit: '#cfe8f4', cols: 6, h: 46, w: 10 },
+    { wall: '#c8b38a', win: '#3a3f46', lit: '#f6dc98', cols: 5, h: 26, w: 12 },
+];
+const facadeTex = new Map();
+const facadeBump = new Map();
+/** Relief map: walls high, windows recessed, floor bands as ledges. */
+function facadeBumpTexture(i) {
+    let tex = facadeBump.get(i);
+    if (tex)
+        return tex;
+    const f = FACADES[i];
+    const rows = Math.round(f.h / 3.2);
+    const cw = 24, ch = 28;
+    const c = document.createElement('canvas');
+    c.width = f.cols * cw;
+    c.height = rows * ch;
+    const x = c.getContext('2d');
+    x.fillStyle = '#c8c8c8';
+    x.fillRect(0, 0, c.width, c.height);
+    x.fillStyle = '#ffffff';
+    for (let r = 0; r < rows; r++)
+        x.fillRect(0, r * ch + ch - 4, c.width, 4);
+    x.fillStyle = '#202020';
+    for (let r = 1; r < rows; r++)
+        for (let col = 0; col < f.cols; col++)
+            x.fillRect(col * cw + 5, r * ch + 5, cw - 10, ch - 13);
+    x.fillStyle = '#303030';
+    x.fillRect(0, 0, c.width, ch);
+    tex = new THREE.CanvasTexture(c);
+    tex.anisotropy = 4;
+    facadeBump.set(i, tex);
+    return tex;
+}
+/** Window grid painted once per facade; lit windows scattered so it reads as a real street. */
+function facadeTexture(i) {
+    let tex = facadeTex.get(i);
+    if (tex)
+        return tex;
+    const f = FACADES[i];
+    const rows = Math.round(f.h / 3.2);
+    const cw = 24, ch = 28;
+    const c = document.createElement('canvas');
+    c.width = f.cols * cw;
+    c.height = rows * ch;
+    const x = c.getContext('2d');
+    x.fillStyle = f.wall;
+    x.fillRect(0, 0, c.width, c.height);
+    // floor bands
+    x.fillStyle = 'rgba(0,0,0,0.10)';
+    for (let r = 0; r < rows; r++)
+        x.fillRect(0, r * ch + ch - 3, c.width, 3);
+    let seed = 17 + i * 31;
+    const rnd = () => ((seed = (seed * 1103515245 + 12345) & 0x7fffffff) / 0x7fffffff);
+    for (let r = 1; r < rows; r++) {
+        for (let col = 0; col < f.cols; col++) {
+            const lit = rnd() < 0.28;
+            x.fillStyle = lit ? f.lit : f.win;
+            x.fillRect(col * cw + 5, r * ch + 5, cw - 10, ch - 13);
+            x.fillStyle = 'rgba(255,255,255,0.14)';
+            x.fillRect(col * cw + 5, r * ch + 5, cw - 10, 2);
+        }
+    }
+    // shopfront row at street level
+    x.fillStyle = '#26303a';
+    x.fillRect(0, 0, c.width, ch);
+    x.fillStyle = '#e8c070';
+    for (let col = 0; col < f.cols; col++)
+        x.fillRect(col * cw + 3, 6, cw - 6, ch - 10);
+    tex = new THREE.CanvasTexture(c);
+    tex.colorSpace = THREE.SRGBColorSpace;
+    tex.anisotropy = 4;
+    facadeTex.set(i, tex);
+    return tex;
+}
+/** Street-front tower with a painted window grid, roof parapet and rooftop gear. Local x 0..depth. */
+function makeTower(i) {
+    const f = FACADES[i];
+    const g = new THREE.Group();
+    const depth = 12;
+    const wallCol = new THREE.Color(f.wall);
+    const mapFace = (shade, bump) => new THREE.MeshStandardMaterial({ map: facadeTexture(i), ...(bump ? { bumpMap: facadeBumpTexture(i), bumpScale: 3 } : {}), roughness: 0.85, color: new THREE.Color(shade, shade, shade) });
+    const front = mapFace(1, true);
+    const lambertFace = (shade) => new THREE.MeshLambertMaterial({ map: facadeTexture(i), color: new THREE.Color(shade, shade, shade) });
+    const flank = lambertFace(0.62);
+    const back = lambertFace(0.45);
+    const roofM = new THREE.MeshLambertMaterial({ color: 0x555a5c });
+    // +x, -x (road side), +y, -y, +z, -z
+    const mats = [back, front, roofM, roofM, flank, flank];
+    const body = new THREE.Mesh(new THREE.BoxGeometry(depth, f.h, 13), mats);
+    body.position.set(depth / 2, f.h / 2, 0);
+    body.castShadow = true;
+    g.add(body);
+    const trimM = new THREE.MeshLambertMaterial({ color: wallCol.clone().multiplyScalar(0.72) });
+    // Real relief on the road-facing side: pilasters between window columns and projecting floor ledges.
+    const parts = [];
+    const box = (w, h, d, x, y, z) => {
+        const bg = new THREE.BoxGeometry(w, h, d);
+        bg.translate(x, y, z);
+        parts.push(bg);
+    };
+    const colW = 13 / f.cols;
+    for (let c = 0; c <= f.cols; c++)
+        box(0.3, f.h - 3.2, 0.5, -0.15, 3.2 + (f.h - 3.2) / 2, -6.5 + c * colW);
+    const floors = Math.round(f.h / 3.2);
+    for (let r = 2; r < floors; r += 3)
+        box(0.35, 0.28, 13.4, -0.17, r * 3.2, 0);
+    box(0.6, 0.35, 13.6, -0.3, f.h - 0.1, 0); // cornice
+    box(0.8, 0.2, 13.2, -0.4, 3.7, 0); // shopfront canopy
+    // Stepped crown so the skyline has depth (merged into the trim mesh: no extra draw call).
+    if (f.h > 24)
+        box(depth * 0.7, f.h * 0.14, 9, depth * 0.55, f.h + f.h * 0.07, 0);
+    g.add(new THREE.Mesh(mergeGeometries(parts), trimM));
+    const rim = new THREE.Mesh(new THREE.BoxGeometry(depth + 0.5, 0.7, 13.5), new THREE.MeshStandardMaterial({ color: 0x6a6e70 }));
+    rim.position.set(depth / 2, f.h + 0.35, 0);
+    g.add(rim);
+    const roofY = f.h > 24 ? f.h * 1.14 : f.h;
+    const tank = new THREE.Mesh(new THREE.CylinderGeometry(1.1, 1.1, 2.2, 12), new THREE.MeshStandardMaterial({ color: 0x8a6a4c }));
+    tank.position.set(depth * 0.3, f.h + 1.8, 2);
+    g.add(tank);
+    const ac = new THREE.Mesh(new THREE.BoxGeometry(2.4, 1.1, 1.8), new THREE.MeshStandardMaterial({ color: 0x9aa2a6 }));
+    ac.position.set(depth * 0.65, f.h + 1.2, -2.5);
+    g.add(ac);
+    if (i === 1 || i === 4) {
+        const mast = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.14, 7, 6), new THREE.MeshStandardMaterial({ color: 0xcfd3d6 }));
+        mast.position.set(depth * 0.5, roofY + 3.5, 0);
+        g.add(mast);
+    }
+    return g;
+}
+function makeLamp() {
+    const g = new THREE.Group();
+    const steel = new THREE.MeshStandardMaterial({ color: 0x3a4248, metalness: 0.5, roughness: 0.5 });
+    const pole = new THREE.Mesh(new THREE.CylinderGeometry(0.07, 0.1, 6.8, 8), steel);
+    pole.position.y = 3.4;
+    const arm = new THREE.Mesh(new THREE.BoxGeometry(2.2, 0.1, 0.1), steel);
+    arm.position.set(-1.0, 6.7, 0);
+    const head = new THREE.Mesh(new THREE.BoxGeometry(0.8, 0.14, 0.34), new THREE.MeshStandardMaterial({ color: 0xfff1c8, emissive: 0xffe08a, emissiveIntensity: 1.3 }));
+    head.position.set(-2.0, 6.62, 0);
+    g.add(pole, arm, head);
+    return g;
+}
+function makeStreetTree() {
+    const g = new THREE.Group();
+    const trunk = new THREE.Mesh(new THREE.CylinderGeometry(0.14, 0.2, 2.2, 8), new THREE.MeshStandardMaterial({ color: LOOK.bark }));
+    trunk.position.y = 1.1;
+    g.add(trunk);
+    for (const [ox, oy, oz, r] of [[0, 3.2, 0, 1.5], [0.7, 2.8, 0.3, 1.0], [-0.6, 2.9, -0.3, 1.1]]) {
+        const c = new THREE.Mesh(new THREE.IcosahedronGeometry(r, 1), new THREE.MeshStandardMaterial({ color: LOOK.foliage[1], flatShading: true }));
+        c.position.set(ox, oy, oz);
+        g.add(c);
+    }
+    return g;
+}
+function makeCactus() {
+    const g = new THREE.Group();
+    const m = new THREE.MeshStandardMaterial({ color: '#5f8a4f', flatShading: true });
+    const trunk = new THREE.Mesh(new THREE.CapsuleGeometry(0.28, 2.4, 4, 10), m);
+    trunk.position.y = 1.5;
+    g.add(trunk);
+    for (const s of [-1, 1]) {
+        const arm = new THREE.Mesh(new THREE.CapsuleGeometry(0.18, 0.9, 4, 8), m);
+        arm.position.set(s * 0.55, 1.9 + (s > 0 ? 0.3 : 0), 0);
+        g.add(arm);
+        const up = new THREE.Mesh(new THREE.CapsuleGeometry(0.17, 0.7, 4, 8), m);
+        up.position.set(s * 0.82, 2.55 + (s > 0 ? 0.3 : 0), 0);
+        g.add(up);
+    }
+    return g;
+}
+function makeMesa() {
+    const g = new THREE.Group();
+    const layers = ['#b4693e', '#c47c4a', '#a45a38', '#cf8d58'];
+    let y = 0;
+    [[9, 4], [8, 3.2], [7, 3], [6, 2.4]].forEach(([r, h], i) => {
+        const l = new THREE.Mesh(new THREE.CylinderGeometry(r * 0.9, r, h, 9), new THREE.MeshStandardMaterial({ color: layers[i], flatShading: true }));
+        l.position.y = y + h / 2;
+        y += h;
+        g.add(l);
+    });
+    return g;
+}
+function makeCabin() {
+    const g = new THREE.Group();
+    const wall = new THREE.Mesh(new THREE.BoxGeometry(4.4, 2.4, 3.6), new THREE.MeshStandardMaterial({ color: '#8a6a4a', flatShading: true }));
+    wall.position.y = 1.2;
+    const roof = new THREE.Mesh(new THREE.ConeGeometry(3.6, 1.8, 4), new THREE.MeshStandardMaterial({ color: '#8f3b30', flatShading: true }));
+    roof.rotation.y = Math.PI / 4;
+    roof.scale.set(1.1, 1, 0.9);
+    roof.position.y = 3.3;
+    const chim = new THREE.Mesh(new THREE.BoxGeometry(0.5, 1.3, 0.5), new THREE.MeshStandardMaterial({ color: '#6b6560' }));
+    chim.position.set(1.3, 3.8, 0.5);
+    const door = new THREE.Mesh(new THREE.BoxGeometry(0.8, 1.5, 0.08), new THREE.MeshStandardMaterial({ color: '#4a3424' }));
+    door.position.set(0, 0.75, 1.82);
+    const win = new THREE.Mesh(new THREE.BoxGeometry(0.8, 0.7, 0.08), new THREE.MeshStandardMaterial({ color: '#f2d890', emissive: '#c9a050', emissiveIntensity: 0.4 }));
+    win.position.set(1.3, 1.4, 1.82);
+    g.add(wall, roof, chim, door, win);
+    return g;
+}
+function makeLighthouse() {
+    const g = new THREE.Group();
+    for (let i = 0; i < 4; i++) {
+        const seg = new THREE.Mesh(new THREE.CylinderGeometry(1.4 - i * 0.14 - 0.1, 1.4 - i * 0.14, 2.6, 14), new THREE.MeshStandardMaterial({ color: i % 2 ? '#c8402f' : '#f2efe6', flatShading: true }));
+        seg.position.y = 1.3 + i * 2.6;
+        g.add(seg);
+    }
+    const lamp = new THREE.Mesh(new THREE.CylinderGeometry(0.8, 0.8, 1.2, 12), new THREE.MeshStandardMaterial({ color: '#fff3c0', emissive: '#ffd870', emissiveIntensity: 1.2 }));
+    lamp.position.y = 11;
+    const cap = new THREE.Mesh(new THREE.ConeGeometry(1.1, 1.0, 12), new THREE.MeshStandardMaterial({ color: '#333a40' }));
+    cap.position.y = 12.1;
+    g.add(lamp, cap);
+    return g;
+}
 function makeBollard() {
     const g = new THREE.Group();
     const post = new THREE.Mesh(new THREE.CylinderGeometry(0.12, 0.14, 0.85, 8), new THREE.MeshStandardMaterial({ color: LOOK.chalk, roughness: 0.7 }));
@@ -144,6 +362,18 @@ const templates = {
     bollard: makeBollard,
     fence: makeFence,
     guard: makeGuard,
+    tower0: () => makeTower(0),
+    tower1: () => makeTower(1),
+    tower2: () => makeTower(2),
+    tower3: () => makeTower(3),
+    tower4: () => makeTower(4),
+    tower5: () => makeTower(5),
+    lamp: makeLamp,
+    streetTree: makeStreetTree,
+    cactus: makeCactus,
+    mesa: makeMesa,
+    cabin: makeCabin,
+    lighthouse: makeLighthouse,
 };
 /** Pooled roadside props synced from run distance. */
 export class PropField {
@@ -170,7 +400,7 @@ export class PropField {
         this.active++;
         return g;
     }
-    place(kind, x, z, baseScale, farZ, rotY = 0) {
+    place(kind, x, z, baseScale, farZ, rotY = 0, zMul = 1, flatGrow = false) {
         const presence = depthPresence(z, farZ, -12, 70, 18);
         if (presence < 0.02)
             return;
@@ -179,7 +409,7 @@ export class PropField {
         g.rotation.y = rotY;
         // Grow up from the ground while fading in/out so pop-in never reads as a hard cut.
         const s = baseScale * presence;
-        g.scale.set(s, s * (0.55 + 0.45 * presence), s);
+        g.scale.set(s, flatGrow ? s : s * (0.55 + 0.45 * presence), s * zMul);
         g.visible = true;
     }
     sync(s, env, drawDistance, propStep) {
@@ -209,11 +439,22 @@ export class PropField {
                     this.place('palm', x - leftOff - 0.5, z, 0.95 + (n % 4) * 0.08, farZ);
                 if (n % 4 === 0)
                     this.place('palm', x + rightOff + 4, z + 3, 0.8, farZ);
+                if (n % 17 === 5)
+                    this.place('lighthouse', x + rightOff + 16, z, 1.2, farZ);
             }
             else if (biomeId === 2) {
-                this.place('building', x + rightOff + 1, z, 0.9 + (n % 3) * 0.12, farZ);
-                if (n % 2 === 0)
-                    this.place('building', x - leftOff - 2, z + 2, 0.75, farZ);
+                // City: a continuous street front of varied towers, set back from the road.
+                const inR = t > -20 && t < 330;
+                const cityR = inR ? ramp(Math.max(0, t)) + 6 : 11.5;
+                const zMul = (step * 0.97) / 13;
+                const kr = (((n * 7 + 3) % 6) + 6) % 6;
+                const kl = (((n * 5 + 1) % 6) + 6) % 6;
+                this.place(('tower' + kr), x + cityR, z, 1, farZ, 0, zMul, true);
+                this.place(('tower' + kl), x - 11, z, 1, farZ, Math.PI, zMul, true);
+                if (n % 2 === 0 && !inR)
+                    this.place('streetTree', x + 9.6, z + step * 0.5, 1, farZ);
+                if (n % 2 === 1)
+                    this.place('streetTree', x - 9.4, z + step * 0.5, 1, farZ);
             }
             else if (biomeId === 3) {
                 this.place('rock', x + rightOff, z, 1, farZ);
@@ -221,6 +462,14 @@ export class PropField {
                     this.place('rock', x - leftOff, z + 1, 0.7, farZ);
                 if (n % 3 === 0)
                     this.place('bush', x + rightOff - 2, z, 1, farZ);
+                if (n % 2 === 1)
+                    this.place('cactus', x + rightOff - 3, z + jitter, 0.9 + (n % 3) * 0.2, farZ);
+                if (n % 5 === 0)
+                    this.place('cactus', x - leftOff + 1, z, 1.1, farZ);
+                if (n % 6 === 2)
+                    this.place('mesa', x + rightOff + 34 + (n % 3) * 8, z, 1.1, farZ);
+                if (n % 7 === 3)
+                    this.place('mesa', x - leftOff - 38, z, 0.9, farZ);
             }
             else if (biomeId === 4) {
                 // Sober snow fields: sparse dark tree line, no fences or bushes near the road.
@@ -238,6 +487,8 @@ export class PropField {
                     this.place('bush', x + rightOff - 2.5, z + 1.5, 1, farZ);
                 if (n % 4 === 0)
                     this.place('fence', x + 8.2, z, 1, farZ, 0.1);
+                if (n % 11 === 4)
+                    this.place('cabin', x - leftOff - 5, z, 1, farZ, -Math.PI / 2);
             }
         }
         const railFar = Math.min(220, farZ);
@@ -264,10 +515,14 @@ export class PropField {
             const x = curve(s.d + z) - base;
             const t = world - s.fork;
             const exitZone = inExitClearance(t);
+            const cityHere = (biomeForEnv(env) >= 0 ? biomeForEnv(env) : Math.floor(world / 1600) % BIOMES.length) === 2;
             for (const side of [-1, 1]) {
                 if (side > 0 && exitZone)
                     continue;
-                this.place('bollard', x + side * 6.85, z, 1, postFar);
+                if (cityHere)
+                    this.place('lamp', x + side * 7.7, z, 1, postFar, side > 0 ? 0 : Math.PI, 1, true);
+                else
+                    this.place('bollard', x + side * 6.85, z, 1, postFar);
             }
         }
         for (let i = this.active; i < this.pool.length; i++)
