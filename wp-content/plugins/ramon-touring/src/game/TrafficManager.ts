@@ -29,6 +29,22 @@ function makeCar(id: number, d: number, lane: number, type: VehicleTypeId): Traf
 }
 
 /** Tighter packs as level climbs — late game should force crashes. */
+/**
+ * Open-lane plan along the road: in every ~140 m stretch one lane gets no new
+ * traffic, and the open lane only ever shifts to a neighbouring lane. So some
+ * lane is always open, and every lane carries cars in turn.
+ */
+const OPEN_SEG = 140;
+let openSeq: number[] = [1];
+function openLaneAt(d: number): number {
+  const k = Math.max(0, Math.floor(d / OPEN_SEG));
+  while (openSeq.length <= k) {
+    const last = openSeq[openSeq.length - 1];
+    openSeq.push(last === 1 ? (Math.random() < 0.5 ? 0 : 2) : 1);
+  }
+  return openSeq[k];
+}
+
 function packGap(level: number, mode: RunState['mode']): number {
   if (mode === 'explore') return TRAFFIC.minGap * 1.5;
   const shrink = Math.min(12, (level - 1) * 1.35 + level * 0.4);
@@ -38,6 +54,7 @@ function packGap(level: number, mode: RunState['mode']): number {
 export function createInitialTraffic(mode: 'arcade' | 'explore'): { traffic: TrafficCar[]; nextId: number } {
   const n = mode === 'explore' ? TRAFFIC.poolExplore : TRAFFIC.poolArcade;
   const traffic: TrafficCar[] = [];
+  openSeq = [1];
   let nextId = 1;
   const step = mode === 'explore' ? 24 : 11;
   for (let i = 0; i < n; i++) {
@@ -92,8 +109,11 @@ function findSlot(
 ): { lane: number; d: number } {
   for (let nudge = 0; nudge < 40; nudge++) {
     const d = d0 + nudge * 5;
-    for (let k = 0; k < 3; k++) {
-      const lane = (startLane + k) % 3;
+    const open = openLaneAt(d);
+    const load = [0, 1, 2].map((l) => traffic.filter((c) => c.id !== exceptId && Math.abs(c.d - d) < 90 && blocksLane(c, l)).length);
+    const order = [0, 1, 2].filter((l) => l !== open).sort((a, b) => load[a] - load[b]);
+    for (let k = 0; k < order.length; k++) {
+      const lane = order[k];
       const lx = TRAFFIC.lanes[lane];
       if (!gapClear(traffic, lx, d, exceptId, length)) continue;
       if (formsWall(traffic, { x: lx, targetX: lx, width, d }, exceptId)) continue;

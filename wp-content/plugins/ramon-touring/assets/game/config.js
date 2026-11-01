@@ -56,9 +56,9 @@ export const TRAFFIC = {
      * the same stretch of road this long (centre to centre, metres). Anything
      * tighter is an unpassable wall.
      */
-    wallSpan: 22,
+    wallSpan: 30,
     /** Hard floor enforced every step: no car may move into a wall tighter than this. */
-    wallHold: 16,
+    wallHold: 24,
 };
 export const SCORE = {
     pass: 100,
