@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { BIOMES, effectiveNight } from '../../game/EnvironmentManager.js';
+import { BIOMES, biomeForEnv, effectiveNight } from '../../game/EnvironmentManager.js';
 import { cameraPose } from '../../game/CameraController.js';
 import { LOOK } from '../../look.js';
 import type { QualitySettings } from '../../game/PerformanceManager.js';
@@ -272,7 +272,11 @@ export class RoadWorld {
 
   private atmosphere(s: RunState, env: EnvironmentId, weather: WeatherId): void {
     const night = effectiveNight(env) || env === 'night';
-    const biome = BIOMES[Math.floor(s.d / 1600) % BIOMES.length];
+    // Honor the resolved environment: the picker (and auto-biomes) must match
+    // what is on screen. Before, the palette came from distance alone, so
+    // choosing "Nieve" still showed the coast palette for kilometres.
+    const forcedBiome = biomeForEnv(env);
+    const biome = BIOMES[forcedBiome >= 0 ? forcedBiome : Math.floor(s.d / 1600) % BIOMES.length];
     let skyTop = biome.sky[0];
     let skyMid = biome.sky[1];
     let skyBot = biome.sky[2];
@@ -301,21 +305,26 @@ export class RoadWorld {
     const fogCol = new THREE.Color(biome.haze.slice(0, 7) || '#e8dcc8');
     (this.scene.fog as THREE.FogExp2).color.copy(fogCol);
     (this.scene.fog as THREE.FogExp2).density = night ? 0.017 : weather === 'fog' ? 0.015 : 0.0088;
+    const dusk = env === 'snow';
     this.hemi.color.set(skyTop);
     this.hemi.groundColor.set(ground);
-    this.hemi.intensity = night ? 0.45 : 1.25;
-    this.sun.intensity = night ? 0.3 : weather === 'cloudy' || weather === 'rain' ? 0.95 : 1.65;
-    this.sun.color.set(biome.sun || LOOK.sun);
+    this.hemi.intensity = night ? 0.45 : dusk ? 1.05 : 1.25;
+    this.sun.intensity = night ? 0.3 : dusk ? 0.95 : weather === 'cloudy' || weather === 'rain' ? 0.95 : 1.65;
+    if (dusk) {
+      this.hemi.color.set('#b8c8e0');
+      this.sun.color.set('#e8ecf4');
+    }
+    if (!dusk) this.sun.color.set(biome.sun || LOOK.sun);
     this.fill.intensity = night ? 0.25 : 0.65;
     this.groundMat.color.set(ground);
-    this.asphaltMat.color.set(night ? LOOK.asphalt.night : LOOK.asphalt.day);
+    this.asphaltMat.color.set(dusk ? '#9aa4ae' : night ? LOOK.asphalt.night : LOOK.asphalt.day);
     this.waterMat.color.set(biome.water);
 
     const skyMat = this.skyDome.material as THREE.ShaderMaterial;
     skyMat.uniforms.topColor.value.set(skyTop);
     skyMat.uniforms.midColor.value.set(skyMid);
     skyMat.uniforms.botColor.value.set(skyBot);
-    this.sunDisc.visible = !night;
+    this.sunDisc.visible = !night && !dusk;
     (this.sunDisc.material as THREE.MeshBasicMaterial).color.set(
       weather === 'sunset' ? 0xff9040 : hex(biome.sun || LOOK.sun),
     );
@@ -540,7 +549,8 @@ export class RoadWorld {
     this.camera.near = 0.2;
     this.camera.far = Math.max(420, opts.quality.drawDistance + 80);
     this.camera.position.set(pose.pos.x, pose.pos.y, pose.pos.z);
-    this.camera.lookAt(pose.target.x + roadAhead * 0.55, pose.target.y, pose.target.z);
+    // On portrait screens the curve look-ahead pushed the car out of frame.
+    this.camera.lookAt(pose.target.x + roadAhead * (aspect < 1 ? 0.22 : 0.55), pose.target.y, pose.target.z);
     this.camera.updateProjectionMatrix();
     // Critical: chase-from-behind mirrors X; flip projection so ←/→ match the screen.
     mirrorChaseProjection(this.camera);
@@ -548,7 +558,7 @@ export class RoadWorld {
 
     if (this.player.userData.color !== opts.color) {
       this.scene.remove(this.player);
-      this.player = createVehicle('sport', opts.color);
+      this.player = createVehicle('hatch' as CarVariant, opts.color);
       this.scene.add(this.player);
       this.player.userData.color = opts.color;
     }
@@ -567,7 +577,11 @@ export class RoadWorld {
     const base = curve(s.d);
     const trafficFar = opts.quality.drawDistance * 0.72;
     let drawn = 0;
-    for (const t of s.traffic) {
+    // Draw nearest-first: the draw cap must only ever drop the farthest (fogged)
+    // cars, never one the player is about to reach. Unsorted iteration hid live
+    // cars at arbitrary distances while they still collided.
+    const ordered = s.traffic.slice().sort((a, b) => a.d - b.d);
+    for (const t of ordered) {
       const z = t.d - s.d;
       const presence = depthPresence(z, trafficFar, -14, 60, 16);
       if (presence < 0.03 || drawn >= opts.quality.maxTrafficDraw) continue;

@@ -15,8 +15,8 @@ export function stepCamera(s: RunState, pathOffset: number, _cameraMode: number,
   s.fovBoost += (speedNorm * CAMERA.fovSpeedFactor - s.fovBoost) * Math.min(1, dt * 2.4);
   s.shake = Math.max(0, s.shake - dt * CAMERA.shakeDecay);
   if (reduceMotion) s.shake = 0;
-  s.camY = 3.15 + speedNorm * 0.35 + s.shake * 0.06;
-  s.camZ = -8.4 - speedNorm * 2.4;
+  s.camY = 3.6 + speedNorm * 0.3 + s.shake * 0.06;
+  s.camZ = -9.9 - speedNorm * 2.2;
 }
 
 export function cameraPose(s: RunState, pathOffset: number, _cameraMode: number, aspectPortrait: boolean): CamPose {
@@ -26,7 +26,7 @@ export function cameraPose(s: RunState, pathOffset: number, _cameraMode: number,
   // Keep look nearly centered so the car doesn't read as skewed vs the lanes.
   const steerLook = s.steer * 0.35;
   return {
-    pos: { x: s.camX + shakeX * 0.45, y: s.camY || 3.15, z: s.camZ || -8.4 },
+    pos: { x: s.camX + shakeX * 0.45, y: s.camY || 3.6, z: s.camZ || -9.9 },
     target: { x: px + steerLook, y: 0.45, z: lookZ },
     fovMul: (aspectPortrait ? 0.88 : 0.68) * (1 - s.fovBoost * 0.85),
   };

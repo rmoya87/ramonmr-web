@@ -203,3 +203,14 @@ body.rm-touring-shell #rm-touring .reader-expanded .workshop .hanging-panel{heig
   border-radius:22px!important;
 }
 
+/* Mobile HUD: keep gauge, route cue and mission clear of the touch controls */
+@media (max-width:899px), (pointer:coarse) {
+  #rm-touring .speed.gauge { bottom: calc(max(12px, env(safe-area-inset-bottom)) + 66px); width: 82px; height: 82px; }
+  #rm-touring .speed.gauge b { font-size: 22px; }
+  #rm-touring .route-cue { bottom: calc(max(12px, env(safe-area-inset-bottom)) + 66px); }
+  #rm-touring .mission-bar { bottom: calc(max(12px, env(safe-area-inset-bottom)) + 140px); max-width: min(58%, 320px); padding: 8px 12px; font-size: 10px; }
+}
+/* Mobile: mission pill parks under the top-left HUD, clear of the car and bottom controls */
+@media (max-width:899px), (pointer:coarse) {
+  #rm-touring .mission-bar { bottom: auto; left: 14px; right: auto; transform: none; max-width: 62%; text-align: left; }
+}

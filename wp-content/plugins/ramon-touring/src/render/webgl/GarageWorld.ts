@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import { LOOK } from '../../look.js';
-import { createVehicle, setVehicleLights } from './Vehicles.js';
+import { createVehicle, setVehicleLights, type CarVariant } from './Vehicles.js';
 
 export class GarageWorld {
   readonly scene = new THREE.Scene();
@@ -50,14 +50,14 @@ export class GarageWorld {
     lamp.position.set(0, 5, 0);
     this.scene.add(lamp);
 
-    this.car = createVehicle('sport', '#c23a2b');
+    this.car = createVehicle('hatch' as CarVariant, '#c23a2b');
     this.scene.add(this.car);
   }
 
   update(opts: { angle: number; zoom: number; color: string; hood: boolean; lights: boolean; aspect: number }): void {
     if (this.car.userData.color !== opts.color) {
       this.scene.remove(this.car);
-      this.car = createVehicle('sport', opts.color);
+      this.car = createVehicle('hatch' as CarVariant, opts.color);
       this.car.userData.color = opts.color;
       this.scene.add(this.car);
     }

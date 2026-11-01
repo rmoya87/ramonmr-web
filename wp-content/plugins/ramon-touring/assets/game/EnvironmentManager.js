@@ -47,13 +47,24 @@ export const BIOMES = [
         id: 4,
         nameEs: 'Nieve',
         nameEn: 'Snow',
-        ground: ['#e4ecf0', '#d4dee4', '#f0f4f6'],
-        sky: ['#7a9ab0', '#c8d8e4', '#e8e4d8'],
-        water: '#6a8aa0',
-        sun: '#f8f0e0',
-        haze: '#e0e8f088',
+        ground: ['#dde6ee', '#ccd8e2', '#eef3f7'],
+        sky: ['#131e31', '#2b3d5c', '#7e8ea6'],
+        water: '#4a5e78',
+        sun: '#c8d4e8',
+        haze: '#8fa2bd88',
     },
 ];
+/** Biome index for a concrete environment; -1 for night/beach (they keep distance variety). */
+export function biomeForEnv(env) {
+    switch (env) {
+        case 'coast': return 0;
+        case 'forest': return 1;
+        case 'city': return 2;
+        case 'desert': return 3;
+        case 'snow': return 4;
+        default: return -1;
+    }
+}
 export function regionAt(d) {
     return Math.floor(d / 1600) % BIOMES.length;
 }

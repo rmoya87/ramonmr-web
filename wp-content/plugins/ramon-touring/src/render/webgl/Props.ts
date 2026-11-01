@@ -1,11 +1,11 @@
 import * as THREE from 'three';
-import { BIOMES } from '../../game/EnvironmentManager.js';
+import { BIOMES, biomeForEnv } from '../../game/EnvironmentManager.js';
 import { LOOK } from '../../look.js';
 import { curve, depthPresence, inExitClearance, ramp } from './path.js';
 import type { RunState } from '../../game/types.js';
 import type { EnvironmentId } from '../../game/config.js';
 
-type PropKind = 'pine' | 'palm' | 'bush' | 'rock' | 'building' | 'bollard' | 'fence' | 'guard';
+type PropKind = 'pine' | 'pineSnow' | 'palm' | 'bush' | 'rock' | 'building' | 'bollard' | 'fence' | 'guard';
 
 function makePine(): THREE.Group {
   const g = new THREE.Group();
@@ -23,6 +23,26 @@ function makePine(): THREE.Group {
     );
     cone.position.y = 1.55 + i * 0.72;
     cone.castShadow = true;
+    g.add(cone);
+  }
+  return g;
+}
+
+/** Dark snow-capped pine for the night-snow look. */
+function makePineSnow(): THREE.Group {
+  const g = new THREE.Group();
+  const trunk = new THREE.Mesh(
+    new THREE.CylinderGeometry(0.15, 0.24, 1.5, 7),
+    new THREE.MeshStandardMaterial({ color: '#2a2118', flatShading: true }),
+  );
+  trunk.position.y = 0.75;
+  g.add(trunk);
+  for (let i = 0; i < 4; i++) {
+    const cone = new THREE.Mesh(
+      new THREE.ConeGeometry(1.2 - i * 0.22, 1.5, 8),
+      new THREE.MeshStandardMaterial({ color: i === 3 ? '#c9d6de' : '#1e3038', flatShading: true }),
+    );
+    cone.position.y = 1.5 + i * 0.7;
     g.add(cone);
   }
   return g;
@@ -172,6 +192,7 @@ function makeGuard(): THREE.Group {
 
 const templates: Record<PropKind, () => THREE.Group> = {
   pine: makePine,
+  pineSnow: makePineSnow,
   palm: makePalm,
   bush: makeBush,
   rock: makeRock,
@@ -232,7 +253,8 @@ export class PropField {
       const t = world - s.fork;
       const rightOff = Math.max(12.5 + ((n % 5 + 5) % 5) * 2.2, t > -20 && t < 330 ? ramp(Math.max(0, t)) + 5.5 : 0);
       const leftOff = 11.5 + ((n % 3 + 3) % 3) * 1.8;
-      const biomeId = Math.floor(world / 1600) % BIOMES.length;
+      const envBiome = biomeForEnv(env);
+      const biomeId = envBiome >= 0 ? envBiome : Math.floor(world / 1600) % BIOMES.length;
       const jitter = ((n * 17) % 7) * 0.35;
 
       if (beach) {
@@ -247,6 +269,10 @@ export class PropField {
         this.place('rock', x + rightOff, z, 1, farZ);
         if (n % 2 === 0) this.place('rock', x - leftOff, z + 1, 0.7, farZ);
         if (n % 3 === 0) this.place('bush', x + rightOff - 2, z, 1, farZ);
+      } else if (biomeId === 4) {
+        // Sober snow fields: sparse dark tree line, no fences or bushes near the road.
+        if (n % 2 === 0) this.place('pineSnow', x + rightOff + 2.5, z, 1.1 + (n % 4) * 0.16, farZ);
+        if (n % 3 === 0) this.place('pineSnow', x - leftOff - 3.5, z + jitter, 0.95 + (n % 3) * 0.12, farZ);
       } else {
         this.place('pine', x + rightOff, z, 1 + (n % 4) * 0.14, farZ);
         this.place('pine', x - leftOff, z + jitter, 0.85 + (n % 3) * 0.1, farZ);

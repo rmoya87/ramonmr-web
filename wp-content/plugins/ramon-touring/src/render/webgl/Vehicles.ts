@@ -45,7 +45,111 @@ function addWheel(group: THREE.Group, x: number, z: number, r: number): void {
  * Single sealed volume stack: every panel is opaque and overlaps neighbors
  * so the chase camera never sees “inside” through seams.
  */
+/**
+ * Player hatch — reference look: one clean volume, huge sloped rear glass,
+ * round taillights joined by a thin red bar. No stacked slabs/spoilers.
+ */
+function createHatch(color: string): THREE.Group {
+  const g = new THREE.Group();
+  g.name = 'car-hatch';
+  const paint = bodyMat(color);
+  const glass = glassMat();
+  const dark = new THREE.MeshStandardMaterial({ color: 0x141a1e, roughness: 0.85 });
+
+  const W = 1.86, L = 4.3, H = 0.78;
+  const wheelR = 0.42, wheelZ = 1.32;
+  const floorY = wheelR * 0.5;
+  const bodyY = wheelR + H * 0.5;
+
+  // Single hull with a soft nose taper
+  const hull = new THREE.Mesh(new THREE.BoxGeometry(W, H, L), paint);
+  hull.position.y = bodyY;
+  hull.castShadow = true;
+  g.add(hull);
+  const nose = new THREE.Mesh(new THREE.BoxGeometry(W * 0.94, H * 0.55, 0.7), paint);
+  nose.position.set(0, wheelR + H * 0.32, L * 0.5 + 0.28);
+  nose.rotation.x = 0.18;
+  g.add(nose);
+  const floor = new THREE.Mesh(new THREE.BoxGeometry(W * 1.02, 0.2, L * 1.04), dark);
+  floor.position.y = floorY;
+  g.add(floor);
+
+  // Cabin: one trapezoid-ish block, wide and low
+  const cabH = 0.62, cabL = 2.2, cabZ = -0.25;
+  const cabin = new THREE.Mesh(new THREE.BoxGeometry(W * 0.86, cabH, cabL), paint);
+  cabin.position.set(0, bodyY + H * 0.5 + cabH * 0.42, cabZ);
+  cabin.castShadow = true;
+  g.add(cabin);
+  // Roof cap slightly wider so the cabin never reads as stacked slabs
+  const roof = new THREE.Mesh(new THREE.BoxGeometry(W * 0.88, 0.14, cabL * 0.94), paint);
+  roof.position.set(0, bodyY + H * 0.5 + cabH * 0.88, cabZ + 0.06);
+  g.add(roof);
+
+  // THE signature: huge dark rear glass, sloped, covering the whole rear upper face
+  const rearGlass = new THREE.Mesh(new THREE.BoxGeometry(W * 0.78, cabH * 0.95, 0.08), glass);
+  rearGlass.position.set(0, bodyY + H * 0.5 + cabH * 0.4, cabZ - cabL * 0.5 - 0.02);
+  rearGlass.rotation.x = 0.42;
+  g.add(rearGlass);
+  // Side glass band
+  for (const side of [-1, 1]) {
+    const sg = new THREE.Mesh(new THREE.BoxGeometry(0.07, cabH * 0.52, cabL * 0.7), glass);
+    sg.position.set(side * W * 0.43, bodyY + H * 0.5 + cabH * 0.42, cabZ);
+    g.add(sg);
+  }
+  // Windshield
+  const wind = new THREE.Mesh(new THREE.BoxGeometry(W * 0.76, cabH * 0.6, 0.08), glass);
+  wind.position.set(0, bodyY + H * 0.5 + cabH * 0.42, cabZ + cabL * 0.5 + 0.03);
+  wind.rotation.x = -0.38;
+  g.add(wind);
+
+  // Round taillights + thin connecting bar on the flat hatch face
+  const rearZ = -L * 0.5 - 0.03;
+  const tailY = wheelR + H * 0.62;
+  const bar = new THREE.Mesh(
+    new THREE.BoxGeometry(W * 0.52, 0.07, 0.06),
+    new THREE.MeshStandardMaterial({ color: 0xa8281c, emissive: 0x7a1408, emissiveIntensity: 0.8 }),
+  );
+  bar.position.set(0, tailY, rearZ);
+  bar.userData.kind = 'tailbar';
+  g.add(bar);
+  for (const side of [-1, 1]) {
+    const light = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.17, 0.17, 0.07, 14),
+      new THREE.MeshStandardMaterial({ color: 0xd8402c, emissive: 0x8a1a10, emissiveIntensity: 0.9 }),
+    );
+    light.rotation.x = Math.PI / 2;
+    light.position.set(side * W * 0.33, tailY, rearZ - 0.01);
+    light.userData.kind = 'tail';
+    g.add(light);
+  }
+  // Plate
+  const plate = new THREE.Mesh(
+    new THREE.BoxGeometry(0.5, 0.16, 0.04),
+    new THREE.MeshStandardMaterial({ color: 0xd8dee2, roughness: 0.5 }),
+  );
+  plate.position.set(0, wheelR + H * 0.28, rearZ);
+  g.add(plate);
+  // Headlights
+  for (const side of [-1, 1]) {
+    const hl = new THREE.Mesh(
+      new THREE.SphereGeometry(0.12, 10, 10),
+      new THREE.MeshStandardMaterial({ color: 0xfff6d0, emissive: 0xaa8844, emissiveIntensity: 0.85 }),
+    );
+    hl.position.set(side * W * 0.32, wheelR + H * 0.45, L * 0.5 + 0.1);
+    hl.userData.kind = 'head';
+    g.add(hl);
+  }
+  // Wheels
+  for (const side of [-1, 1]) {
+    addWheel(g, side * (W * 0.48), wheelZ, wheelR);
+    addWheel(g, side * (W * 0.48), -wheelZ, wheelR);
+  }
+  return g;
+}
+
 export function createVehicle(variant: CarVariant, color: string): THREE.Group {
+  if ((variant as string) === 'hatch') return createHatch(color);
+
   const g = new THREE.Group();
   g.name = `car-${variant}`;
   const paint = bodyMat(color);
@@ -186,6 +290,15 @@ export function createVehicle(variant: CarVariant, color: string): THREE.Group {
     g.add(bed);
   }
 
+  // Full-width rear light bar — the signature low-poly night look.
+  const tailBar = new THREE.Mesh(
+    new THREE.BoxGeometry(bodyW * 0.62, 0.08, 0.07),
+    new THREE.MeshStandardMaterial({ color: 0xa8281c, emissive: 0x7a1408, emissiveIntensity: 0.8 }),
+  );
+  tailBar.position.set(0, wheelR + bodyH * 0.78, -bodyL * 0.52);
+  tailBar.userData.kind = 'tailbar';
+  g.add(tailBar);
+
   for (const side of [-1, 1]) {
     addWheel(g, side * (bodyW * 0.48), wheelZ, wheelR);
     addWheel(g, side * (bodyW * 0.48), -wheelZ, wheelR);
@@ -220,6 +333,10 @@ export function setVehicleLights(group: THREE.Group, on: boolean, brake: boolean
     if (obj.userData.kind === 'tail') {
       m.emissive.setHex(brake ? 0xff2200 : 0x661818);
       m.emissiveIntensity = brake ? 2 : 0.55;
+    }
+    if (obj.userData.kind === 'tailbar') {
+      m.emissive.setHex(brake ? 0xff2812 : on ? 0xcc2214 : 0x551208);
+      m.emissiveIntensity = brake ? 2.0 : on ? 0.95 : 0.45;
     }
   });
 }

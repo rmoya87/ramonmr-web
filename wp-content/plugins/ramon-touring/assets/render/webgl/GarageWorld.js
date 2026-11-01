@@ -31,13 +31,13 @@ export class GarageWorld {
         const lamp = new THREE.PointLight(0xfff6d5, 0.8, 20);
         lamp.position.set(0, 5, 0);
         this.scene.add(lamp);
-        this.car = createVehicle('sport', '#c23a2b');
+        this.car = createVehicle('hatch', '#c23a2b');
         this.scene.add(this.car);
     }
     update(opts) {
         if (this.car.userData.color !== opts.color) {
             this.scene.remove(this.car);
-            this.car = createVehicle('sport', opts.color);
+            this.car = createVehicle('hatch', opts.color);
             this.car.userData.color = opts.color;
             this.scene.add(this.car);
         }

@@ -225,6 +225,23 @@ const rc = road.querySelector('canvas') as HTMLCanvasElement;
 const gc = workshop.querySelector('canvas') as HTMLCanvasElement;
 const roadGL = new GameView(rc);
 const garageGL = new GameView(gc);
+
+// The mission pill parks directly under the top HUD on mobile, tracking its
+// real height: the HUD wraps to 2-3 rows on narrow screens, so a fixed top
+// overlapped the hearts row. ResizeObserver re-parks it whenever the HUD
+// reflows (font load, hearts lost, width change).
+const topHudEl = $('.top-hud') as HTMLElement;
+const missionEl = $('[data-hud=mission-wrap]') as HTMLElement;
+const mobileHudMq = matchMedia('(max-width:899px), (pointer:coarse)');
+function layoutMission(): void {
+  if (!topHudEl || !missionEl) return;
+  if (!mobileHudMq.matches) { missionEl.style.top = ''; return; }
+  missionEl.style.top = `${topHudEl.offsetTop + topHudEl.offsetHeight + 10}px`;
+}
+if (typeof ResizeObserver !== 'undefined') new ResizeObserver(layoutMission).observe(topHudEl);
+mobileHudMq.addEventListener?.('change', layoutMission);
+addEventListener('resize', layoutMission);
+
 const reader = $('.reader') as HTMLIFrameElement;
 const stage = $('.orbit-stage');
 
@@ -741,7 +758,7 @@ const loop = new GameLoop({
             color,
             camera: livePreview ? 0 : camera,
             brake: !!polled.brake,
-            lights: lights || environment === 'night',
+            lights: lights || s.environment === 'night' || s.environment === 'snow',
             environment: s.environment,
             weather,
             quality: q,

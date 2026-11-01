@@ -264,7 +264,8 @@ export function drawRoad(c, s, w, h, opts) {
         }
     }
     let drawn = 0;
-    for (const tr of s.traffic) {
+    const orderedTraffic = s.traffic.slice().sort((a, b) => a.d - b.d);
+    for (const tr of orderedTraffic) {
         const z = tr.d - s.d;
         if (z > -10 && z < quality.drawDistance * 0.5 && drawn < quality.maxTrafficDraw) {
             car(objects, cx(z) + tr.x, z, tr.color, {

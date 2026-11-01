@@ -172,7 +172,12 @@ function preventBlockade(s) {
     const lanes = new Set(ahead.map((c) => Math.round(c.x)));
     if (lanes.size < 3)
         return;
+    // Open a gap by speeding the right car up gradually. The old code teleported
+    // it +28 m, which read as "the car ahead disappears" exactly when the player
+    // committed to a lane behind the wall.
     const right = ahead.reduce((a, b) => (b.x > a.x ? b : a));
-    right.d += 28;
-    right.passed = false;
+    const def = VEHICLE_TYPES[right.type];
+    right.speed = Math.min(right.speed + 26, def.preferred + 45);
+    right.state = 'cruise';
+    right.changeTimer = 0;
 }
