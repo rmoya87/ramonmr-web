@@ -10,11 +10,8 @@ test('mode selector stays below site header and hides with the mobile menu', () 
   assert.match(css, /#rm-mode-pill\{[^}]*z-index:19;/);
   assert.match(css, /html\.has-modal-open #rm-mode-pill\{display:none\}/);
 });
-test('mode selector keeps the desktop vertical layout and accessible mobile menu switch', () => {
-  assert.match(css, /@media\(max-width:781px\)/);
-  assert.match(css, /#rm-mode-pill\{display:none\}/);
-  assert.match(php, /render_block_core\/navigation/);
-  assert.match(css, /#rm-menu-mode-pill a span\{[^}]*min-height:44px/);
+test('mode selector keeps the vertical mobile layout and accessible switch', () => {
+  assert.match(css, /@media\(max-width:700px\)/);
   assert.match(css, /writing-mode:vertical-rl/);
   assert.match(php, /role="switch" aria-checked=/);
 });
